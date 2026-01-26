@@ -111,3 +111,28 @@ Mesh::createRGBAxes(GLdouble l)
 
 	return mesh;
 }
+
+Mesh* Mesh::generateRegularPolygon(GLuint num, GLdouble r)
+{
+	// creamos malla y le ponemos la primitiva
+	Mesh* mesh = new Mesh(); 
+	mesh->mPrimitive = GL_LINE_LOOP;
+
+	// establecemos num de vertices y al array de vertices le reservamos ese tamanio.
+	mesh->mNumVertices = num;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+
+	// se van guardando en sentido antihorario
+	GLdouble alpha = 90.0;
+	GLdouble incremento = 360.0 / num;
+	for (GLuint i = 0; i < num + 2; i++) {
+		GLdouble x = r * glm::cos(glm::radians(alpha));
+		GLdouble y = r * glm::sin(glm::radians(alpha));
+		alpha += incremento;
+
+		// (Cx + R * cos(alpha), Cy + R * sin(alpha), 0).
+		mesh->vVertices.emplace_back(x, y, 0.0);
+	}
+
+	return mesh;
+}

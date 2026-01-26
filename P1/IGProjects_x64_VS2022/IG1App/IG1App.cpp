@@ -55,10 +55,17 @@ IG1App::init()
 	// allocate memory and resources
 	mViewPort = new Viewport(mWinW, mWinH);
 	mCamera = new Camera(mViewPort);
-	mScenes.push_back(new Scene);
+
+	// crea las escenas y las mete en el vector
+	mScenes.push_back(new Scene0());
+	mScenes.push_back(new Scene1());
+	mScenes.push_back(new Scene2());
 
 	mCamera->set2D();
 	mScenes[0]->init();
+
+	for (Scene* s : mScenes) s->init();
+
 	mScenes[mCurrentScene]->load();
 }
 

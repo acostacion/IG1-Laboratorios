@@ -37,6 +37,7 @@ protected:
 	virtual void upload(const glm::mat4& mModelViewMat) const;
 };
 
+
 class EntityWithColors : public Abs_Entity
 {
 public:
@@ -44,10 +45,26 @@ public:
 	void render(const glm::mat4& modelViewMat) const override;
 };
 
+class SingleColorEntity : public Abs_Entity {
+public:
+	explicit SingleColorEntity(glm::vec4 color = glm::vec4(1.0f));
+	void render(const glm::mat4& modelViewMat) const override;
+
+	glm::vec4 getColor() const { return mColor; }
+	void setColor(glm::vec4 c) { mColor = c; }
+private:
+	glm::vec4 mColor;
+};
+
 class RGBAxes : public EntityWithColors
 {
 public:
 	explicit RGBAxes(GLdouble l);
+};
+
+class RegularPolygon : public SingleColorEntity {
+public:
+	explicit RegularPolygon(GLuint num, GLdouble r);
 };
 
 #endif //_H_Entities_H_
