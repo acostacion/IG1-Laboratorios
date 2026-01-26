@@ -67,4 +67,9 @@ public:
 	explicit RegularPolygon(GLuint num, GLdouble r);
 };
 
+class Cube : public SingleColorEntity {
+public:
+	Cube(GLdouble l);
+};
+
 #endif //_H_Entities_H_

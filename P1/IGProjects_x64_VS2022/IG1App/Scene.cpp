@@ -87,3 +87,11 @@ void Scene1::init() {
 void Scene2::init() {
 	Scene::init();
 }
+
+void Scene3::init() {
+	Scene::init();
+
+	Cube* cube = new Cube(200);
+	cube->setColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+	gObjects.push_back(cube);
+}
