@@ -64,3 +64,23 @@ RegularPolygon::RegularPolygon(GLuint num, GLdouble r) : SingleColorEntity() {
 Cube::Cube(GLdouble l) : SingleColorEntity() {
 	mMesh = Mesh::generateCube(l);
 }
+
+void Cube::render(const glm::mat4& modelViewMat) const {
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		upload(aMat);
+
+		glEnable(GL_CULL_FACE);
+			// CARA DE DELANTE
+			glCullFace(GL_BACK);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			mMesh->render();
+
+			// CARA DE ATRAS
+			glCullFace(GL_FRONT);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+			mMesh->render();
+		glDisable(GL_CULL_FACE);
+	}
+}

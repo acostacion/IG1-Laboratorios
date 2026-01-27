@@ -146,70 +146,56 @@ Mesh* Mesh::generateCube(GLdouble length) {
 	1---------3
 	*/
 
-	// ---- VÉRTICES ----.
-	// Establecemos primitiva GL_TRIANGLE_STRIP
+	// Establecemos primitiva GL_TRIANGLES
 	mesh->mPrimitive = GL_TRIANGLES;
-
 	mesh->mNumVertices = 36;
 	mesh->vVertices.reserve(mesh->mNumVertices);
 
 	GLdouble r = length / 2;
 
-	// ¡¡¡ MIRAR DIBUJO CHULETA PARA ENTENDER !!!
+	// TODO hacer formal
+	vector<glm::vec3> v = {
+	{-r,-r,-r},
+	{-r,-r, r},
+	{-r, r, r},
+	{r, r,-r},
+	{-r,-r,-r},
+	{-r, r,-r},
+	{r,-r, r},
+	{-r,-r,-r},
+	{r,-r,-r},
+	{r, r,-r},
+	{r,-r,-r},
+	{-r,-r,-r},
+	{-r,-r,-r},
+	{-r, r, r},
+	{-r, r,-r},
+	{r,-r, r},
+	{-r,-r, r},
+	{-r,-r,-r},
+	{-r, r, r},
+	{-r,-r, r},
+	{r,-r, r},
+	{r, r, r},
+	{r,-r,-r},
+	{r, r,-r},
+	{r,-r,-r},
+	{r, r, r},
+	{r,-r, r},
+	{r, r, r},
+	{r, r,-r},
+	{-r, r,-r},
+	{r, r, r},
+	{-r, r,-r},
+	{-r, r, r},
+	{r, r, r},
+	{-r, r, r},
+	{r,-r, r}
+	};
 
-	// ---- CARA 1.
-	mesh->vVertices.emplace_back(-r, -r, -r); // 0.
-	mesh->vVertices.emplace_back(-r, -r, r); // 1.
-	mesh->vVertices.emplace_back(r, -r, -r); // 2.
-
-	mesh->vVertices.emplace_back(r, -r, r); // 3.
-	mesh->vVertices.push_back(mesh->vVertices[1]); // 4 (misma pos que el 1).
-	mesh->vVertices.push_back(mesh->vVertices[2]); // 5 (misma pos que el 2).
-
-	// ---- CARA 2.
-	mesh->vVertices.push_back(mesh->vVertices[2]); // 6 (misma pos que el 2).
-	mesh->vVertices.emplace_back(r, r, -r); // 7.
-	mesh->vVertices.push_back(mesh->vVertices[0]); // 8 (misma pos que el 0).
-
-	mesh->vVertices.emplace_back(-r, r, -r); // 9.
-	mesh->vVertices.push_back(mesh->vVertices[7]); // 10 (misma pos que el 7).
-	mesh->vVertices.push_back(mesh->vVertices[0]); // 11 (misma pos que el 0).
-
-	// ---- CARA 3.
-	mesh->vVertices.push_back(mesh->vVertices[0]); // 12 (misma pos que el 0).
-	mesh->vVertices.push_back(mesh->vVertices[9]); // 13 (misma pos que el 9).
-	mesh->vVertices.push_back(mesh->vVertices[1]); // 14 (misma pos que el 1).
-
-	mesh->vVertices.emplace_back(-r, r, r); // 15.
-	mesh->vVertices.push_back(mesh->vVertices[9]); // 16 (misma pos que el 9).
-	mesh->vVertices.push_back(mesh->vVertices[1]); // 17 (misma pos que el 1).
-
-	// ---- CARA 4 (PARALELA A CARA 1).
-	mesh->vVertices.push_back(mesh->vVertices[9]); // 18 (misma pos que el 9).
-	mesh->vVertices.push_back(mesh->vVertices[15]); // 19 (misma pos que el 15).
-	mesh->vVertices.push_back(mesh->vVertices[7]); // 20 (misma pos que el 7).
-
-	mesh->vVertices.emplace_back(r, r, r); // 21.
-	mesh->vVertices.push_back(mesh->vVertices[15]); // 22 (misma pos que el 15).
-	mesh->vVertices.push_back(mesh->vVertices[7]); // 23 (misma pos que el 7).
-
-	// ---- CARA 5 (PARALELA A CARA 2).
-	mesh->vVertices.push_back(mesh->vVertices[3]); // 24 (misma pos que el 3).
-	mesh->vVertices.push_back(mesh->vVertices[21]); // 25 (misma pos que el 21).
-	mesh->vVertices.push_back(mesh->vVertices[1]); // 26 (misma pos que el 1).
-
-	mesh->vVertices.push_back(mesh->vVertices[15]); // 27 (misma pos que el 15).
-	mesh->vVertices.push_back(mesh->vVertices[21]); // 28 (misma pos que el 21).
-	mesh->vVertices.push_back(mesh->vVertices[1]); // 29 (misma pos que el 1).
-
-	// ---- CARA 6 (PARALELA A CARA 3).
-	mesh->vVertices.push_back(mesh->vVertices[2]); // 30 (misma pos que el 2).
-	mesh->vVertices.push_back(mesh->vVertices[7]); // 31 (misma pos que el 7).
-	mesh->vVertices.push_back(mesh->vVertices[3]); // 32 (misma pos que el 3).
-
-	mesh->vVertices.push_back(mesh->vVertices[21]); // 33 (misma pos que el 21).
-	mesh->vVertices.push_back(mesh->vVertices[7]); // 34 (misma pos que el 7).
-	mesh->vVertices.push_back(mesh->vVertices[3]); // 35 (misma pos que el 3).
+	for (int i = 0; i < mesh->mNumVertices; ++i) {
+		mesh->vVertices.emplace_back(v[i]);
+	}
 
 	return mesh;
 }
