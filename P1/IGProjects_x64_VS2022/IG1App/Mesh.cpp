@@ -147,29 +147,55 @@ Mesh* Mesh::generateCube(GLdouble length) {
 	*/
 
 	// Establecemos primitiva GL_TRIANGLES
-	mesh->mPrimitive = GL_TRIANGLES;
-	mesh->mNumVertices = 5;
+	mesh->mPrimitive = GL_TRIANGLE_STRIP;
+	mesh->mNumVertices = 14;
 	mesh->vVertices.reserve(mesh->mNumVertices);
 
 	GLdouble r = length / 2;
 
-	// TODO hacer formal
+	// TODO casi casi....
 	vector<glm::vec3> v = {
-		{-r, r, r},
-		{-r, -r, r},
-		{r, r, r},
-		{r, -r, r},
-		{r, r, -r}
 
-		// TODO hacer con triangle strip luego
+		// -Y
+		{-r, -r, -r},
+		{r, -r, -r},
+		{-r, -r, r},
+		{r, -r, r},
+
+		// +X
+		{r,r,r},
+		{r, -r, -r},
+		{r, r, -r},
+
+		// -Z
+		// el v[0]
+		{-r, r, -r},
+
+		// -X
+		// el v[2]
+		{-r, r, r},
+
+		// +Y
+		// el v[4]
+		// el v[8]
+		// el v[6]
 	};
 
-	vector<GLint> indexes = { 0, 1, 2, 3, 4};
-	
-
-	for (int i = 0; i < mesh->mNumVertices; ++i) {
-		mesh->vVertices.emplace_back(v[indexes[i]]);
+	for (int i = 0; i < 7; ++i) {
+		mesh->vVertices.emplace_back(v[i]);
 	}
 
+	mesh->vVertices.push_back(mesh->vVertices[0]);
+	mesh->vVertices.emplace_back(v[7]);
+	mesh->vVertices.push_back(mesh->vVertices[2]);
+	mesh->vVertices.emplace_back(v[8]);
+	mesh->vVertices.push_back(mesh->vVertices[4]);
+	mesh->vVertices.push_back(mesh->vVertices[8]);
+	mesh->vVertices.push_back(mesh->vVertices[6]);
+
 	return mesh;
+}
+
+Mesh* Mesh::generateRGBCubeTriangles(GLdouble length) {
+	return nullptr;
 }

@@ -52,7 +52,7 @@ public:
 
 	glm::vec4 getColor() const { return mColor; }
 	void setColor(glm::vec4 c) { mColor = c; }
-private:
+protected:
 	glm::vec4 mColor;
 };
 

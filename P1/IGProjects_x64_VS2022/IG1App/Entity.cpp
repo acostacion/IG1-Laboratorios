@@ -61,7 +61,7 @@ RegularPolygon::RegularPolygon(GLuint num, GLdouble r) : SingleColorEntity() {
 	mMesh = Mesh::generateRegularPolygon(num, r);
 }
 
-Cube::Cube(GLdouble l) : SingleColorEntity() {
+Cube::Cube(GLdouble l) : SingleColorEntity(glm::vec4(0.0f)) {
 	mMesh = Mesh::generateCube(l);
 }
 
@@ -69,6 +69,7 @@ void Cube::render(const glm::mat4& modelViewMat) const {
 	if (mMesh != nullptr) {
 		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
+		mShader->setUniform("color", mColor);
 		upload(aMat);
 
 		glEnable(GL_CULL_FACE);

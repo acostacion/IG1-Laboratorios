@@ -12,6 +12,7 @@ public:
 	static Mesh* createRGBAxes(GLdouble l); // creates a new 3D-RGB axes mesh
 	static Mesh* generateRegularPolygon(GLuint num, GLdouble r);
 	static Mesh* generateCube(GLdouble length);
+	static Mesh* generateRGBCubeTriangles(GLdouble length);
 
 	Mesh();
 	virtual ~Mesh();
