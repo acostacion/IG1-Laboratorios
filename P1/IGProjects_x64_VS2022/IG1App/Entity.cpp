@@ -100,3 +100,29 @@ RGBTriangle::RGBTriangle(GLdouble l) {
 RGBRectangle::RGBRectangle(GLdouble w, GLdouble h) {
 	mMesh = Mesh::generateRGBRectangle(w, h);
 }
+
+void RGBRectangle::render(const mat4& modelViewMat) const {
+	if (mMesh != nullptr) {
+
+		glEnable(GL_CULL_FACE);
+		// CARA DE DELANTE
+		glCullFace(GL_BACK);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		upload(aMat);
+		mMesh->render();
+		// CARA DE ATRAS
+		glCullFace(GL_FRONT);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		upload(aMat);
+		mMesh->render();
+
+		glDisable(GL_CULL_FACE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+	}
+}

@@ -42,7 +42,7 @@ class EntityWithColors : public Abs_Entity
 {
 public:
 	explicit EntityWithColors();
-	void render(const glm::mat4& modelViewMat) const override;
+	virtual void render(const glm::mat4& modelViewMat) const override;
 };
 
 class SingleColorEntity : public Abs_Entity {
@@ -81,6 +81,7 @@ public:
 class RGBRectangle : public EntityWithColors {
 public:
 	explicit RGBRectangle(GLdouble w, GLdouble h);
+	void render(const glm::mat4& modelViewMat) const override;
 };
 
 #endif //_H_Entities_H_
