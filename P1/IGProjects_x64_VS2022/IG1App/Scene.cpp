@@ -86,11 +86,15 @@ void Scene1::init() {
 
 void Scene2::init() {
 	Scene::init();
-	RGBTriangle* tri = new RGBTriangle(100);
+	RGBTriangle* tri = new RGBTriangle(50);
 	gObjects.push_back(tri);
 
-	RGBRectangle* rect = new RGBRectangle(300, 200);
+	RGBRectangle* rect = new RGBRectangle(300, 300);
 	gObjects.push_back(rect);
+
+	RegularPolygon* circ = new RegularPolygon(40, 215);
+	circ->setColor({ 1.0f, 0.0f, 1.0f, 1.0f });
+	gObjects.push_back(circ);
 }
 
 void Scene3::init() {
