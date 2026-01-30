@@ -199,3 +199,36 @@ Mesh* Mesh::generateCube(GLdouble length) {
 Mesh* Mesh::generateRGBCubeTriangles(GLdouble length) {
 	return nullptr;
 }
+
+Mesh* Mesh::generateRectangle(GLdouble w, GLdouble h) {
+	Mesh* mesh = new Mesh();
+	mesh->mPrimitive = GL_TRIANGLE_STRIP;
+	mesh->mNumVertices = 4;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+	GLdouble hw = w / 2;
+	GLdouble hh = h / 2;
+	mesh->vVertices.emplace_back(-hw, -hh, 0.0);
+	mesh->vVertices.emplace_back(hw, -hh, 0.0);
+	mesh->vVertices.emplace_back(-hw, hh, 0.0);
+	mesh->vVertices.emplace_back(hw, hh, 0.0);
+	return mesh;
+}
+
+Mesh* Mesh::generateRGBRectangle(GLdouble w, GLdouble h) {
+	Mesh* mesh = new Mesh();
+	mesh->mPrimitive = GL_TRIANGLE_STRIP;
+	mesh->mNumVertices = 4;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+	GLdouble hw = w / 2;
+	GLdouble hh = h / 2;
+	mesh->vVertices.emplace_back(-hw, -hh, 0.0);
+	mesh->vVertices.emplace_back(hw, -hh, 0.0);
+	mesh->vVertices.emplace_back(-hw, hh, 0.0);
+	mesh->vVertices.emplace_back(hw, hh, 0.0);
+	mesh->vColors.reserve(mesh->mNumVertices);
+	mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0); // Red
+	mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0); // Green
+	mesh->vColors.emplace_back(0.0, 0.0, 1.0, 1.0); // Blue
+	mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0); // Green
+	return mesh;
+}

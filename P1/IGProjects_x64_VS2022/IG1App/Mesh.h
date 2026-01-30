@@ -13,6 +13,8 @@ public:
 	static Mesh* generateRegularPolygon(GLuint num, GLdouble r);
 	static Mesh* generateCube(GLdouble length);
 	static Mesh* generateRGBCubeTriangles(GLdouble length);
+	static Mesh* generateRectangle(GLdouble w, GLdouble h);
+	static Mesh* generateRGBRectangle(GLdouble w, GLdouble h);
 
 	Mesh();
 	virtual ~Mesh();

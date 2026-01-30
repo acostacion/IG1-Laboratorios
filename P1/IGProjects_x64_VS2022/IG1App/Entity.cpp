@@ -96,3 +96,7 @@ RGBTriangle::RGBTriangle(GLdouble l) {
 	  {0.0f, 0.0f, 1.0f, 1.0f}  // azul
 		});
 }
+
+RGBRectangle::RGBRectangle(GLdouble w, GLdouble h) {
+	mMesh = Mesh::generateRGBRectangle(w, h);
+}

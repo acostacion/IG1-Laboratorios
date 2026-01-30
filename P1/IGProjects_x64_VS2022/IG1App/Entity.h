@@ -78,4 +78,9 @@ public:
 	explicit RGBTriangle(GLdouble l);
 };
 
+class RGBRectangle : public EntityWithColors {
+public:
+	explicit RGBRectangle(GLdouble w, GLdouble h);
+};
+
 #endif //_H_Entities_H_
