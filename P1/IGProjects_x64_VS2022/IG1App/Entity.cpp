@@ -85,3 +85,14 @@ void Cube::render(const glm::mat4& modelViewMat) const {
 		glDisable(GL_CULL_FACE);
 	}
 }
+
+RGBTriangle::RGBTriangle(GLdouble l) {
+	mMesh = Mesh::generateRegularPolygon(3, l);
+	mMesh->setPrimitive(GL_TRIANGLES);
+	// se pone a cada vértice un color diferente
+	mMesh->setColorBuffer({
+	  {1.0f, 0.0f, 0.0f, 1.0f}, // rojo
+	  {0.0f, 1.0f, 0.0f, 1.0f}, // verde
+	  {0.0f, 0.0f, 1.0f, 1.0f}  // azul
+		});
+}

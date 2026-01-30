@@ -35,65 +35,38 @@ Scene::destroy()
 }
 
 void
-Scene::load() {
+Scene::load()
+{
 	for (Abs_Entity* obj : gObjects)
 		obj->load();
 }
 
 void
-Scene::unload() {
+Scene::unload()
+{
 	for (Abs_Entity* obj : gObjects)
 		obj->unload();
 }
 
 void
-Scene::setGL() {
+Scene::setGL()
+{
 	// OpenGL basic setting
-	glClearColor(0.6, 0.7, 0.8, 1.0); // background color (alpha=1 -> opaque)
+	glClearColor(1.0, 1.0, 1.0, 1.0); // background color (alpha=1 -> opaque)
 	glEnable(GL_DEPTH_TEST);          // enable Depth test
 }
 void
-Scene::resetGL() {
+Scene::resetGL()
+{
 	glClearColor(.0, .0, .0, .0); // background color (alpha=1 -> opaque)
 	glDisable(GL_DEPTH_TEST);     // disable Depth test
 }
 
 void
-Scene::render(Camera const& cam) const {
+Scene::render(Camera const& cam) const
+{
 	cam.upload();
 
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
-}
-
-void Scene0::init() {
-	Scene::init();
-}
-
-void Scene1::init() {
-	Scene::init();
-
-	// hexagono magenta.
-	RegularPolygon* hex = new RegularPolygon(6, 200);
-	hex->setColor({ 1.0f, 0.0f, 1.0f, 1.0f });
-	gObjects.push_back(hex);
-
-	// circunferencia amarilla.
-	RegularPolygon* circ = new RegularPolygon(40, 200);
-	circ->setColor({ 1.0f, 1.0f, 0.0f, 1.0f });
-	gObjects.push_back(circ);
-}
-
-void Scene2::init() {
-	Scene::init();
-	RGBTriangle* tri = new RGBTriangle(200);
-	gObjects.push_back(tri);
-}
-
-void Scene3::init() {
-	Scene::init();
-
-	Cube* cube = new Cube(200);
-	cube->setColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-	gObjects.push_back(cube);
 }
