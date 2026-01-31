@@ -86,6 +86,10 @@ void Cube::render(const glm::mat4& modelViewMat) const {
 	}
 }
 
+RGBCube::RGBCube(GLdouble l) : EntityWithColors() {
+	mMesh = Mesh::generateRGBCubeTriangles(l);
+}
+
 RGBTriangle::RGBTriangle(GLdouble l) {
 	mMesh = Mesh::generateRegularPolygon(3, l);
 	mMesh->setPrimitive(GL_TRIANGLES);
@@ -126,3 +130,5 @@ void RGBRectangle::render(const mat4& modelViewMat) const {
 
 	}
 }
+
+

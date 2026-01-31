@@ -100,7 +100,11 @@ void Scene2::init() {
 void Scene3::init() {
 	Scene::init();
 
-	Cube* cube = new Cube(200);
+	/*Cube* cube = new Cube(200);
 	cube->setColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-	gObjects.push_back(cube);
+	gObjects.push_back(cube);*/
+
+	RGBCube* rgbCube = new RGBCube(200);
+	gObjects.push_back(rgbCube);
+
 }

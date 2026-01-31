@@ -73,6 +73,12 @@ public:
 	void render(const glm::mat4& modelViewMat) const override;
 };
 
+class RGBCube: public EntityWithColors
+{
+public:
+	RGBCube(GLdouble l);
+};
+
 class RGBTriangle : public EntityWithColors {
 public:
 	explicit RGBTriangle(GLdouble l);

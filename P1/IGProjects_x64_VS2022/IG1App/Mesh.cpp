@@ -197,7 +197,118 @@ Mesh* Mesh::generateCube(GLdouble length) {
 }
 
 Mesh* Mesh::generateRGBCubeTriangles(GLdouble length) {
-	return nullptr;
+	Mesh* mesh = new Mesh();
+
+	// Establecemos primitiva GL_TRIANGLES
+	mesh->mPrimitive = GL_TRIANGLES;
+	mesh->mNumVertices = 14;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+
+	GLdouble r = length / 2;
+
+	vector<glm::vec3> v = {
+
+		// triangulo abajo -X
+		{-r, -r, -r}, // v[0]
+		{-r, -r, r}, // v[1]
+		{-r, r, r}, // v[2]
+
+		// triangulo arriba -Z
+		{r, r, -r}, // v[3]
+		// v[0]
+		{-r, r, -r}, // v[4]
+
+		// triangulo derecha -Y
+		{r, -r, r}, // v[5]
+		// v[0]
+		{r, -r, -r}, // v[6]
+
+		// triangulo abajo -Z
+		// v[3]
+		// v[6]
+		// v[0]
+
+		// triangulo arriba -X
+		// v[0]
+		// v[2]
+		// v[4]
+
+		{r,r,r},
+		{r, -r, -r},
+	};
+
+	// TODO casi casi....
+	vector<glm::vec3> vs = {
+
+	{1.0f,-1.0f, 1.0f },
+	{-1.0f,-1.0f, 1.0f },
+	{-1.0f,-1.0f,-1.0f },
+
+	{-1.0f, 1.0f, 1.0f },
+	{-1.0f,-1.0f, 1.0f },
+	{1.0f,-1.0f, 1.0f },
+
+	{1.0f, 1.0f, 1.0f },
+	{1.0f,-1.0f,-1.0f },
+	{1.0f, 1.0f,-1.0f },
+
+	{1.0f,-1.0f,-1.0f },
+	{1.0f, 1.0f, 1.0f },
+	{1.0f,-1.0f, 1.0f },
+
+	{1.0f, 1.0f, 1.0f },
+	{1.0f, 1.0f,-1.0f },
+	{-1.0f, 1.0f,-1.0f },
+
+	{1.0f, 1.0f, 1.0f },
+	{-1.0f, 1.0f,-1.0f },
+	{-1.0f, 1.0f, 1.0f },
+
+	{1.0f, 1.0f, 1.0f },
+	{-1.0f, 1.0f, 1.0f },
+	{1.0f,-1.0f, 1.0f }
+	};
+
+	for (int i = 0; i < 7; ++i) {
+		mesh->vVertices.emplace_back(v[i]);
+	}
+
+	mesh->vVertices.push_back(mesh->vVertices[0]);
+	mesh->vVertices.emplace_back(v[7]);
+	mesh->vVertices.push_back(mesh->vVertices[2]);
+	mesh->vVertices.emplace_back(v[8]);
+	mesh->vVertices.push_back(mesh->vVertices[4]);
+	mesh->vVertices.push_back(mesh->vVertices[8]);
+	mesh->vVertices.push_back(mesh->vVertices[6]);
+
+	// ----COLORES----.
+	/* 0: red (1.0, 0.0, 0.0, 1.0);
+	   1: green (0.0, 1.0, 0.0, 1.0);
+	   2: blue (0.0, 0.0, 1.0, 1.0) */
+
+	mesh->vColors.reserve(mesh->mNumVertices);
+
+	// ---- CARA -Y AZUL.
+	for (int i = 0; i < 4; ++i)
+		mesh->vColors.emplace_back(0.0, 0.0, 1.0, 1.0);
+
+	// ---- CARA +X VERDE.
+	for (int i = 0; i < 3; ++i)
+		mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0);
+
+	// ---- CARA -Z ROJA.
+	for (int i = 0; i < 2; ++i)
+		mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0);
+
+	// ---- CARA -X VERDE.
+	for (int i = 0; i < 2; ++i)
+		mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0);
+
+	// ---- CARA +Y ROJA.
+	for (int i = 0; i < 3; ++i)
+		mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0);
+
+	return mesh;
 }
 
 Mesh* Mesh::generateRectangle(GLdouble w, GLdouble h) {
