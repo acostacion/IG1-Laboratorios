@@ -153,7 +153,7 @@ Mesh* Mesh::generateCube(GLdouble length) {
 
 	GLdouble r = length / 2;
 
-	// TODO casi casi....
+	// TODO FIXEAR
 	vector<glm::vec3> v = {
 
 		// -Y
@@ -201,85 +201,42 @@ Mesh* Mesh::generateRGBCubeTriangles(GLdouble length) {
 
 	// Establecemos primitiva GL_TRIANGLES
 	mesh->mPrimitive = GL_TRIANGLES;
-	mesh->mNumVertices = 14;
+	mesh->mNumVertices = 36;
 	mesh->vVertices.reserve(mesh->mNumVertices);
 
 	GLdouble r = length / 2;
 
 	vector<glm::vec3> v = {
 
-		// triangulo abajo -X
-		{-r, -r, -r}, // v[0]
-		{-r, -r, r}, // v[1]
-		{-r, r, r}, // v[2]
+		// Cara -Z
+	   {-r,-r,-r}, { r,-r,-r}, { r, r,-r},
+	   {-r,-r,-r}, { r, r,-r}, {-r, r,-r},
 
-		// triangulo arriba -Z
-		{r, r, -r}, // v[3]
-		// v[0]
-		{-r, r, -r}, // v[4]
+	   // Cara +Z
+	   {-r,-r, r}, { r, r, r}, { r,-r, r},
+	   {-r,-r, r}, {-r, r, r}, { r, r, r},
 
-		// triangulo derecha -Y
-		{r, -r, r}, // v[5]
-		// v[0]
-		{r, -r, -r}, // v[6]
+	   // Cara -X
+	   {-r,-r,-r}, {-r, r,-r}, {-r, r, r},
+	   {-r,-r,-r}, {-r, r, r}, {-r,-r, r},
 
-		// triangulo abajo -Z
-		// v[3]
-		// v[6]
-		// v[0]
+	   // Cara +X
+	   { r,-r,-r}, { r, r, r}, { r, r,-r},
+	   { r,-r,-r}, { r,-r, r}, { r, r, r},
 
-		// triangulo arriba -X
-		// v[0]
-		// v[2]
-		// v[4]
+	   // Cara -Y
+	   {-r,-r,-r}, {-r,-r, r}, { r,-r, r},
+	   {-r,-r,-r}, { r,-r, r}, { r,-r,-r},
 
-		{r,r,r},
-		{r, -r, -r},
+	   // Cara +Y
+	   {-r, r,-r}, { r, r,-r}, { r, r, r},
+	   {-r, r,-r}, { r, r, r}, {-r, r, r}
 	};
 
-	// TODO casi casi....
-	vector<glm::vec3> vs = {
-
-	{1.0f,-1.0f, 1.0f },
-	{-1.0f,-1.0f, 1.0f },
-	{-1.0f,-1.0f,-1.0f },
-
-	{-1.0f, 1.0f, 1.0f },
-	{-1.0f,-1.0f, 1.0f },
-	{1.0f,-1.0f, 1.0f },
-
-	{1.0f, 1.0f, 1.0f },
-	{1.0f,-1.0f,-1.0f },
-	{1.0f, 1.0f,-1.0f },
-
-	{1.0f,-1.0f,-1.0f },
-	{1.0f, 1.0f, 1.0f },
-	{1.0f,-1.0f, 1.0f },
-
-	{1.0f, 1.0f, 1.0f },
-	{1.0f, 1.0f,-1.0f },
-	{-1.0f, 1.0f,-1.0f },
-
-	{1.0f, 1.0f, 1.0f },
-	{-1.0f, 1.0f,-1.0f },
-	{-1.0f, 1.0f, 1.0f },
-
-	{1.0f, 1.0f, 1.0f },
-	{-1.0f, 1.0f, 1.0f },
-	{1.0f,-1.0f, 1.0f }
-	};
-
-	for (int i = 0; i < 7; ++i) {
+	for (int i = 0; i < mesh->mNumVertices; ++i) {
 		mesh->vVertices.emplace_back(v[i]);
 	}
 
-	mesh->vVertices.push_back(mesh->vVertices[0]);
-	mesh->vVertices.emplace_back(v[7]);
-	mesh->vVertices.push_back(mesh->vVertices[2]);
-	mesh->vVertices.emplace_back(v[8]);
-	mesh->vVertices.push_back(mesh->vVertices[4]);
-	mesh->vVertices.push_back(mesh->vVertices[8]);
-	mesh->vVertices.push_back(mesh->vVertices[6]);
 
 	// ----COLORES----.
 	/* 0: red (1.0, 0.0, 0.0, 1.0);
@@ -288,25 +245,18 @@ Mesh* Mesh::generateRGBCubeTriangles(GLdouble length) {
 
 	mesh->vColors.reserve(mesh->mNumVertices);
 
-	// ---- CARA -Y AZUL.
-	for (int i = 0; i < 4; ++i)
+	// Z y -Z
+	for (int i = 0; i < 12; ++i)
 		mesh->vColors.emplace_back(0.0, 0.0, 1.0, 1.0);
 
-	// ---- CARA +X VERDE.
-	for (int i = 0; i < 3; ++i)
-		mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0);
-
-	// ---- CARA -Z ROJA.
-	for (int i = 0; i < 2; ++i)
+	// X y -X
+	for (int i = 0; i < 12; ++i)
 		mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0);
 
-	// ---- CARA -X VERDE.
-	for (int i = 0; i < 2; ++i)
+	// Y y -Y
+	for (int i = 0; i < 12; ++i)
 		mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0);
-
-	// ---- CARA +Y ROJA.
-	for (int i = 0; i < 3; ++i)
-		mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0);
+	
 
 	return mesh;
 }
