@@ -247,15 +247,15 @@ Mesh* Mesh::generateRGBCubeTriangles(GLdouble length) {
 
 	// Z y -Z
 	for (int i = 0; i < 12; ++i)
-		mesh->vColors.emplace_back(0.0, 0.0, 1.0, 1.0);
+		mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0);
 
 	// X y -X
 	for (int i = 0; i < 12; ++i)
-		mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0);
+		mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0);
 
 	// Y y -Y
 	for (int i = 0; i < 12; ++i)
-		mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0);
+		mesh->vColors.emplace_back(0.0, 0.0, 1.0, 1.0);
 	
 
 	return mesh;

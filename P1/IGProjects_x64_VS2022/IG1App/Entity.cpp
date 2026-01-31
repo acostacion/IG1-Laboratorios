@@ -15,6 +15,9 @@ Abs_Entity::~Abs_Entity() {
 	mMesh = nullptr;
 }
 
+void Abs_Entity::update() {
+}
+
 void
 Abs_Entity::load() {
 	mMesh->load();
@@ -86,8 +89,47 @@ void Cube::render(const glm::mat4& modelViewMat) const {
 	}
 }
 
-RGBCube::RGBCube(GLdouble l) : EntityWithColors() {
-	mMesh = Mesh::generateRGBCubeTriangles(l);
+RGBCube::RGBCube(GLdouble l) : EntityWithColors(), _l(l) {
+	mMesh = Mesh::generateRGBCubeTriangles(_l);
+}
+
+void RGBCube::update() {
+	// hace la animacion en X inicialmente.
+	rotateOnAxis(_axisState);
+
+	// ¡¡¡OJO!!! como en rotateOnAxis hacemos angle/2 para que sea 180, aquí lo tenemos que hacer 360.
+	if (angle >= 360)
+	{ // Cuando llegue a 180 (en la animacion) se reinicia el angulo y se pasa al siguiente estado de animacion.
+		angle = 0;
+		_axisState++;
+	}
+
+	// Cuando se complete la animacion se reinicia el estado y vuelta a empezar.
+	if (_axisState == 3) _axisState = 0;
+
+	angle++; // va iterando el angle
+}
+
+void RGBCube::rotateOnAxis(GLint n) {
+	//switch (n)
+	//{
+	//case 0: // x
+	//	mModelMat = rotate(glm::dmat4(1), radians(angle / 2), glm::dvec3(1, 0, 0))
+	//		* translate(glm::dmat4(1), glm::dvec3(_l / 2, _l / 2, -_l / 2));
+	//	break;
+
+	//case 1: // z
+	//	mModelMat = rotate(glm::dmat4(1), radians(angle / 2), glm::dvec3(0, 0, 1))
+	//		* translate(glm::dmat4(1), glm::dvec3(_l / 2, -_l / 2, _l / 2));
+	//	break;
+
+	//case 2: // y
+	//	mModelMat = rotate(glm::dmat4(1), radians(angle / 2), glm::dvec3(0, 1, 0))
+	//		* translate(glm::dmat4(1), glm::dvec3(-_l / 2, _l / 2, _l / 2));
+	//	break;
+
+	//default:break;
+	//}
 }
 
 RGBTriangle::RGBTriangle(GLdouble l) {
