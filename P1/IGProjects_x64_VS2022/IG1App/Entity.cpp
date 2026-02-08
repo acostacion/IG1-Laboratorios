@@ -1,4 +1,4 @@
-#include "Entity.h"
+ï»¿#include "Entity.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -96,8 +96,8 @@ RGBCube::RGBCube(GLdouble l) : EntityWithColors(), _l(l) {
 void RGBCube::update() {
 	// hace la animacion en X inicialmente.
 	rotateOnAxis(_axisState);
-
-	// ¡¡¡OJO!!! como en rotateOnAxis hacemos angle/2 para que sea 180, aquí lo tenemos que hacer 360.
+	/*
+	// Â¡Â¡Â¡OJO!!! como en rotateOnAxis hacemos angle/2 para que sea 180, aquÃ­ lo tenemos que hacer 360.
 	if (_angle >= 360)
 	{ // Cuando llegue a 180 (en la animacion) se reinicia el angulo y se pasa al siguiente estado de animacion.
 		_angle = 0;
@@ -107,7 +107,8 @@ void RGBCube::update() {
 	// Cuando se complete la animacion se reinicia el estado y vuelta a empezar.
 	if (_axisState == 3) _axisState = 0;
 
-	_angle++; // va iterando el angle
+	angle++; // va iterando el angle
+	*/
 }
 
 void RGBCube::rotateOnAxis(GLint n) {
@@ -132,15 +133,23 @@ void RGBCube::rotateOnAxis(GLint n) {
 	}
 }
 
-RGBTriangle::RGBTriangle(GLdouble l) {
+RGBTriangle::RGBTriangle(GLdouble l, GLdouble r) {
 	mMesh = Mesh::generateRegularPolygon(3, l);
 	mMesh->setPrimitive(GL_TRIANGLES);
-	// se pone a cada vértice un color diferente
+	// se pone a cada vÃ©rtice un color diferente
 	mMesh->setColorBuffer({
 	  {1.0f, 0.0f, 0.0f, 1.0f}, // rojo
 	  {0.0f, 1.0f, 0.0f, 1.0f}, // verde
 	  {0.0f, 0.0f, 1.0f, 1.0f}  // azul
 		});
+	mModelMat = translate(glm::dmat4(1), glm::dvec3(r, 0.0, 0.0));
+}
+
+void RGBTriangle::update()
+{
+	float delta = glm::radians(5.0f); // 5 grados por update
+	mModelMat = glm::rotate(mModelMat, -delta, glm::vec3(0, 0, 1));
+	mModelMat = glm::rotate(glm::mat4(1.0f), delta, glm::vec3(0, 0, 1)) * mModelMat;
 }
 
 RGBRectangle::RGBRectangle(GLdouble w, GLdouble h) {
@@ -152,14 +161,14 @@ void RGBRectangle::render(const mat4& modelViewMat) const {
 
 		glEnable(GL_CULL_FACE);
 		// CARA DE DELANTE
-		glCullFace(GL_BACK);
+		glCullFace(GL_FRONT);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
 		upload(aMat);
 		mMesh->render();
 		// CARA DE ATRAS
-		glCullFace(GL_FRONT);
+		glCullFace(GL_BACK);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();

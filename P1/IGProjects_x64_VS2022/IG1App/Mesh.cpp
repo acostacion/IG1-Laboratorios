@@ -287,9 +287,9 @@ Mesh* Mesh::generateRGBRectangle(GLdouble w, GLdouble h) {
 	mesh->vVertices.emplace_back(-hw, hh, 0.0);
 	mesh->vVertices.emplace_back(hw, hh, 0.0);
 	mesh->vColors.reserve(mesh->mNumVertices);
-	mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0); // Red
 	mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0); // Green
 	mesh->vColors.emplace_back(0.0, 0.0, 1.0, 1.0); // Blue
+	mesh->vColors.emplace_back(1.0, 0.0, 0.0, 1.0); // Red
 	mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0); // Green
 	return mesh;
 }

@@ -93,7 +93,13 @@ private:
 
 class RGBTriangle : public EntityWithColors {
 public:
-	explicit RGBTriangle(GLdouble l);
+	explicit RGBTriangle(GLdouble l, GLdouble r);
+	void update() override;
+private:
+	GLdouble _l; // length
+	GLdouble _r; // radius
+	float _localAngle;
+	float _orbitAngle;
 };
 
 class RGBRectangle : public EntityWithColors {

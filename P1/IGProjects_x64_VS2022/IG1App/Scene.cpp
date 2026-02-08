@@ -86,7 +86,7 @@ void Scene1::init() {
 
 void Scene2::init() {
 	Scene::init();
-	RGBTriangle* tri = new RGBTriangle(50);
+	RGBTriangle* tri = new RGBTriangle(50, 215);
 	gObjects.push_back(tri);
 
 	RGBRectangle* rect = new RGBRectangle(300, 300);

@@ -22,6 +22,11 @@ public:
 
 	void render(Camera const& cam) const;
 
+	virtual void update() {
+		for (Abs_Entity* obj : gObjects)
+			obj->update();
+	}
+
 	// load or unload scene data into the GPU
 	void load();
 	void unload();
