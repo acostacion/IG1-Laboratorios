@@ -38,8 +38,28 @@ IG1App::run() // enters the main event processing loop
 			mNeedsRedisplay = false;
 		}
 
-		// Stop and wait for new events
-		glfwWaitEvents();
+		if (mUpdateEnabled) {
+
+			double currentTime = glfwGetTime();
+
+			if (currentTime >= mNextUpdate) {
+
+				mScenes[mCurrentScene]->update();
+				mNextUpdate = currentTime + FRAME_DURATION; // siguiente update dentro de FRAME_DURATION segundos
+				mNeedsRedisplay = true;
+			}
+
+			// calcula cuanto tiempo queda para el proximo update
+			double timeToWait = mNextUpdate - glfwGetTime();
+			if (timeToWait < 0) timeToWait = 0; // si el tiempo ya ha pasado no esparamos
+
+			glfwWaitEventsTimeout(timeToWait);
+		}
+
+		else {
+			// Stop and wait for new events
+			glfwWaitEvents();
+		}
 	}
 
 	destroy();
@@ -172,7 +192,13 @@ IG1App::key(unsigned int key)
 			mCamera->set2D();
 			break;
 		case 'u':
-			mScenes[mCurrentScene]->update();
+			//mScenes[mCurrentScene]->update();
+			mUpdateEnabled = !mUpdateEnabled;
+
+			if (mUpdateEnabled) {
+				mNextUpdate = glfwGetTime() + FRAME_DURATION; // ponemos ya cuando sera el siguiente update, dentro de frame duration segundos
+			}
+			
 			break;
 		default:
 			if (key >= '0' && key <= '9') {

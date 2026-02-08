@@ -9,12 +9,18 @@
 #include "Scene.h"
 #include "Viewport.h"
 
+
 class IG1App
 {
 public:
+
+	static constexpr double FRAME_DURATION = 1.0 / 60.0; // 60 FPS
+
+	bool mUpdateEnabled = true;
+	double mNextUpdate = 0.0;
+
 	// static single instance (singleton pattern)
 	static IG1App s_ig1app;
-
 	IG1App(IG1App const& J) = delete;         // no copy constructor
 	void operator=(IG1App const& J) = delete; // no copy assignment
 
