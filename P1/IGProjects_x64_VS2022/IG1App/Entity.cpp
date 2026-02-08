@@ -148,7 +148,7 @@ RGBTriangle::RGBTriangle(GLdouble l, GLdouble r) {
 void RGBTriangle::update()
 {
 	float delta = glm::radians(5.0f); // 5 grados por update
-	mModelMat = glm::rotate(mModelMat, -delta, glm::vec3(0, 0, 1));
+	mModelMat = glm::rotate(mModelMat, -delta*2, glm::vec3(0, 0, 1));
 	mModelMat = glm::rotate(glm::mat4(1.0f), delta, glm::vec3(0, 0, 1)) * mModelMat;
 }
 
