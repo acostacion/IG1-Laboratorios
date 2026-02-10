@@ -9,12 +9,15 @@ IG1App IG1App::s_ig1app; // default constructor (constructor with no parameters)
 
 // Print OpenGL errors and warnings
 void GLAPIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                   GLsizei length, const GLchar* message, const void* userParam)
+	GLsizei length, const GLchar* message, const void* userParam)
 {
-	const char* prefix = (type == GL_DEBUG_TYPE_ERROR)
-		? "\x1b[31m[ERROR]\x1b[0m "
-		: "\x1b[33m[WARNING]\x1b[0m ";
-	cout << prefix << message << endl;
+
+	if (severity != GL_DEBUG_SEVERITY_NOTIFICATION) {
+		const char* prefix = (type == GL_DEBUG_TYPE_ERROR)
+			? "\x1b[31m[ERROR]\x1b[0m "
+			: "\x1b[33m[WARNING]\x1b[0m ";
+		cout << prefix << message << endl;
+	}
 }
 
 void
