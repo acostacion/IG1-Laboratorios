@@ -108,3 +108,10 @@ void Scene3::init() {
 	gObjects.push_back(rgbCube);
 
 }
+
+void Scene4::init() {
+	Scene::init();
+
+	BoxOutline* bo = new BoxOutline(200);
+	gObjects.push_back(bo);
+}

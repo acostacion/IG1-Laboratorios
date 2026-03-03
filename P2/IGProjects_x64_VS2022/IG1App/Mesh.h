@@ -15,6 +15,7 @@ public:
 	static Mesh* generateRGBCubeTriangles(GLdouble length);
 	static Mesh* generateRectangle(GLdouble w, GLdouble h);
 	static Mesh* generateRGBRectangle(GLdouble w, GLdouble h);
+	static Mesh* generateBoxOutline(GLdouble length);
 
 	Mesh();
 	virtual ~Mesh();

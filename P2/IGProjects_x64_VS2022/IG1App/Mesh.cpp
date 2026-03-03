@@ -293,3 +293,42 @@ Mesh* Mesh::generateRGBRectangle(GLdouble w, GLdouble h) {
 	mesh->vColors.emplace_back(0.0, 1.0, 0.0, 1.0); // Green
 	return mesh;
 }
+
+Mesh* Mesh::generateBoxOutline(GLdouble length)
+{
+	Mesh* mesh = new Mesh();
+
+	/*
+	0---------2
+	|    /    |
+	1---------3
+	*/
+
+	// Establecemos primitiva GL_TRIANGLE_STRIP
+	mesh->mPrimitive = GL_TRIANGLE_STRIP;
+
+	mesh->mNumVertices = 10; // !!!! PONER LOS VERTICES JUSTOS
+	mesh->vVertices.reserve(mesh->mNumVertices);
+
+	GLdouble r = length / 2;
+
+	// CARA 1 (PLANO XY).
+	mesh->vVertices.emplace_back(r, r, -r); // 0.
+	mesh->vVertices.emplace_back(r, -r, -r); // 1.
+	mesh->vVertices.emplace_back(-r, r, -r); // 2.
+	mesh->vVertices.emplace_back(-r, -r, -r); // 3.
+
+	// CARA 2 (PLANO YZ).
+	mesh->vVertices.emplace_back(-r, r, r); // 4.
+	mesh->vVertices.emplace_back(-r, -r, r); // 5.
+
+	// CARA 3 (PARALELO A XY).
+	mesh->vVertices.emplace_back(r, r, r); // 6.
+	mesh->vVertices.emplace_back(r, -r, r); // 7.
+
+	// CARA 4 (PARALELO A YZ). (vertices de cierre)
+	mesh->vVertices.push_back(mesh->vVertices[0]); // 8. = 0 (misma pos que el 0).
+	mesh->vVertices.push_back(mesh->vVertices[1]); // 9. = 1 (misma pos que el 1).
+
+	return mesh;
+}
