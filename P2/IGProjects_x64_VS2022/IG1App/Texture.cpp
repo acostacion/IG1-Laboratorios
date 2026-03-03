@@ -67,3 +67,27 @@ Texture::setWrap(GLuint wp) // GL_REPEAT, GL_CLAMP_TO_EDGE, ...
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wp);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+// carga el buffer de color (frontal o trasero) dado por el tercer argumento,
+// como una textura de dimensiones dadas por los parametros primero y segundo
+void Texture::loadColorBuffer(GLsizei width, GLsizei height, GLuint buffer) { // buffer puede ser GL_FRONT o GL_BACK
+	if (mId == 0)
+		init();
+
+	// Inicializa los atributos de la textura
+	mWidth = width;
+	mHeight = height;
+
+	// --- Setea
+	glReadBuffer(buffer);			   // Para modificar el buffer de lectura activo 
+	// -> las instrucciones siguientes afectan al buffer que se cargue aqui
+	glBindTexture(GL_TEXTURE_2D, mId); // Bindea textura a mId
+
+	// Los datos se copian del buffer de lectura activo: GL_FRONT o GL_BACK
+	// Copiar en la textura activa parte de la imagen del Color Buffer (en coordenadas de pantalla, como el viewport)
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, mWidth, mHeight, 0);
+
+	// --- Resetea
+	glBindTexture(GL_TEXTURE_2D, 0); // Bindea textura a 0
+	glReadBuffer(GL_FRONT);			 // por defecto GL_FRONT
+}
