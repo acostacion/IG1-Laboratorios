@@ -116,6 +116,7 @@ void Scene4::init() {
 	Scene::init();
 
 	createBoxOutline(200);
+	createPhoto(100, 100);
 	/*Ground* ground = new Ground(400, 400);
 	gObjects.push_back(ground);
 	Star3D* star = new Star3D(150, 8, 100);
@@ -127,9 +128,7 @@ void Scene4::init() {
 }
 
 void Scene4::createBoxOutline(GLdouble length) {
-	// ----- CAJA SIN TAPAS -----
 	// --- texturas
-	// 
 	// creamos y cargamos (con load()) las texturas de los objetos de la escena
 	
 	// ----> textura por fuera <----
@@ -152,4 +151,13 @@ void Scene4::createBoxOutline(GLdouble length) {
 	// --- traslaciones, escalas y rotaciones
 	//bo->setModelMat(translate(glm::dmat4(1), glm::dvec3(80, 30 / 2, 80))); TODO luego
 	gObjects.push_back(bo); // mete la entidad en la escena
+}
+
+void Scene4::createPhoto(GLdouble w, GLdouble h) {
+	Texture* texF = new Texture();								// crea nueva textura
+	texF->loadColorBuffer(800.0, 600.0);
+	gTextures.push_back(texF);									// lo metemos en el vector de texturas
+	Photo* foto = new Photo(w, h);								// entidad
+	foto->setTexture(texF);									    // establece la textura de esta entidad
+	gObjects.push_back(foto);									// mete la entidad en la escena
 }

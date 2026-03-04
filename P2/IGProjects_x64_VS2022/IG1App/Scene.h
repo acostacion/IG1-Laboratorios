@@ -66,5 +66,6 @@ public:
 
 private:
 	void createBoxOutline(GLdouble length);
+	void createPhoto(GLdouble w, GLdouble h);
 };
 #endif //_H_Scene_H_

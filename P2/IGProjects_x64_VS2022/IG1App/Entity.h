@@ -146,4 +146,11 @@ private:
 	float _yAngle = 0.0f;
 };
 
+class Photo : public EntityWithTexture {
+public:
+	explicit Photo(GLdouble w, GLdouble h);
+	void render(const glm::mat4& modelViewMat) const override;
+	void update() override;
+};
+
 #endif //_H_Entities_H_
