@@ -230,3 +230,38 @@ void EntityWithTexture::render(const glm::mat4& modelViewMat) const {
 		if (mTexture != nullptr) mTexture->unbind();
 	}
 }
+
+Star3D::Star3D(GLdouble re, GLuint np, GLdouble h)
+	: EntityWithTexture(), _h(h) {
+	mMesh = Mesh::generateStar3DTexCor(re, np, h);
+}
+
+void Star3D::render(const glm::mat4& modelViewMat) const {
+	if (mMesh != nullptr) {
+		mShader->use();
+		mShader->setUniform("modulate", mModulate);
+
+		if (mTexture != nullptr) mTexture->bind();
+
+		// Primera estrella
+		glm::mat4 aMat = modelViewMat * mModelMat;
+		upload(aMat);
+		mMesh->render();
+
+		// Segunda estrella volteada
+		glm::mat4 aMatFlip = aMat * glm::rotate(glm::mat4(1.0f),
+			glm::radians(180.0f), glm::vec3(1, 0, 0));
+		upload(aMatFlip);
+		mMesh->render();
+
+		if (mTexture != nullptr) mTexture->unbind();
+	}
+}
+
+void Star3D::update() {
+	_zAngle += 2.0f; // velocidad giro sobre Z
+	_yAngle += 1.0f; // velocidad giro sobre Y (más lento)
+
+	mModelMat = glm::rotate(glm::mat4(1.0f), glm::radians(_yAngle), glm::vec3(0, 1, 0))
+		* glm::rotate(glm::mat4(1.0f), glm::radians(_zAngle), glm::vec3(0, 0, 1));
+}

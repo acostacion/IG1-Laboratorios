@@ -119,6 +119,7 @@ class EntityWithTexture : public Abs_Entity {
 public:
 	explicit EntityWithTexture();
 	void render(const glm::mat4& modelViewMat) const override;
+	void setTexture(Texture* t) { mTexture = t; }
 protected:
 	Texture* mTexture = nullptr;
 	bool mModulate = false;
@@ -127,6 +128,17 @@ protected:
 class Ground : public EntityWithTexture {
 public:
 	explicit Ground(GLdouble w, GLdouble h);
+};
+
+class Star3D : public EntityWithTexture {
+public:
+	explicit Star3D(GLdouble re, GLuint np, GLdouble h);
+	void render(const glm::mat4& modelViewMat) const override;
+	void update() override;
+private:
+	GLdouble _h;
+	float _zAngle = 0.0f;
+	float _yAngle = 0.0f;
 };
 
 #endif //_H_Entities_H_

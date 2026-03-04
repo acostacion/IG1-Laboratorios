@@ -367,3 +367,64 @@ Mesh* Mesh::generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw, GLuint rh
 
 	return mesh;
 }
+
+Mesh* Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h) {
+	Mesh* mesh = new Mesh();
+	mesh->mPrimitive = GL_TRIANGLE_FAN;
+
+	mesh->mNumVertices = 2 * np + 2;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+
+	// Centro del fan
+	mesh->vVertices.emplace_back(0.0, 0.0, 0.0);
+
+	GLdouble ri = re / 2.0;
+	GLdouble angIncr = 360.0 / np; // ángulo entre puntas
+
+	for (GLuint i = 0; i < np; i++) {
+		GLdouble angExt = glm::radians(90.0 + i * angIncr);       // punta exterior
+		GLdouble angInt = glm::radians(90.0 + (i + 0.5) * angIncr); // valle interior
+
+		// Vértice exterior (punta)
+		mesh->vVertices.emplace_back(
+			re * cos(angExt), re * sin(angExt), h);
+		// Vértice interior (valle)
+		mesh->vVertices.emplace_back(
+			ri * cos(angInt), ri * sin(angInt), h);
+	}
+
+	// Cerrar el fan repitiendo la primera punta
+	mesh->vVertices.push_back(mesh->vVertices[1]);
+
+	return mesh;
+}
+
+Mesh* Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h) {
+	Mesh* mesh = generateStar3D(re, np, h); // reutilizamos la geometría
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+
+	GLdouble ri = re / 2.0;
+	GLdouble angIncr = 360.0 / np;
+
+	// Centro -> centro de la textura
+	mesh->vTexCoords.emplace_back(0.5, 0.5);
+
+	for (GLuint i = 0; i < np; i++) {
+		GLdouble angExt = glm::radians(90.0 + i * angIncr);
+		GLdouble angInt = glm::radians(90.0 + (i + 0.5) * angIncr);
+
+		// Exterior: borde de la textura (normalizado a [0,1])
+		mesh->vTexCoords.emplace_back(
+			0.5 + 0.5 * cos(angExt),
+			0.5 + 0.5 * sin(angExt));
+		// Interior: mitad del radio en textura
+		mesh->vTexCoords.emplace_back(
+			0.5 + 0.25 * cos(angInt),
+			0.5 + 0.25 * sin(angInt));
+	}
+
+	// Cerrar
+	mesh->vTexCoords.push_back(mesh->vTexCoords[1]);
+
+	return mesh;
+}

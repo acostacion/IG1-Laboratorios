@@ -116,4 +116,9 @@ void Scene4::init() {
 	gObjects.push_back(bo);
 	Ground* ground = new Ground(400, 400);
 	gObjects.push_back(ground);
+	Star3D* star = new Star3D(150, 8, 100);
+	Texture* starTex = new Texture();
+	starTex->load("..\\assets\\images\\rueda.png");
+	star->setTexture(starTex);
+	gObjects.push_back(star);
 }
