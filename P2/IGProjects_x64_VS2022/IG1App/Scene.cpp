@@ -30,8 +30,11 @@ Scene::destroy()
 
 	for (Abs_Entity* el : gObjects)
 		delete el;
-
 	gObjects.clear();
+
+	for (Texture* t : gTextures)
+		delete t;
+	gTextures.clear();
 }
 
 void
@@ -112,13 +115,41 @@ void Scene3::init() {
 void Scene4::init() {
 	Scene::init();
 
-	BoxOutline* bo = new BoxOutline(200);
-	gObjects.push_back(bo);
-	Ground* ground = new Ground(400, 400);
+	createBoxOutline(200);
+	/*Ground* ground = new Ground(400, 400);
 	gObjects.push_back(ground);
 	Star3D* star = new Star3D(150, 8, 100);
 	Texture* starTex = new Texture();
 	starTex->load("..\\assets\\images\\rueda.png");
+	gTextures.push_back(starTex);
 	star->setTexture(starTex);
-	gObjects.push_back(star);
+	gObjects.push_back(star);*/
+}
+
+void Scene4::createBoxOutline(GLdouble length) {
+	// ----- CAJA SIN TAPAS -----
+	// --- texturas
+	// 
+	// creamos y cargamos (con load()) las texturas de los objetos de la escena
+	
+	// ----> textura por fuera <----
+	Texture* texC = new Texture();								// crea nueva textura
+	const std::string con = "../assets/images/papelE.png";	// ruta de la textura
+	texC->load(con, 255);									// carga la textura con su alfa
+	gTextures.push_back(texC);									// lo metemos en el vector de texturas de la escena para poder eliminarla luego
+
+	// ----> textura por dentro <---
+	Texture* texP = new Texture();								// crea nueva textura
+	const std::string pap = "../assets/images/container.jpg";		// ruta de la textura
+	texP->load(pap, 255);									// carga la textura con su alfa
+	gTextures.push_back(texP);									// lo metemos en el vector de texturas de la escena para poder eliminarla luego
+
+	// --- entidad
+	BoxOutline* bo = new BoxOutline(length);
+	bo->setTexture(texC);	// establece la textura de esta entidad
+	bo->setTextureInterior(texP); // textura para el interior
+
+	// --- traslaciones, escalas y rotaciones
+	//bo->setModelMat(translate(glm::dmat4(1), glm::dvec3(80, 30 / 2, 80))); TODO luego
+	gObjects.push_back(bo); // mete la entidad en la escena
 }

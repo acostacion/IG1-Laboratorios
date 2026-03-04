@@ -58,6 +58,16 @@ protected:
 	glm::vec4 mColor;
 };
 
+class EntityWithTexture : public Abs_Entity {
+public:
+	explicit EntityWithTexture();
+	void render(const glm::mat4& modelViewMat) const override;
+	void setTexture(Texture* t) { mTexture = t; }
+protected:
+	Texture* mTexture = nullptr;
+	bool mModulate = false;
+};
+
 class RGBAxes : public EntityWithColors
 {
 public:
@@ -109,20 +119,15 @@ public:
 	void render(const glm::mat4& modelViewMat) const override;
 };
 
-class BoxOutline : public SingleColorEntity {
+class BoxOutline : public EntityWithTexture {
 public:
 	explicit BoxOutline(GLdouble length);
 	void render(const glm::mat4& modelViewMat) const override;
-};
 
-class EntityWithTexture : public Abs_Entity {
-public:
-	explicit EntityWithTexture();
-	void render(const glm::mat4& modelViewMat) const override;
-	void setTexture(Texture* t) { mTexture = t; }
+	void setTextureInterior(Texture* tex) { mTextureInterior = tex; }
+
 protected:
-	Texture* mTexture = nullptr;
-	bool mModulate = false;
+	Texture* mTextureInterior = nullptr; // texture
 };
 
 class Ground : public EntityWithTexture {

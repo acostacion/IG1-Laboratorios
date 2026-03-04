@@ -182,29 +182,33 @@ void RGBRectangle::render(const mat4& modelViewMat) const {
 }
 
 BoxOutline::BoxOutline(GLdouble length) 
-	: SingleColorEntity(glm::vec4(0.0f)) {
-	mMesh = Mesh::generateBoxOutline(length);
+	: EntityWithTexture() {
+	mMesh = Mesh::generateBoxOutlineTexCor(length);
 }
 
 void BoxOutline::render(const glm::mat4& modelViewMat) const { // TODO luego cambiar a la version de texturas
 	if (mMesh != nullptr) {
-		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
-		mShader->setUniform("color", mColor);
+		mShader->setUniform("modulate", mModulate);
 		upload(aMat);
 
-		glEnable(GL_CULL_FACE);
-		// CARA DE DELANTE
-		glCullFace(GL_BACK);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		mMesh->render();
+		if (mTexture != nullptr) // si la textura no es nula podemos proceder a renderizarla
+		{
+			glEnable(GL_CULL_FACE);
+			// CARA DE DELANTE
+			mTexture->bind();
+			glCullFace(GL_BACK);
+			mMesh->render();
+			mTexture->unbind();
 
-		// CARA DE ATRAS
-		glCullFace(GL_FRONT);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		mMesh->render();
-		glDisable(GL_CULL_FACE);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // restaurar
+			// CARA DE ATRAS
+			mTextureInterior->bind();
+			glCullFace(GL_FRONT);
+			mMesh->render();
+			mTextureInterior->unbind();
+			glDisable(GL_CULL_FACE);
+		}
 	}
 }
 

@@ -36,7 +36,8 @@ protected:
 	void setGL();
 	void resetGL();
 
-	std::vector<Abs_Entity*> gObjects; // Entities (graphic objects) of the scene
+	std::vector<Abs_Entity*> gObjects;		// Entities (graphic objects) of the scene
+	std::vector<Texture*> gTextures;		// texturas de la escena
 };
 
 class Scene0 : public Scene {
@@ -62,5 +63,8 @@ public:
 class Scene4 : public Scene {
 public:
 	void init() override;
+
+private:
+	void createBoxOutline(GLdouble length);
 };
 #endif //_H_Scene_H_

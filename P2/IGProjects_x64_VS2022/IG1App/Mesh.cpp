@@ -347,6 +347,37 @@ Mesh* Mesh::generateBoxOutline(GLdouble length)
 	return mesh;
 }
 
+Mesh* Mesh::generateBoxOutlineTexCor(GLdouble length) {
+	Mesh* mesh = generateBoxOutline(length);
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+
+	/*
+	0---------2
+	|    /    |
+	1---------3
+	*/
+
+	// Cara 1.
+	mesh->vTexCoords.emplace_back(0, 1); // 0.
+	mesh->vTexCoords.emplace_back(0, 0); // 1.
+	mesh->vTexCoords.emplace_back(1, 1); // 2.
+	mesh->vTexCoords.emplace_back(1, 0); // 3.
+
+	// Cara 2.
+	mesh->vTexCoords.emplace_back(0, 1); // 4.
+	mesh->vTexCoords.emplace_back(0, 0); // 5.
+
+	// Cara 3.
+	mesh->vTexCoords.emplace_back(1, 1); // 6.
+	mesh->vTexCoords.emplace_back(1, 0); // 7.
+
+	// Cara 4.
+	mesh->vTexCoords.emplace_back(0, 1); // 8.
+	mesh->vTexCoords.emplace_back(0, 0); // 9.
+
+	return mesh;
+}
+
 Mesh* Mesh::generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw, GLuint rh) {
 	Mesh* mesh = new Mesh();
 	mesh->mPrimitive = GL_TRIANGLE_STRIP;
