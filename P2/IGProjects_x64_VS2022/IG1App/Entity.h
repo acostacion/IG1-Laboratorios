@@ -6,6 +6,7 @@
 
 #include "Mesh.h"
 #include "Shader.h"
+#include "Texture.h"
 
 class Abs_Entity // abstract class
 {
@@ -112,6 +113,20 @@ class BoxOutline : public SingleColorEntity {
 public:
 	explicit BoxOutline(GLdouble length);
 	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class EntityWithTexture : public Abs_Entity {
+public:
+	explicit EntityWithTexture();
+	void render(const glm::mat4& modelViewMat) const override;
+protected:
+	Texture* mTexture = nullptr;
+	bool mModulate = false;
+};
+
+class Ground : public EntityWithTexture {
+public:
+	explicit Ground(GLdouble w, GLdouble h);
 };
 
 #endif //_H_Entities_H_

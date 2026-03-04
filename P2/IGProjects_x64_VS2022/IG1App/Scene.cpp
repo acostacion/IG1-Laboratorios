@@ -114,4 +114,6 @@ void Scene4::init() {
 
 	BoxOutline* bo = new BoxOutline(200);
 	gObjects.push_back(bo);
+	Ground* ground = new Ground(400, 400);
+	gObjects.push_back(ground);
 }

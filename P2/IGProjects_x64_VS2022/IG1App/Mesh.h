@@ -16,6 +16,7 @@ public:
 	static Mesh* generateRectangle(GLdouble w, GLdouble h);
 	static Mesh* generateRGBRectangle(GLdouble w, GLdouble h);
 	static Mesh* generateBoxOutline(GLdouble length);
+	static Mesh* generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw = 1, GLuint rh = 1);
 
 	Mesh();
 	virtual ~Mesh();
@@ -44,6 +45,8 @@ protected:
 	GLuint mNumVertices = 0; // number of elements ( = vVertices.size())
 	std::vector<glm::vec3> vVertices; // vertex array
 	std::vector<glm::vec4> vColors;   // color array
+	std::vector<glm::vec2> vTexCoords;  // texture coordinates array
+	
 	virtual void draw() const;
 
 	GLuint mVAO;  // vertex array object
@@ -51,6 +54,7 @@ protected:
 private:
 	GLuint mVBO;  // vertex buffer object
 	GLuint mCBO;  // color buffer object
+	GLuint mTBO = 0; // texture coordinates buffer object
 };
 
 #endif //_H_Scene_H_

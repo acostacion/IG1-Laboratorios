@@ -204,5 +204,29 @@ void BoxOutline::render(const glm::mat4& modelViewMat) const { // TODO luego cam
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		mMesh->render();
 		glDisable(GL_CULL_FACE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // restaurar
+	}
+}
+
+Ground::Ground(GLdouble w, GLdouble h) {
+	mMesh = Mesh::generateRectangleTexCor(w, h, 4, 4); // rw=rh=4 como en el ejemplo
+	mTexture = new Texture();
+	mTexture->load("..\\assets\\images\\baldosaC.png"); // ajusta la ruta a tu proyecto
+	mModelMat = glm::rotate(glm::dmat4(1), glm::radians(-90.0), glm::dvec3(1, 0, 0));
+}
+
+EntityWithTexture::EntityWithTexture() {
+	mShader = Shader::get("texture");
+}
+
+void EntityWithTexture::render(const glm::mat4& modelViewMat) const {
+	if (mMesh != nullptr) {
+		glm::mat4 aMat = modelViewMat * mModelMat;
+		mShader->use();
+		mShader->setUniform("modulate", mModulate);
+		upload(aMat);
+		if (mTexture != nullptr) mTexture->bind();
+		mMesh->render();
+		if (mTexture != nullptr) mTexture->unbind();
 	}
 }

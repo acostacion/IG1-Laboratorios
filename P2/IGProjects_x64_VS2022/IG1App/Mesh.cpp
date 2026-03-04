@@ -50,6 +50,15 @@ Mesh::load()
 			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vec4), nullptr);
 			glEnableVertexAttribArray(1);
 		}
+
+		if (vTexCoords.size() > 0) {
+			glGenBuffers(1, &mTBO);
+			glBindBuffer(GL_ARRAY_BUFFER, mTBO);
+			glBufferData(GL_ARRAY_BUFFER, vTexCoords.size() * sizeof(glm::vec2),
+				vTexCoords.data(), GL_STATIC_DRAW);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), nullptr);
+			glEnableVertexAttribArray(2);
+		}
 	}
 }
 
@@ -65,6 +74,11 @@ Mesh::unload()
 		if (mCBO != NONE) {
 			glDeleteBuffers(1, &mCBO);
 			mCBO = NONE;
+		}
+
+		if (mTBO != NONE) {
+			glDeleteBuffers(1, &mTBO);
+			mTBO = NONE;
 		}
 	}
 }
@@ -329,6 +343,27 @@ Mesh* Mesh::generateBoxOutline(GLdouble length)
 	// CARA 4 (PARALELO A YZ). (vertices de cierre)
 	mesh->vVertices.push_back(mesh->vVertices[0]); // 8. = 0 (misma pos que el 0).
 	mesh->vVertices.push_back(mesh->vVertices[1]); // 9. = 1 (misma pos que el 1).
+
+	return mesh;
+}
+
+Mesh* Mesh::generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw, GLuint rh) {
+	Mesh* mesh = new Mesh();
+	mesh->mPrimitive = GL_TRIANGLE_STRIP;
+	mesh->mNumVertices = 4;
+	mesh->vVertices.reserve(4);
+
+	GLdouble hw = w / 2, hh = h / 2;
+	mesh->vVertices.emplace_back(-hw, -hh, 0.0);
+	mesh->vVertices.emplace_back(hw, -hh, 0.0);
+	mesh->vVertices.emplace_back(-hw, hh, 0.0);
+	mesh->vVertices.emplace_back(hw, hh, 0.0);
+
+	mesh->vTexCoords.reserve(4);
+	mesh->vTexCoords.emplace_back(0.0, 0.0);
+	mesh->vTexCoords.emplace_back(rw, 0.0);
+	mesh->vTexCoords.emplace_back(0.0, rh);
+	mesh->vTexCoords.emplace_back(rw, rh);
 
 	return mesh;
 }
