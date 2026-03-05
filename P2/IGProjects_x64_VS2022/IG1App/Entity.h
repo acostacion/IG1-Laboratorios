@@ -20,6 +20,7 @@ public:
 	Abs_Entity& operator=(const Abs_Entity& e) = delete; // no copy assignment
 
 	virtual void render(const glm::mat4& modelViewMat) const = 0; // abstract method
+
 	virtual void update();
 
 	// modeling matrix
@@ -27,8 +28,8 @@ public:
 	void setModelMat(glm::mat4 const& aMat) { mModelMat = aMat; };
 
 	// load or unload entity data into the GPU
-	void load();
-	void unload();
+	virtual void load();
+	virtual void unload();
 
 protected:
 	Mesh* mMesh = nullptr; // the mesh
@@ -130,6 +131,45 @@ protected:
 	Texture* mTextureInterior = nullptr; // texture
 };
 
+class Box : public EntityWithTexture
+{
+public:
+	explicit Box(GLdouble length);
+	~Box() override;
+
+	void render(const glm::mat4& modelViewMat) const override;
+	void renderBox(const glm::mat4& modelViewMat) const;
+	void renderBoxUpper(const glm::mat4& modelViewMat) const;
+	void renderBoxLower(const glm::mat4& modelViewMat) const;
+
+	void update() override;
+
+	void load() override;
+	void unload() override;
+
+	void setTextureInterior(Texture* tex) { mTextureInterior = tex; }
+	void setModelMatAbj(glm::dmat4 const& bMat) { mModelMatAbj = bMat; }
+	void setModelMatArr(glm::dmat4 const& cMat) { mModelMatArr = cMat; }
+
+protected:
+	Texture* mTextureInterior = nullptr; // texture
+
+	GLdouble _length; // length de la box.
+
+	// --- tapa abajo
+	Mesh* mMeshTapaAbj = nullptr;
+	glm::mat4 mModelMatAbj = glm::mat4(1.0);
+
+	// --- tapa arriba
+	Mesh* mMeshTapaArr = nullptr;
+	glm::mat4 mModelMatArr = glm::mat4(1.0);
+
+private:
+	// --- para el update.
+	double angle = 180.0;  // empiza en 180 grados (empieza abierta)
+	GLint openState = 1; // 0 -> abres 1 -> cierras
+};
+
 class Ground : public EntityWithTexture {
 public:
 	explicit Ground(GLdouble w, GLdouble h);
@@ -153,8 +193,7 @@ public:
 	void update() override;
 };
 
-class GlassParapet : public EntityWithTexture
-{
+class GlassParapet : public EntityWithTexture {
 public:
 	explicit GlassParapet(GLdouble length);
 	void render(const glm::mat4& modelViewMat) const override;

@@ -342,3 +342,139 @@ void GlassParapet::render(const glm::mat4& modelViewMat) const {
 		}
 	}
 }
+
+Box::Box(GLdouble length) 
+	: EntityWithTexture(), _length(length) {
+	mMesh = Mesh::generateBoxOutlineTexCor(_length);
+	mMeshTapaAbj = Mesh::generateRectangleTexCor(_length, _length);
+	mMeshTapaArr = Mesh::generateRectangleTexCor(_length, _length);
+}
+
+Box::~Box() {
+	delete mMesh;
+	mMesh = nullptr;
+
+	delete mMeshTapaAbj;
+	mMeshTapaAbj = nullptr;
+
+	delete mMeshTapaArr;
+	mMeshTapaArr = nullptr;
+}
+
+void Box::render(const glm::mat4& modelViewMat) const {
+	if (mMesh != nullptr && mTexture != nullptr)
+	{
+		// --- Caja Principal 
+		renderBox(modelViewMat);
+
+		// --- Tapa abajo 
+		renderBoxLower(modelViewMat);
+
+		// --- Tapa arriba 
+		renderBoxUpper(modelViewMat);
+	}
+}
+
+void Box::renderBox(const glm::mat4& modelViewMat) const {
+	mat4 aMat = modelViewMat * mModelMat;
+	mShader->use();
+	mShader->setUniform("modulate", mModulate);
+	upload(aMat);
+
+	// culling
+	glEnable(GL_CULL_FACE);
+	// CARA DE DELANTE
+	mTexture->bind(); // activa la textura en la gpu
+	glCullFace(GL_BACK);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMesh->render();
+	mTexture->unbind(); // desactiva la textura en la gpu
+
+	// CARA DE ATRAS
+	mTextureInterior->bind(); // activa la textura en la gpu
+	glCullFace(GL_FRONT);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMesh->render();
+	mTextureInterior->unbind(); // desactiva la textura en la gpu
+	glDisable(GL_CULL_FACE);
+}
+
+void Box::renderBoxUpper(const glm::mat4& modelViewMat) const {
+	mat4 cMat = modelViewMat * mModelMatArr
+		* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1, 0, 0))
+		* glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0, 1, 0));
+	upload(cMat);
+
+	// culling
+	glEnable(GL_CULL_FACE);
+	// CARA DE DELANTE
+	mTexture->bind(); // activa la textura en la gpu
+	glCullFace(GL_BACK);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMeshTapaArr->render();
+	mTexture->unbind(); // desactiva la textura en la gpu
+
+	// CARA DE ATRAS
+	mTextureInterior->bind(); // activa la textura en la gpu
+	glCullFace(GL_FRONT);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMeshTapaArr->render();
+	mTextureInterior->unbind(); // desactiva la textura en la gpu
+	glDisable(GL_CULL_FACE);
+}
+
+void Box::renderBoxLower(const glm::mat4& modelViewMat) const {
+	mat4 bMat = modelViewMat * mModelMatAbj
+		* glm::translate(glm::mat4(1), glm::vec3(0, -_length / 2.0, 0))
+		* glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1, 0, 0));
+	upload(bMat);
+
+	// culling
+	glEnable(GL_CULL_FACE);
+	// CARA DE DELANTE
+	mTexture->bind(); // activa la textura en la gpu
+	glCullFace(GL_BACK);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMeshTapaAbj->render();
+	mTexture->unbind(); // desactiva la textura en la gpu
+
+	// CARA DE ATRAS
+	mTextureInterior->bind(); // activa la textura en la gpu
+	glCullFace(GL_FRONT);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMeshTapaAbj->render();
+	mTextureInterior->unbind(); // desactiva la textura en la gpu
+	glDisable(GL_CULL_FACE);
+}
+
+void Box::update() {
+	// esto se haría solo para la tapa de arriba
+	mModelMatArr =
+		translate(glm::dmat4(1), glm::dvec3(-_length / 2, _length / 2, 0))		// mueve a donde esta la caja
+		* rotate(dmat4(1), radians(angle), dvec3(0.0, 0.0, 1.0))				// abre y cierra
+		* translate(glm::dmat4(1), glm::dvec3(_length / 2, 0, 0));				// mueve para que la visagra sea en el z
+
+	// ---- gestion estado
+	// cerrando && angulo <= 0 -> abriendo
+	if (openState == 1.0 && angle <= 0.0) openState = 0.0;
+	// abriendo && angulo >= 180 -> cerrando
+	else if (openState == 0.0 && angle >= 180.0) openState = 1.0;
+
+	// ---- gestion angulo
+	// abriendo && angulo <= 180 -> angulo++ (abre)
+	if (angle < 180 && openState == 0.0) angle++;
+	// cerrando && angulo >= 0	 -> angulo-- (cierra)
+	else if (angle > 0 && openState == 1.0) angle--;
+}
+
+void Box::load() {
+	mMesh->load();
+	mMeshTapaAbj->load();
+	mMeshTapaArr->load();
+}
+
+void Box::unload() {
+	mMesh->unload();
+	mMeshTapaAbj->unload();
+	mMeshTapaArr->unload();
+}

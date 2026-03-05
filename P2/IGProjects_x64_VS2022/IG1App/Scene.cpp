@@ -75,10 +75,12 @@ void
 Scene::render(Camera const& cam) const {
 	cam.upload();
 
+	// --- objetos opacos
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
 
 	// --- blending objetos translucidos
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // activa blend func antes de renderizar objetos translucidos
 	glDepthMask(GL_FALSE);							   // 
 
@@ -87,6 +89,7 @@ Scene::render(Camera const& cam) const {
 		el->render(cam.viewMat());
 
 	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 }
 
 void Scene0::init() {
@@ -137,7 +140,9 @@ void Scene4::init() {
 
 	//createBoxOutline(200);
 	//createPhoto(100, 100);
-	createGlassParapet(200);
+	//createGlassParapet(200);
+	createBox(200);
+
 	/*Ground* ground = new Ground(400, 400);
 	gObjects.push_back(ground);
 	Star3D* star = new Star3D(150, 8, 100);
@@ -192,4 +197,27 @@ void Scene4::createGlassParapet(GLdouble length) {
 	gla->setTexture(texG);												// establece la textura de esta entidad
 	gla->setModelMat(translate(glm::dmat4(1), glm::dvec3(0, 100, 0)));
 	gObjectsTrans.push_back(gla);										// mete la entidad en la escena
+}
+
+void Scene4::createBox(GLdouble length) {
+	// --- texturas
+	// creamos y cargamos (con load()) las texturas de los objetos de la escena
+	// ----> textura por fuera <----
+	Texture* texCT = new Texture();									// crea nueva textura
+	const std::string conT = "../assets/images/papelE.png";	// ruta de la textura
+	texCT->load(conT, 255);								// carga la textura con su alfa
+	gTextures.push_back(texCT);										// al vector de texturas de la escena
+	// ----> textura por dentro <---
+	Texture* texPT = new Texture();									// crea nueva textura
+	const std::string papT = "../assets/images/container.jpg";		// ruta de la textura
+	texPT->load(papT, 255);								// carga la textura con su alfa
+	gTextures.push_back(texPT);										// sl vector de texturas de la escena
+
+	// --- entidad
+	Box* boT = new Box(length);
+	boT->setTexture(texCT);	// establece la textura de esta entidad
+	boT->setTextureInterior(texPT); // textura para el interior
+	//boT->setModelMat(translate(glm::dmat4(1), glm::dvec3(-80, 30 / 2, -80)));
+	//boT->setModelMatAbj(translate(glm::dmat4(1), glm::dvec3(-80, 30 / 2, -80)));
+	gObjects.push_back(boT); // mete la entidad en la escena
 }
