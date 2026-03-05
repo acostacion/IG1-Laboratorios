@@ -32,6 +32,10 @@ Scene::destroy()
 		delete el;
 	gObjects.clear();
 
+	for (Abs_Entity* el : gObjectsTrans)
+		delete el;
+	gObjectsTrans.clear();
+
 	for (Texture* t : gTextures)
 		delete t;
 	gTextures.clear();
@@ -41,11 +45,17 @@ void
 Scene::load() {
 	for (Abs_Entity* obj : gObjects)
 		obj->load();
+
+	for (Abs_Entity* obj : gObjectsTrans)
+		obj->load();
 }
 
 void
 Scene::unload() {
 	for (Abs_Entity* obj : gObjects)
+		obj->unload();
+
+	for (Abs_Entity* obj : gObjectsTrans)
 		obj->unload();
 }
 
@@ -67,6 +77,16 @@ Scene::render(Camera const& cam) const {
 
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
+
+	// --- blending objetos translucidos
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // activa blend func antes de renderizar objetos translucidos
+	glDepthMask(GL_FALSE);							   // 
+
+	// translucidos -> despues objetos con transparencia
+	for (Abs_Entity* el : gObjectsTrans)
+		el->render(cam.viewMat());
+
+	glDepthMask(GL_TRUE);
 }
 
 void Scene0::init() {
@@ -115,8 +135,9 @@ void Scene3::init() {
 void Scene4::init() {
 	Scene::init();
 
-	createBoxOutline(200);
-	createPhoto(100, 100);
+	//createBoxOutline(200);
+	//createPhoto(100, 100);
+	createGlassParapet(200);
 	/*Ground* ground = new Ground(400, 400);
 	gObjects.push_back(ground);
 	Star3D* star = new Star3D(150, 8, 100);
@@ -160,4 +181,15 @@ void Scene4::createPhoto(GLdouble w, GLdouble h) {
 	Photo* foto = new Photo(w, h);								// entidad
 	foto->setTexture(texF);									    // establece la textura de esta entidad
 	gObjects.push_back(foto);									// mete la entidad en la escena
+}
+
+void Scene4::createGlassParapet(GLdouble length) {
+	Texture* texG = new Texture();										// crea nueva textura
+	const std::string win = "../assets/images/windowC.png";				// ruta de la textura
+	texG->load(win, 100);											// carga la textura con su alfa 255 opaco
+	gTextures.push_back(texG);											// lo metemos en el vector de texturas 
+	GlassParapet* gla = new GlassParapet(length);		// entidad
+	gla->setTexture(texG);												// establece la textura de esta entidad
+	gla->setModelMat(translate(glm::dmat4(1), glm::dvec3(0, 100, 0)));
+	gObjectsTrans.push_back(gla);										// mete la entidad en la escena
 }

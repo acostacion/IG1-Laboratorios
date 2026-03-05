@@ -153,4 +153,11 @@ public:
 	void update() override;
 };
 
+class GlassParapet : public EntityWithTexture
+{
+public:
+	explicit GlassParapet(GLdouble length);
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
 #endif //_H_Entities_H_

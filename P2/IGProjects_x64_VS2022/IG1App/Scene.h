@@ -25,6 +25,9 @@ public:
 	virtual void update() {
 		for (Abs_Entity* obj : gObjects)
 			obj->update();
+
+		for (Abs_Entity* obj : gObjectsTrans)
+			obj->update();
 	}
 
 	// load or unload scene data into the GPU
@@ -38,6 +41,7 @@ protected:
 
 	std::vector<Abs_Entity*> gObjects;		// Entities (graphic objects) of the scene
 	std::vector<Texture*> gTextures;		// texturas de la escena
+	std::vector<Abs_Entity*> gObjectsTrans; // Entidades con transparencias
 };
 
 class Scene0 : public Scene {
@@ -67,5 +71,6 @@ public:
 private:
 	void createBoxOutline(GLdouble length);
 	void createPhoto(GLdouble w, GLdouble h);
+	void createGlassParapet(GLdouble length);
 };
 #endif //_H_Scene_H_
