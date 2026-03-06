@@ -91,3 +91,17 @@ void Texture::loadColorBuffer(GLsizei width, GLsizei height, GLuint buffer) { //
 	glBindTexture(GL_TEXTURE_2D, 0); // Bindea textura a 0
 	glReadBuffer(GL_FRONT);			 // por defecto GL_FRONT
 }
+
+void Texture::saveScreenshot(const std::string& file) {
+	Image img;
+
+	img.reserve(800, 600); // Reserve
+
+	glBindTexture(GL_TEXTURE_2D, mId); // Bindea textura a mId
+
+	// Obtener (de GPU a CPU) la imagen de la textura activa:
+	// pixels: array donde guardar los datos (de tipo y tamanio adecuado)
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data());
+
+	img.save(file); // gestiona el fichero
+}

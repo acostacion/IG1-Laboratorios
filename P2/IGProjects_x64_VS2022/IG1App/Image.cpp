@@ -146,6 +146,7 @@ Image::setColorkeyAlpha(glm::u8vec3 colorKey, GLubyte alpha)
 void
 Image::save(const std::string& name)
 {
+	stbi_flip_vertically_on_write(1); // para voltear la foto y que salga bien
 	string extension = name.substr(name.rfind(".") + 1);
 
 	for (char& c : extension)

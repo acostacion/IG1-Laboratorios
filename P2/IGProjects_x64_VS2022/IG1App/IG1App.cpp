@@ -183,6 +183,9 @@ IG1App::key(unsigned int key)
 	bool need_redisplay = true;
 
 	switch (key) {
+		case 'f': 
+			captura();
+			break;
 		case '+':
 			mCamera->setScale(+0.01); // zoom in  (increases the scale)
 			break;
@@ -257,6 +260,12 @@ IG1App::specialkey(int key, int scancode, int action, int mods)
 
 	if (need_redisplay)
 		mNeedsRedisplay = true;
+}
+
+void IG1App::captura() {
+	Texture tex;
+	tex.loadColorBuffer(800.0, 600.0);
+	tex.saveScreenshot("../capturas/cap.bmp");
 }
 
 bool
