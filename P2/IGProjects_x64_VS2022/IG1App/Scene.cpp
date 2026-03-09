@@ -141,7 +141,8 @@ void Scene4::init() {
 	//createBoxOutline(200);
 	//createPhoto(100, 100);
 	//createGlassParapet(200);
-	createBox(200);
+	//createBox(200);
+	createGrass(200);
 
 	/*Ground* ground = new Ground(400, 400);
 	gObjects.push_back(ground);
@@ -220,4 +221,14 @@ void Scene4::createBox(GLdouble length) {
 	//boT->setModelMat(translate(glm::dmat4(1), glm::dvec3(-80, 30 / 2, -80)));
 	//boT->setModelMatAbj(translate(glm::dmat4(1), glm::dvec3(-80, 30 / 2, -80)));
 	gObjects.push_back(boT); // mete la entidad en la escena
+}
+
+void Scene4::createGrass(GLdouble length) {
+	Texture* texH = new Texture();								// crea nueva textura
+	const std::string h = "../assets/images/grass.png";	// ruta de la textura
+	texH->load(h, 255);									// carga la textura con su alfa 255 opaco
+	gTextures.push_back(texH);									// lo metemos en el vector de texturas 
+	Grass* hier = new Grass(length);				// entidad
+	hier->setTexture(texH);										// establece la textura de esta entidad
+	gObjects.push_back(hier);									// mete la entidad en la escena
 }

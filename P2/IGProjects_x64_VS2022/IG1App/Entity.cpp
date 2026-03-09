@@ -478,3 +478,60 @@ void Box::unload() {
 	mMeshTapaAbj->unload();
 	mMeshTapaArr->unload();
 }
+
+Grass::Grass(GLdouble l) 
+	: EntityWithTexture(), _length(l) {
+	mMesh = Mesh::generateRectangleTexCor(l, l);
+	mShader = Shader::get("texture:texture_alpha");
+}
+
+void Grass::render(const glm::mat4& modelViewMat) const {
+	if (mMesh != nullptr && mTexture != nullptr) {
+		mTexture->bind();	 // activa la textura en la gpu
+		createFirstGrass(modelViewMat);
+		createSecondGrass(modelViewMat);
+		createThirdGrass(modelViewMat);
+		mTexture->unbind();  // desactiva la textura en la gpu
+	}
+}
+
+void Grass::createFirstGrass(const glm::mat4& modelViewMat) const {
+	mat4 aMat = modelViewMat * mModelMat;
+
+	mShader->use();
+	mShader->setUniform("modulate", mModulate);
+	upload(aMat);
+
+	// culling
+	glEnable(GL_CULL_FACE);
+	// CARA DE DELANTE
+	glCullFace(GL_BACK);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMesh->render();
+
+	// CARA DE ATRAS
+	glCullFace(GL_FRONT);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	mMesh->render();
+	glDisable(GL_CULL_FACE);
+}
+
+void Grass::createSecondGrass(const glm::mat4& modelViewMat) const {
+	mat4 bMat = modelViewMat * mModelMat
+		* glm::rotate(glm::mat4(1.0f), glm::radians(60.0f), glm::vec3(0, 1, 0));
+
+	mShader->use();
+	mShader->setUniform("modulate", mModulate);
+	upload(bMat);
+	mMesh->render();
+}
+
+void Grass::createThirdGrass(const glm::mat4& modelViewMat) const {
+	mat4 cMat = modelViewMat * mModelMat
+		* glm::rotate(glm::mat4(1.0f), glm::radians(-60.0f), glm::vec3(0, 1, 0));
+
+	mShader->use();
+	mShader->setUniform("modulate", mModulate);
+	upload(cMat);
+	mMesh->render();
+}

@@ -199,4 +199,18 @@ public:
 	void render(const glm::mat4& modelViewMat) const override;
 };
 
+class Grass : public EntityWithTexture {
+public:
+	explicit Grass(GLdouble l);
+	void render(const glm::mat4& modelViewMat) const override;
+
+private:
+	void createFirstGrass(const glm::mat4& modelViewMat) const;
+	void createSecondGrass(const glm::mat4& modelViewMat) const;
+	void createThirdGrass(const glm::mat4& modelViewMat) const;
+
+protected:
+	GLdouble _length;
+};
+
 #endif //_H_Entities_H_

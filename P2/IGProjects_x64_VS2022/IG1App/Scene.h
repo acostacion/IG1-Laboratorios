@@ -73,5 +73,6 @@ private:
 	void createPhoto(GLdouble w, GLdouble h);
 	void createGlassParapet(GLdouble length);
 	void createBox(GLdouble length);
+	void createGrass(GLdouble length);
 };
 #endif //_H_Scene_H_
