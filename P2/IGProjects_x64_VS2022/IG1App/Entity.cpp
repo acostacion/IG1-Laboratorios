@@ -266,9 +266,11 @@ void Star3D::update() {
 	_zAngle += 2.0f; // velocidad giro sobre Z
 	_yAngle += 1.0f; // velocidad giro sobre Y (más lento)
 
-	mModelMat = glm::rotate(glm::mat4(1.0f), glm::radians(_yAngle), glm::vec3(0, 1, 0))
+	mModelMat = mBaseTransform                                                          // posición/escala base
+		* glm::rotate(glm::mat4(1.0f), glm::radians(_yAngle), glm::vec3(0, 1, 0))
 		* glm::rotate(glm::mat4(1.0f), glm::radians(_zAngle), glm::vec3(0, 0, 1));
 }
+
 
 Photo::Photo(GLdouble w, GLdouble h) : EntityWithTexture() {
 	mMesh = Mesh::generateRectangleTexCor(w, h);
@@ -448,11 +450,11 @@ void Box::renderBoxLower(const glm::mat4& modelViewMat) const {
 }
 
 void Box::update() {
-	// esto se haría solo para la tapa de arriba
-	mModelMatArr =
-		translate(glm::dmat4(1), glm::dvec3(-_length / 2, _length / 2, 0))		// mueve a donde esta la caja
-		* rotate(dmat4(1), radians(angle), dvec3(0.0, 0.0, 1.0))				// abre y cierra
-		* translate(glm::dmat4(1), glm::dvec3(_length / 2, 0, 0));				// mueve para que la visagra sea en el z
+
+	mModelMatArr = mBaseTranslation                                              // posición base
+		* translate(glm::dmat4(1), glm::dvec3(-_length / 2, _length / 2, 0))
+		* rotate(dmat4(1), radians(angle), dvec3(0.0, 0.0, 1.0))
+		* translate(glm::dmat4(1), glm::dvec3(_length / 2, 0, 0));
 
 	// ---- gestion estado
 	// cerrando && angulo <= 0 -> abriendo

@@ -74,5 +74,9 @@ private:
 	void createGlassParapet(GLdouble length);
 	void createBox(GLdouble length);
 	void createGrass(GLdouble length);
+
+	GlassParapet* parapet;
+	Box* box;
+	Star3D* star;
 };
 #endif //_H_Scene_H_

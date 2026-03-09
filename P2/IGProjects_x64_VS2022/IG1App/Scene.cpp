@@ -139,19 +139,24 @@ void Scene4::init() {
 	Scene::init();
 
 	//createBoxOutline(200);
-	//createPhoto(100, 100);
-	//createGlassParapet(200);
-	//createBox(200);
+	createPhoto(100, 100);
+	createGlassParapet(600);
+	createBox(200);
 	createGrass(200);
 
-	/*Ground* ground = new Ground(400, 400);
+
+	Ground* ground = new Ground(600, 600);
 	gObjects.push_back(ground);
-	Star3D* star = new Star3D(150, 8, 100);
+	Star3D* star = new Star3D(100, 5, 65);
 	Texture* starTex = new Texture();
 	starTex->load("..\\assets\\images\\rueda.png");
 	gTextures.push_back(starTex);
 	star->setTexture(starTex);
-	gObjects.push_back(star);*/
+	star->setBaseTransform(
+		glm::translate(glm::mat4(1), glm::vec3(150, 100, 150)) *
+		glm::scale(glm::mat4(1), glm::vec3(0.5f, 0.5f, 0.5f))
+	);
+	gObjects.push_back(star);
 }
 
 void Scene4::createBoxOutline(GLdouble length) {
@@ -197,6 +202,7 @@ void Scene4::createGlassParapet(GLdouble length) {
 	GlassParapet* gla = new GlassParapet(length);		// entidad
 	gla->setTexture(texG);												// establece la textura de esta entidad
 	gla->setModelMat(translate(glm::dmat4(1), glm::dvec3(0, 100, 0)));
+    gla->setModelMat(glm::scale(glm::mat4(1.0), glm::vec3(1.0f, 0.2f, 1.0f)) * gla->modelMat());
 	gObjectsTrans.push_back(gla);										// mete la entidad en la escena
 }
 
@@ -218,8 +224,10 @@ void Scene4::createBox(GLdouble length) {
 	Box* boT = new Box(length);
 	boT->setTexture(texCT);	// establece la textura de esta entidad
 	boT->setTextureInterior(texPT); // textura para el interior
-	//boT->setModelMat(translate(glm::dmat4(1), glm::dvec3(-80, 30 / 2, -80)));
-	//boT->setModelMatAbj(translate(glm::dmat4(1), glm::dvec3(-80, 30 / 2, -80)));
+	boT->setModelMat(translate(glm::dmat4(1), glm::dvec3(150, 101, 150)));
+	boT->setBaseTranslation(translate(glm::mat4(1), glm::vec3(150, 101, 150)));
+	boT->setModelMatAbj(translate(glm::dmat4(1), glm::dvec3(150, 101, 150)));
+
 	gObjects.push_back(boT); // mete la entidad en la escena
 }
 
@@ -230,5 +238,6 @@ void Scene4::createGrass(GLdouble length) {
 	gTextures.push_back(texH);									// lo metemos en el vector de texturas 
 	Grass* hier = new Grass(length);				// entidad
 	hier->setTexture(texH);										// establece la textura de esta entidad
+	hier->setModelMat(translate(glm::dmat4(1), glm::dvec3(-150, 100, 150)));
 	gObjects.push_back(hier);									// mete la entidad en la escena
 }

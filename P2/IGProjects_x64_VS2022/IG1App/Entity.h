@@ -150,6 +150,7 @@ public:
 	void setTextureInterior(Texture* tex) { mTextureInterior = tex; }
 	void setModelMatAbj(glm::dmat4 const& bMat) { mModelMatAbj = bMat; }
 	void setModelMatArr(glm::dmat4 const& cMat) { mModelMatArr = cMat; }
+	void setBaseTranslation(glm::mat4 const& t) { mBaseTranslation = t; }
 
 protected:
 	Texture* mTextureInterior = nullptr; // texture
@@ -163,8 +164,10 @@ protected:
 	// --- tapa arriba
 	Mesh* mMeshTapaArr = nullptr;
 	glm::mat4 mModelMatArr = glm::mat4(1.0);
-
 private:
+
+	glm::dmat4 mBaseTranslation = glm::mat4(1.0); // traslación base de la caja
+
 	// --- para el update.
 	double angle = 180.0;  // empiza en 180 grados (empieza abierta)
 	GLint openState = 1; // 0 -> abres 1 -> cierras
@@ -180,10 +183,13 @@ public:
 	explicit Star3D(GLdouble re, GLuint np, GLdouble h);
 	void render(const glm::mat4& modelViewMat) const override;
 	void update() override;
+	void setBaseTransform(glm::mat4 const& t) { mBaseTransform = t; }
+
 private:
 	GLdouble _h;
 	float _zAngle = 0.0f;
 	float _yAngle = 0.0f;
+	glm::mat4 mBaseTransform = glm::mat4(1.0); // base: traslación + escala
 };
 
 class Photo : public EntityWithTexture {
