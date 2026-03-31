@@ -25,6 +25,10 @@ public:
 	void yaw(GLfloat a);   // rotates a degrees on the Y axis
 	void roll(GLfloat a);  // rotates a degrees on the Z axis
 
+	void moveLR(GLfloat d); // mueve d unidades a la derecha (d>0) o a la izquierda (d<0)
+	void moveFB(GLfloat d); // mueve d unidades hacia adelante (d>0) o hacia atrás (d<0)
+	void moveUD(GLfloat d); // mueve d unidades hacia arriba (d>0) o hacia abajo (d<0)
+
 	// projection matrix
 	glm::mat4 const& projMat() const { return mProjMat; };
 
@@ -40,6 +44,12 @@ protected:
 	glm::vec3 mEye = {0.0, 0.0, 500.0}; // camera's position
 	glm::vec3 mLook = {0.0, 0.0, 0.0};  // target's position
 	glm::vec3 mUp = {0.0, 1.0, 0.0};    // the up vector
+
+	glm::vec3 mRight;
+	glm::vec3 mFront;
+	glm::vec3 mUpward;
+
+	void SetAxes(); // updates the right, front and up vectors
 
 	glm::mat4 mViewMat;   // view matrix = inverse of modeling matrix
 	void uploadVM() const; // transfers viewMat to the GPU
