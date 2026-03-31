@@ -216,6 +216,9 @@ IG1App::key(unsigned int key)
 		case 'S':
 			mCamera->moveFB(-10);
 			break;
+		case 'p':
+			mCamera->changePrj();
+			break;
 		case 'u':
 			//mScenes[mCurrentScene]->update();
 			mUpdateEnabled = !mUpdateEnabled;

@@ -124,9 +124,16 @@ Camera::setSize(GLdouble xw, GLdouble yh)
 void
 Camera::setScale(GLdouble s)
 {
-	mScaleFact -= s;
-	if (mScaleFact < 0)
-		mScaleFact = 0.01;
+	if (bOrto) {
+		mScaleFact -= s;
+		if (mScaleFact < 0) mScaleFact = 0.01;
+	}
+	// si no es ortogonal, ajustamos el campo de visión (FOV) para simular el zoom
+	else {
+		mFov -= s * 10; // ajusta la velocidad a tu gusto
+		if (mFov < 1.0f) mFov = 1.0f;
+		if (mFov > 170.0f) mFov = 170.0f;
+	}
 	setPM();
 }
 
@@ -141,6 +148,11 @@ Camera::setPM()
 		                 mNearVal,
 		                 mFarVal);
 		// glm::ortho defines the orthogonal projection matrix
+	}
+	else {
+		mProjMat = glm::perspective(glm::radians(mFov),
+			xRight / yTop,
+			mNearVal, mFarVal);
 	}
 }
 

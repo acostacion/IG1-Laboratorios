@@ -32,6 +32,8 @@ public:
 	// projection matrix
 	glm::mat4 const& projMat() const { return mProjMat; };
 
+	void changePrj() { bOrto = !bOrto; setPM(); }; // cambia de proyección ortogonal a perspectiva o viceversa
+
 	// sets scene visible area size
 	void setSize(GLdouble xw, GLdouble yh);
 	// updates the scale factor
@@ -48,6 +50,8 @@ protected:
 	glm::vec3 mRight;
 	glm::vec3 mFront;
 	glm::vec3 mUpward;
+
+	GLfloat mFov = 50.0f; // field of view inicial
 
 	void SetAxes(); // updates the right, front and up vectors
 
