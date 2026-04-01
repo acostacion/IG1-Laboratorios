@@ -37,6 +37,10 @@ public:
 	void run();   // the main event processing loop
 	void close(); // the application
 
+	// 2 vistas
+	bool m2Vistas = false;
+	void display2V() const; 
+
 protected:
 	IG1App() = default;
 	~IG1App() { close(); };
@@ -55,12 +59,17 @@ protected:
 	static void s_resize(GLFWwindow*, int newWidth, int newHeight) { s_ig1app.resize(newWidth, newHeight); };
 	static void s_key(GLFWwindow* win, unsigned int codepoint) { s_ig1app.key(codepoint); };
 	static void s_specialkey(GLFWwindow* win, int key, int scancode, int action, int mods) { s_ig1app.specialkey(key, scancode, action, mods); };
+	static void s_mouse(GLFWwindow* win, int button, int action, int mods) { s_ig1app.mouse(button, action, mods); };
+	static void s_motion(GLFWwindow* win, double x, double y) { s_ig1app.motion(x, y); };
+	static void s_mouseWheel(GLFWwindow* win, double dx, double dy) { s_ig1app.mouseWheel(dx, dy); };
+
+	void mouse(int button, int state, int mods);
+	void motion(double x, double y);
+	void mouseWheel(double dx, double dy);
+	void fixAxisY(double& y); // arregla el eje y para lo del mouse
 
 	void captura();
 
-	// 2 vistas
-	bool m2Vistas = false;
-	void display2V() const; 
 
 	// Viewport position and size
 	Viewport* mViewPort = nullptr;
@@ -74,6 +83,10 @@ protected:
 	GLFWwindow* mWindow = nullptr; // window's handle
 	int mWinW = 800;               // window's width
 	int mWinH = 600;               // window's height
+
+	glm::dvec2 mMouseCoord; // para guardar las coordenadas del raton.
+	int mMouseButt = -1; // para guardar el boton pulsado 
+	int mMouseMods = 0; // para guardar el control
 };
 
 inline Viewport const&

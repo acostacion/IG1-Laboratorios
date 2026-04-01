@@ -129,6 +129,10 @@ IG1App::iniWinOpenGL()
 	glfwSetKeyCallback(mWindow, s_specialkey);
 	glfwSetWindowRefreshCallback(mWindow, s_display);
 
+	glfwSetMouseButtonCallback(mWindow, s_mouse); // cuando se presiona o se suelta un botón del ratón.
+	glfwSetCursorPosCallback(mWindow, s_motion); // cuando se mueve el ratón.
+	glfwSetScrollCallback(mWindow, s_mouseWheel); // cuando se gira la rueda del ratón o se hace el gesto equivalente con el touchpad.
+
 	// Error message callback (all messages)
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0u, 0, GL_TRUE);
@@ -285,6 +289,61 @@ IG1App::specialkey(int key, int scancode, int action, int mods)
 
 	if (need_redisplay)
 		mNeedsRedisplay = true;
+}
+
+void IG1App::mouse(int button, int state, int mods) {
+	
+	if (state == GLFW_PRESS) mMouseButt = button;
+	else if (state == GLFW_RELEASE) { mMouseButt = -1; } // no se pulsa boton
+
+	mMouseMods = mods;
+
+	// Guarda en mCoord la posicion (x, y) del raton
+	glfwGetCursorPos(mWindow, &mMouseCoord.x, &mMouseCoord.y);
+	fixAxisY(mMouseCoord.y); // fix de la y
+}
+
+void IG1App::motion(double x, double y) {
+	fixAxisY(y); // fix de la y
+
+	// Guarda en unavariable auxiliar mp la diferencia entre mCoord y(x, y)
+	glm::dvec2 mp = { mMouseCoord.x - x, mMouseCoord.y - y };
+
+	// Guarda en mCoord la posición (x, y) del ratón
+	mMouseCoord.x = x;
+	mMouseCoord.y = y;
+
+	// Si mBot es el botón izquierdo, la cámara orbita (mp.x * 0.05, mp.y)
+	if (mMouseButt == GLFW_MOUSE_BUTTON_LEFT) {
+		mCamera->orbit(mp.x * 0.05, mp.y);
+	}
+	else if (mMouseButt == GLFW_MOUSE_BUTTON_RIGHT) {
+		mCamera->moveUD(mp.y);
+		mCamera->moveLR(mp.x);
+	}
+	mNeedsRedisplay = true;
+}
+
+void IG1App::mouseWheel(double dx, double dy) {
+	// si se pulsa ctrl
+	if (mMouseMods == GLFW_MOD_CONTROL) { // IMPORTANTE: CTRL + click rueda hace una cosa y click rueda solo hace otra.
+		// escala la escena, de nuevo según el valor de d
+		mCamera->setScale(dy * 0.01);
+	}
+	// si no está pulsada ninguna tecla modificadora.
+	else {
+		// desplaza la cámara en su dirección de vista.
+		mCamera->moveFB(dy * 4);
+	}
+
+	mNeedsRedisplay = true;
+}
+
+void IG1App::fixAxisY(double& y) {
+	// corregir la y para que vaya bien
+	int width, height;
+	glfwGetWindowSize(mWindow, nullptr, &height);
+	y = height - y;
 }
 
 void IG1App::captura() {
