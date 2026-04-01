@@ -124,6 +124,15 @@ void Camera::rollReal(GLfloat cs) {
 	setVM();
 }
 
+void Camera::orbit(GLdouble incAng, GLdouble incY) {
+	mAng += incAng;
+	mEye.x = mLook.x + cos(radians(mAng)) * mRadio;
+	mEye.z = mLook.z - sin(radians(mAng)) * mRadio;
+	mEye.y += incY;
+	mUp = vec3(0, 1, 0);
+	setVM();
+}
+
 void 
 Camera::moveFB(GLfloat d) {
 	mEye += mFront * d;
@@ -173,7 +182,8 @@ Camera::setPM()
 	else {
 		mProjMat = glm::perspective(glm::radians(mFov),
 			xRight / yTop,
-			mNearVal, mFarVal);
+			mNearVal * 200, // para evitar el efecto "zoom"
+			mFarVal);
 	}
 }
 

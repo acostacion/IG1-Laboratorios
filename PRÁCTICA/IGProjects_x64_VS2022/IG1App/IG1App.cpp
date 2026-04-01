@@ -159,7 +159,8 @@ IG1App::display() const
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the back buffer
 
-	mScenes[mCurrentScene]->render(*mCamera); // uploads the viewport and camera to the GPU
+	if (m2Vistas) { display2V(); } // 2 VISTAS.
+	else { mScenes[mCurrentScene]->render(*mCamera); } // uploads the viewport and camera to the GP
 
 	glfwSwapBuffers(mWindow); // swaps the front and back buffer
 }
@@ -218,6 +219,9 @@ IG1App::key(unsigned int key)
 			break;
 		case 'p':
 			mCamera->changePrj();
+			break;
+		case 'k':
+			m2Vistas = !m2Vistas;
 			break;
 		case 'u':
 			//mScenes[mCurrentScene]->update();
@@ -287,6 +291,38 @@ void IG1App::captura() {
 	Texture tex;
 	tex.loadColorBuffer(800.0, 600.0);
 	tex.saveScreenshot("../capturas/cap.bmp");
+}
+
+void IG1App::display2V() const {
+	// para renderizar las vistas utilizamos una camara auxiliar:
+	Camera auxCam = *mCamera; // copiando mCamera
+	// el puerto de vista queda compartido (se copia el puntero)
+	//lo copiamos en una var.aux
+	Viewport auxVP = *mViewPort;
+	// el tamaño de los 2 puertos de vista es el mismo,
+	// lo configuramos
+	mViewPort->setSize(mWinW / 2, mWinH);
+	// igual que en resize, para que no cambie la escala,
+	// tenemos que cambiar el tamaño de la ventana de vista de la cámara
+	auxCam.setSize(mViewPort->width(), mViewPort->height());
+
+	// vista 3D ->
+	// configurar la posición
+	mViewPort->setPos(0, 0);
+	// cambiar la posición y orientacion de la cámara
+	auxCam.set3D();
+	// renderizamos con la cámara y el puerto de vista configurados
+	mScenes[mCurrentScene]->render(auxCam);
+
+	// vista Cenital ->
+	// configurar la posición
+	mViewPort->setPos(mWinW / 2, 0);
+	// cambiar la posición y orientacion de la cámara
+	auxCam.set2D(); // TODO cambiar a CENITL CUANDO ESTE
+	// renderizamos con la cámara y el puerto de vista configurados
+	mScenes[mCurrentScene]->render(auxCam);
+
+	*mViewPort = auxVP; // * restaurar el puerto de vista 
 }
 
 bool

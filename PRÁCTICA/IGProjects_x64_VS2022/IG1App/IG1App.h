@@ -58,6 +58,10 @@ protected:
 
 	void captura();
 
+	// 2 vistas
+	bool m2Vistas = false;
+	void display2V() const; 
+
 	// Viewport position and size
 	Viewport* mViewPort = nullptr;
 	// Camera position, view volume and projection

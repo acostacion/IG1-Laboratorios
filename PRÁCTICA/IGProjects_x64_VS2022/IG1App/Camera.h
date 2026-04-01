@@ -33,6 +33,8 @@ public:
 	void yawReal(GLfloat cs); //Rotacion en y (v)
 	void rollReal(GLfloat cs); //Rotacion en z (n)
 
+	void orbit(GLdouble incAng, GLdouble incY); 
+
 	// projection matrix
 	glm::mat4 const& projMat() const { return mProjMat; };
 
@@ -54,6 +56,10 @@ protected:
 	glm::vec3 mRight;
 	glm::vec3 mFront;
 	glm::vec3 mUpward;
+
+	// para el orbit()
+	GLdouble mRadio = 1000.0; // Esfera virtual de radio 1000 
+	GLdouble mAng = -45; // Longitud 45 grados oeste.
 
 	GLfloat mFov = 50.0f; // field of view inicial
 
