@@ -41,6 +41,10 @@ public:
 	bool m2Vistas = false;
 	void display2V() const; 
 
+	// 2 escenas.
+	bool m2Scenes = false;
+	void display2S(Scene* s1, Scene* s2) const; 
+
 protected:
 	IG1App() = default;
 	~IG1App() { close(); };
@@ -75,6 +79,7 @@ protected:
 	Viewport* mViewPort = nullptr;
 	// Camera position, view volume and projection
 	Camera* mCamera = nullptr;
+	Camera* mCamera2 = nullptr; // para el 2escenas
 	// Graphics objects are in the scenes
 	std::vector<Scene*> mScenes;
 	size_t mCurrentScene = 0;
