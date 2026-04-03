@@ -20,6 +20,7 @@ public:
 
 	void set2D();
 	void set3D();
+	void setCenital();
 
 	void pitch(GLfloat a); // rotates a degrees on the X axis
 	void yaw(GLfloat a);   // rotates a degrees on the Y axis

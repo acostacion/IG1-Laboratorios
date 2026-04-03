@@ -46,21 +46,35 @@ Camera::setVM()
 	SetAxes();
 }
 
-void
-Camera::set2D()
-{
-	mEye = {0, 0, 500};
-	mLook = {0, 0, 0};
-	mUp = {0, 1, 0};
+void 
+Camera::set2D() {
+	mEye = { 0, 0, 500 };
+	mLook = { 0, 0, 0 };
+	mUp = { 0, 1, 0 };
+	mRadio = 500.0;
+	mAng = 0.0;
 	setVM();
 }
 
-void
-Camera::set3D()
-{
-	mEye = {500, 500, 500};
-	mLook = {0, 10, 0};
-	mUp = {0, 1, 0};
+void 
+Camera::set3D() {
+	mEye = { 500, 500, 500 };
+	mLook = { 0, 10, 0 };
+	mUp = { 0, 1, 0 };
+
+	// inicializar mRadio y mAng coherentemente con mEye y mLook
+	GLdouble dx = mEye.x - mLook.x;
+	GLdouble dz = mEye.z - mLook.z;
+	mRadio = sqrt(dx * dx + dz * dz);   // distancia horizontal al look
+	mAng = glm::degrees(atan2(-dz, dx)); // ángulo coherente con orbit()
+
+	setVM();
+}
+
+void 
+Camera::setCenital() {
+	mEye = { mLook.x, mLook.y + 1000, mLook.z }; // directamente encima del look
+	mUp = { 0, 0, -1 }; // el up no puede ser (0,1,0) porque la cámara mira hacia -Y
 	setVM();
 }
 
@@ -160,7 +174,7 @@ Camera::setScale(GLdouble s)
 	}
 	// si no es ortogonal, ajustamos el campo de visión (FOV) para simular el zoom
 	else {
-		mFov -= s * 10; // ajusta la velocidad a tu gusto
+		mFov -= s * 10;
 		if (mFov < 1.0f) mFov = 1.0f;
 		if (mFov > 170.0f) mFov = 170.0f;
 	}

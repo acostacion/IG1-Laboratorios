@@ -239,6 +239,9 @@ IG1App::key(unsigned int key) {
 		case 'p':
 			actualCam->changePrj();
 			break;
+		case 'c':
+			actualCam->setCenital();
+			break;
 		case 'k':
 			m2Vistas = !m2Vistas;
 			m2Scenes = false; // si se activa m2Vistas, se quita m2Scenes.
