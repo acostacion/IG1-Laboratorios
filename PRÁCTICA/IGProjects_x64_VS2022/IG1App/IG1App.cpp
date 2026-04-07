@@ -424,7 +424,7 @@ void IG1App::display2V() const {
 	// configurar la posición
 	mViewPort->setPos(mWinW / 2, 0);
 	// cambiar la posición y orientacion de la cámara
-	auxCam.set2D(); // TODO cambiar a CENITL CUANDO ESTE
+	auxCam.setCenital();
 	// renderizamos con la cámara y el puerto de vista configurados
 	mScenes[mCurrentScene]->render(auxCam);
 
