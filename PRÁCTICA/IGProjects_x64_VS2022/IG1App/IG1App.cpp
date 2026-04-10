@@ -139,9 +139,9 @@ IG1App::iniWinOpenGL()
 	glfwSetKeyCallback(mWindow, s_specialkey);
 	glfwSetWindowRefreshCallback(mWindow, s_display);
 
-	glfwSetMouseButtonCallback(mWindow, s_mouse); // cuando se presiona o se suelta un botón del ratón.
-	glfwSetCursorPosCallback(mWindow, s_motion); // cuando se mueve el ratón.
-	glfwSetScrollCallback(mWindow, s_mouseWheel); // cuando se gira la rueda del ratón o se hace el gesto equivalente con el touchpad.
+	glfwSetMouseButtonCallback(mWindow, s_mouse); // cuando se presiona o se suelta un botÃ³n del ratÃ³n.
+	glfwSetCursorPosCallback(mWindow, s_motion); // cuando se mueve el ratÃ³n.
+	glfwSetScrollCallback(mWindow, s_mouseWheel); // cuando se gira la rueda del ratÃ³n o se hace el gesto equivalente con el touchpad.
 
 	// Error message callback (all messages)
 	glEnable(GL_DEBUG_OUTPUT);
@@ -352,11 +352,11 @@ void IG1App::motion(double x, double y) {
 	// Guarda en unavariable auxiliar mp la diferencia entre mCoord y(x, y)
 	glm::dvec2 mp = { mMouseCoord.x - x, mMouseCoord.y - y };
 
-	// Guarda en mCoord la posición (x, y) del ratón
+	// Guarda en mCoord la posiciÃ³n (x, y) del ratÃ³n
 	mMouseCoord.x = x;
 	mMouseCoord.y = y;
 
-	// Si mBot es el botón izquierdo, la cámara orbita (mp.x * 0.05, mp.y)
+	// Si mBot es el botÃ³n izquierdo, la cÃ¡mara orbita (mp.x * 0.05, mp.y)
 	if (mMouseButt == GLFW_MOUSE_BUTTON_LEFT) {
 		actualCam->orbit(mp.x * 0.05, mp.y);
 	}
@@ -374,12 +374,12 @@ void IG1App::mouseWheel(double dx, double dy) {
 
 	// si se pulsa ctrl
 	if (mMouseMods == GLFW_MOD_CONTROL) { // IMPORTANTE: CTRL + click rueda hace una cosa y click rueda solo hace otra.
-		// escala la escena, de nuevo según el valor de d
+		// escala la escena, de nuevo segÃºn el valor de d
 		actualCam->setScale(dy * 0.01);
 	}
-	// si no está pulsada ninguna tecla modificadora.
+	// si no estÃ¡ pulsada ninguna tecla modificadora.
 	else {
-		// desplaza la cámara en su dirección de vista.
+		// desplaza la cÃ¡mara en su direcciÃ³n de vista.
 		actualCam->moveFB(dy * 4);
 	}
 
@@ -388,7 +388,7 @@ void IG1App::mouseWheel(double dx, double dy) {
 
 void IG1App::fixAxisY(double& y) {
 	// corregir la y para que vaya bien
-	int width, height;
+	int height;
 	glfwGetWindowSize(mWindow, nullptr, &height);
 	y = height - y;
 }
@@ -405,27 +405,27 @@ void IG1App::display2V() const {
 	// el puerto de vista queda compartido (se copia el puntero)
 	//lo copiamos en una var.aux
 	Viewport auxVP = *mViewPort;
-	// el tamaño de los 2 puertos de vista es el mismo,
+	// el tamaÃ±o de los 2 puertos de vista es el mismo,
 	// lo configuramos
 	mViewPort->setSize(mWinW / 2, mWinH);
 	// igual que en resize, para que no cambie la escala,
-	// tenemos que cambiar el tamaño de la ventana de vista de la cámara
+	// tenemos que cambiar el tamaÃ±o de la ventana de vista de la cÃ¡mara
 	auxCam.setSize(mViewPort->width(), mViewPort->height());
 
 	// vista 3D ->
-	// configurar la posición
+	// configurar la posiciÃ³n
 	mViewPort->setPos(0, 0);
-	// cambiar la posición y orientacion de la cámara
+	// cambiar la posiciÃ³n y orientacion de la cÃ¡mara
 	auxCam.set3D();
-	// renderizamos con la cámara y el puerto de vista configurados
+	// renderizamos con la cÃ¡mara y el puerto de vista configurados
 	mScenes[mCurrentScene]->render(auxCam);
 
 	// vista Cenital ->
-	// configurar la posición
+	// configurar la posiciÃ³n
 	mViewPort->setPos(mWinW / 2, 0);
-	// cambiar la posición y orientacion de la cámara
+	// cambiar la posiciÃ³n y orientacion de la cÃ¡mara
 	auxCam.setCenital();
-	// renderizamos con la cámara y el puerto de vista configurados
+	// renderizamos con la cÃ¡mara y el puerto de vista configurados
 	mScenes[mCurrentScene]->render(auxCam);
 
 	*mViewPort = auxVP; // * restaurar el puerto de vista 
@@ -439,23 +439,23 @@ void IG1App::display2S(Scene* s1, Scene* s2) const {
 	// el puerto de vista queda compartido (se copia el puntero)
 	Viewport auxVP = *mViewPort;
 
-	// el tamaño de los 2 puertos de vista es el mismo, lo configuramos
+	// el tamaÃ±o de los 2 puertos de vista es el mismo, lo configuramos
 	mViewPort->setSize(mWinW / 2, mWinH);
 
 	// Escena 4 ->
-	// igual que en resize, para que no cambie la escala, tenemos que cambiar el tamaño de la ventana de vista de la cámara
+	// igual que en resize, para que no cambie la escala, tenemos que cambiar el tamaÃ±o de la ventana de vista de la cÃ¡mara
 	auxCam.setSize(mViewPort->width(), mViewPort->height());
-	// configurar la posición
+	// configurar la posiciÃ³n
 	mViewPort->setPos(0, 0);
-	// renderizamos con la cámara y el puerto de vista configurados
+	// renderizamos con la cÃ¡mara y el puerto de vista configurados
 	s1->render(auxCam);
 
 	// Escena 2 ->
-	// igual que en resize, para que no cambie la escala, tenemos que cambiar el tamaño de la ventana de vista de la cámara
+	// igual que en resize, para que no cambie la escala, tenemos que cambiar el tamaÃ±o de la ventana de vista de la cÃ¡mara
 	auxCam2.setSize(mViewPort->width(), mViewPort->height());
-	// configurar la posición
+	// configurar la posiciÃ³n
 	mViewPort->setPos(mWinW / 2, 0);
-	// renderizamos con la cámara y el puerto de vista configurados
+	// renderizamos con la cÃ¡mara y el puerto de vista configurados
 	s2->render(auxCam2);
 
 	*mViewPort = auxVP; // * restaurar el puerto de vista 
