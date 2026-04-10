@@ -1,4 +1,4 @@
-﻿#include "Entity.h"
+#include "Entity.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -217,6 +217,11 @@ Ground::Ground(GLdouble w, GLdouble h) {
 	mTexture = new Texture();
 	mTexture->load("..\\assets\\images\\baldosaC.png"); // ajusta la ruta a tu proyecto
 	mModelMat = glm::rotate(glm::dmat4(1), glm::radians(-90.0), glm::dvec3(1, 0, 0));
+}
+
+Ground::~Ground() {
+	delete mMesh; mMesh = nullptr;
+	delete mTexture; mTexture = nullptr;
 }
 
 EntityWithTexture::EntityWithTexture() {

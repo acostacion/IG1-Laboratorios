@@ -166,7 +166,7 @@ protected:
 	glm::mat4 mModelMatArr = glm::mat4(1.0);
 private:
 
-	glm::dmat4 mBaseTranslation = glm::mat4(1.0); // traslación base de la caja
+	glm::dmat4 mBaseTranslation = glm::mat4(1.0); // traslaciÃ³n base de la caja
 
 	// --- para el update.
 	double angle = 180.0;  // empiza en 180 grados (empieza abierta)
@@ -176,6 +176,7 @@ private:
 class Ground : public EntityWithTexture {
 public:
 	explicit Ground(GLdouble w, GLdouble h);
+	~Ground() override;
 };
 
 class Star3D : public EntityWithTexture {
@@ -189,7 +190,7 @@ private:
 	GLdouble _h;
 	float _zAngle = 0.0f;
 	float _yAngle = 0.0f;
-	glm::mat4 mBaseTransform = glm::mat4(1.0); // base: traslación + escala
+	glm::mat4 mBaseTransform = glm::mat4(1.0); // base: traslaciÃ³n + escala
 };
 
 class Photo : public EntityWithTexture {
