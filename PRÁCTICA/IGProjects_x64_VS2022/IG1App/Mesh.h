@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-
+#include <numbers>
 #include <vector>
 
 class Mesh
@@ -39,25 +39,45 @@ public:
 
 	void setPrimitive(GLuint primitive) { mPrimitive = primitive; }
 
-	void load();
-	void unload();
+	virtual void load();
+	virtual void unload();
 
 protected:
 	GLuint mPrimitive =
-	  GL_TRIANGLES;          // graphic primitive: GL_POINTS, GL_LINES, GL_TRIANGLES, ...
-	GLuint mNumVertices = 0; // number of elements ( = vVertices.size())
-	std::vector<glm::vec3> vVertices; // vertex array
-	std::vector<glm::vec4> vColors;   // color array
+	  GL_TRIANGLES;						// graphic primitive: GL_POINTS, GL_LINES, GL_TRIANGLES, ...
+	GLuint mNumVertices = 0;			// number of elements ( = vVertices.size())
+	std::vector<glm::vec3> vVertices;	// vertex array
+	std::vector<glm::vec4> vColors;		// color array
 	std::vector<glm::vec2> vTexCoords;  // texture coordinates array
+	std::vector<glm::vec3> vNormals;	//vector normales
 	
 	virtual void draw() const;
 
 	GLuint mVAO;  // vertex array object
+	GLuint mNBO;  // vertex array object con normales
 
 private:
 	GLuint mVBO;  // vertex buffer object
 	GLuint mCBO;  // color buffer object
 	GLuint mTBO = 0; // texture coordinates buffer object
+};
+
+class IndexMesh : public Mesh {
+public:
+	IndexMesh();
+	virtual ~IndexMesh();
+	void load() override;
+	void unload() override;
+
+	static IndexMesh* generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax = 2 * std::numbers::pi);
+	void buildNormalVectors();
+
+protected:
+	void draw() const override;
+	std::vector<GLuint> vIndexes;
+
+private:
+	GLuint mIBO;  // vertex object buffer
 };
 
 #endif //_H_Scene_H_

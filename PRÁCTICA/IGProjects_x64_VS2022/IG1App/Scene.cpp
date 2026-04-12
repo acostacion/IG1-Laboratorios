@@ -143,11 +143,18 @@ void Scene4::init() {
 	createGlassParapet(600);
 	createBox(200);
 	createGrass(200);
+	createGround(600, 600);
+	createStar(100, 5, 65);
+}
 
-
-	Ground* ground = new Ground(600, 600);
+#pragma region P4 Aux
+void Scene4::createGround(GLdouble width, GLdouble height) {
+	Ground* ground = new Ground(width, height);
 	gObjects.push_back(ground);
-	Star3D* star = new Star3D(100, 5, 65);
+}
+
+void Scene4::createStar(GLdouble re, GLuint np, GLdouble h) {
+	Star3D* star = new Star3D(re, np, h);
 	Texture* starTex = new Texture();
 	starTex->load("..\\assets\\images\\rueda.png");
 	gTextures.push_back(starTex);
@@ -240,4 +247,14 @@ void Scene4::createGrass(GLdouble length) {
 	hier->setTexture(texH);										// establece la textura de esta entidad
 	hier->setModelMat(translate(glm::dmat4(1), glm::dvec3(-150, 100, 150)));
 	gObjects.push_back(hier);									// mete la entidad en la escena
+}
+#pragma endregion
+
+void Scene5::init() {
+	Scene::init();
+
+	Torus* torus = new Torus(200, 50);
+	torus->setModelMat(glm::rotate(glm::dmat4(1), radians(-180.0), dvec3(0.0, 1.0, 0.0)));
+	gObjects.push_back(torus);
+
 }

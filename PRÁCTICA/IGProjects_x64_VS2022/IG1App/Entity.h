@@ -220,4 +220,16 @@ protected:
 	GLdouble _length;
 };
 
+class Torus : public SingleColorEntity {
+public:
+	/*
+	R - radio desde origen de coordenadas
+	r - radio del perfil
+	nPoints - vertices de la circunferencia del perfil
+	nSamples - numero de repeticiones del perfil en la figura final
+	*/
+	explicit Torus(GLdouble R, GLdouble r, GLuint nPoints = 40, GLuint nSamples = 40);
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
 #endif //_H_Entities_H_

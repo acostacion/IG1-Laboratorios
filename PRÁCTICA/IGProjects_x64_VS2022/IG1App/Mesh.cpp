@@ -10,17 +10,16 @@ Mesh::Mesh()
  : mVAO(NONE)
  , mVBO(NONE)
  , mCBO(NONE)
+ , mNBO(NONE)
 {
 }
 
-Mesh::~Mesh()
-{
+Mesh::~Mesh() {
 	unload();
 }
 
 void
-Mesh::draw() const
-{
+Mesh::draw() const {
 	glDrawArrays(
 	  mPrimitive,
 	  0,
@@ -28,8 +27,7 @@ Mesh::draw() const
 }
 
 void
-Mesh::load()
-{
+Mesh::load() {
 	assert(mVBO == NONE); // not already loaded
 
 	if (vVertices.size() > 0) { // transfer data
@@ -59,6 +57,17 @@ Mesh::load()
 			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), nullptr);
 			glEnableVertexAttribArray(2);
 		}
+
+		if (vNormals.size() > 0) { // upload normals
+			glGenBuffers(1, &mNBO);
+			glBindBuffer(GL_ARRAY_BUFFER, mNBO);
+			glBufferData(GL_ARRAY_BUFFER,
+				vNormals.size() * sizeof(vec3),
+				vNormals.data(), GL_STATIC_DRAW);
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
+				sizeof(vec3), nullptr);
+			glEnableVertexAttribArray(3);
+		}
 	}
 }
 
@@ -80,12 +89,17 @@ Mesh::unload()
 			glDeleteBuffers(1, &mTBO);
 			mTBO = NONE;
 		}
+
+		// eliminar los vectores de normales de la GPU
+		if (mNBO != NONE) {
+			glDeleteBuffers(1, &mNBO);
+			mNBO = NONE;
+		}
 	}
 }
 
 void
-Mesh::render() const
-{
+Mesh::render() const {
 	assert(mVAO != NONE);
 
 	glBindVertexArray(mVAO);
@@ -458,4 +472,113 @@ Mesh* Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h) {
 	mesh->vTexCoords.push_back(mesh->vTexCoords[1]);
 
 	return mesh;
+}
+
+IndexMesh::IndexMesh() : mIBO(NONE) {
+}
+
+IndexMesh::~IndexMesh() {
+	unload();
+}
+
+void IndexMesh::load() {
+	Mesh::load(); glBindVertexArray(mVAO);
+	glGenBuffers(1, &mIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+		vIndexes.size() * sizeof(GLuint),
+		vIndexes.data(), GL_STATIC_DRAW);
+	glBindVertexArray(0);
+}
+
+void IndexMesh::unload() {
+	if (mVAO != GL_NONE) {
+		//Borramos los vertices
+		glDeleteVertexArrays(1, &mVAO);
+		glDeleteBuffers(1, &mIBO);
+		mVAO = GL_NONE;
+		mIBO = GL_NONE;
+
+		if (mIBO != NONE) {
+			glDeleteBuffers(1, &mIBO);
+			mIBO = NONE;
+		}
+	}
+}
+
+IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax) {
+	//Crea la malla
+	IndexMesh* mesh = new IndexMesh();
+	//Pone la primitiva
+	mesh->mPrimitive = GL_TRIANGLES;
+	//Toma el tamano del perfil
+	int tamPerfil = profile.size();
+	//std::cout << tamPerfil;
+	//Y reserva los vertices correspondientes a partir de las samples
+	mesh->vVertices.reserve(nSamples * tamPerfil);
+	// Genera los vertices de las muestras (como si fuera un poligono regular)
+	GLdouble theta1 = angleMax / nSamples; //antes era 2 * std::numbers::pi (360º)
+	//Crea los vertices
+	for (int i = 0; i <= nSamples; ++i) { // muestra i-esima
+		GLdouble c = cos(i * theta1), s = sin(i * theta1);
+		for (auto p : profile) // rota el perfil
+			mesh->vVertices.emplace_back(p.x * c, p.y, -p.x * s);
+	}
+
+	//Despues une los vertices para formar caras
+	for (int i = 0; i < nSamples; ++i) // caras i a i + 1 (todas las repeticiones del perfil)
+		for (int j = 0; j < tamPerfil - 1; ++j) { // una cara (puntos dentro del perfil)
+			if (profile[j].x != 0.0) // triangulo inferior
+				for (auto [s, t] : { std::pair{i, j}, std::pair{i, j + 1}, std::pair{i + 1, j} }) {
+					mesh->vIndexes.push_back(s * tamPerfil + t);
+				}
+
+
+			if (profile[j + 1].x != 0.0) // triangulo superior
+				for (auto [s, t] : { std::pair{i, j + 1}, std::pair{i + 1, j + 1}, std::pair{i + 1, j} }) {
+					mesh->vIndexes.push_back(s * tamPerfil + t);
+				}
+		}
+
+	//Reserva vertices
+	mesh->mNumVertices = mesh->vVertices.size();
+
+	mesh->buildNormalVectors();
+	//Devuelve la malla correspondiente
+	return mesh;
+}
+
+void IndexMesh::buildNormalVectors() {
+	// METODO NEWELL (REVISAR):
+	//Rellena inicialmente con (0.0, 0.0, 0.0)
+	for (int i = 0; i < vIndexes.size(); i++)
+		vNormals.emplace_back(0.0, 0.0, 0.0);
+
+	//Define las normales con el producto vectorial
+	for (int i = 0; i < vIndexes.size(); i += 3) //(36 indices/12 triangulos) = 3(vertices por triangulo))
+	{
+		// Calculo normal
+		glm::vec3 normal = glm::normalize(glm::cross(
+			vVertices[vIndexes[i + 1]] - vVertices[vIndexes[i]],
+			vVertices[vIndexes[i + 2]] - vVertices[vIndexes[i]])
+		);
+
+		//Los rellena
+		vNormals[vIndexes[i]] += normal;
+		vNormals[vIndexes[i + 1]] += normal;
+		vNormals[vIndexes[i + 2]] += normal;
+	}
+
+	//Normalizamos los vectores de vNormals
+	for (int i = 0; i < vNormals.size(); i++)
+		vNormals[i] = glm::normalize(vNormals[i]);
+}
+
+void IndexMesh::draw() const {
+	glDrawElements(
+		mPrimitive, // primitiva ( GL_TRIANGLES , etc.)
+		vIndexes.size(), // número de índices
+		GL_UNSIGNED_INT, // tipo de los índices
+		nullptr // offset en el VBO de índices
+	);
 }

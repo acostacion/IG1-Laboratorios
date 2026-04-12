@@ -542,3 +542,56 @@ void Grass::createThirdGrass(const glm::mat4& modelViewMat) const {
 	upload(cMat);
 	mMesh->render();
 }
+
+Torus::Torus(GLdouble R, GLdouble r, GLuint nPoints, GLuint nSamples) {
+	mShader = Shader::get("simple_light");
+	//mShader = Shader::get("normals");
+	std::vector<glm::vec2> profile;
+
+	// Se van guardando en sentido antihorario desde x = 0
+	GLdouble alpha = 90.0;
+	GLdouble incremento = 360.0 / nPoints;
+	//Conseguimos los puntos del perfil
+	for (GLuint i = 0; i < nPoints + 2; i++)
+	{
+		GLdouble x = r * glm::cos(glm::radians(alpha)) + R;
+		GLdouble y = r * glm::sin(glm::radians(alpha)); // el radio en la y no porq si no se sube.
+		alpha += incremento;
+
+		profile.emplace_back(x, y);
+	}
+
+	//Hacemos la malla por revolucion
+	mMesh = IndexMesh::generateByRevolution(profile, nSamples, 2 * std::numbers::pi);
+	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+}
+
+void Torus::render(const glm::mat4& modelViewMat) const {
+	//Vector direccion (no funciona con -1, -1, -1) para los torus
+	glm::vec4 dir(1.0f, 1.0f, 1.0f, 0.0f);
+	//Activar shader simple_light
+	Shader* newShader = Shader::get("simple_light");
+	//Usar shader
+	newShader->use();
+	//Vector normalizado
+	newShader->setUniform("lightDir", glm::normalize(glm::vec4(modelViewMat * dir)));
+
+	if (mMesh != nullptr) {
+		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mShader->setUniform("color", mColor);
+		upload(aMat);
+
+		glEnable(GL_CULL_FACE);
+		// CARA DE DELANTE
+		glCullFace(GL_BACK);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		mMesh->render();
+
+		// CARA DE ATRAS
+		glCullFace(GL_FRONT);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		mMesh->render();
+		glDisable(GL_CULL_FACE);
+	}
+}

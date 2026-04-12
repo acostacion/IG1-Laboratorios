@@ -69,6 +69,8 @@ public:
 	void init() override;
 
 private:
+	void createGround(GLdouble width, GLdouble height);
+	void createStar(GLdouble re, GLuint np, GLdouble h);
 	void createBoxOutline(GLdouble length);
 	void createPhoto(GLdouble w, GLdouble h);
 	void createGlassParapet(GLdouble length);
@@ -78,5 +80,10 @@ private:
 	GlassParapet* parapet;
 	Box* box;
 	Star3D* star;
+};
+
+class Scene5 : public Scene {
+public:
+	void init() override;
 };
 #endif //_H_Scene_H_
