@@ -567,6 +567,7 @@ Torus::Torus(GLdouble R, GLdouble r, GLuint nPoints, GLuint nSamples) {
 }
 
 void Torus::render(const glm::mat4& modelViewMat) const {
+	// TODO esto creo k hay k kitarlo
 	//Vector direccion (no funciona con -1, -1, -1) para los torus
 	glm::vec4 dir(1.0f, 1.0f, 1.0f, 0.0f);
 	//Activar shader simple_light
@@ -594,4 +595,8 @@ void Torus::render(const glm::mat4& modelViewMat) const {
 		mMesh->render();
 		glDisable(GL_CULL_FACE);
 	}
+}
+
+ColorMaterialEntity::ColorMaterialEntity() {
+	mShader = Shader::get("simple_light");
 }

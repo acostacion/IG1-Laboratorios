@@ -69,6 +69,11 @@ protected:
 	bool mModulate = false;
 };
 
+class ColorMaterialEntity : public SingleColorEntity {
+public:
+	explicit ColorMaterialEntity();
+};
+
 class RGBAxes : public EntityWithColors
 {
 public:

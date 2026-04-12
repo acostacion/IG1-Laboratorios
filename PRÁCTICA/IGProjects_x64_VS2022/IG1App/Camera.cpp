@@ -34,8 +34,7 @@ Camera::SetAxes()
 }
 
 void
-Camera::uploadVM() const
-{
+Camera::uploadVM() const {
 	Shader::setUniform4All("modelView", mViewMat);
 }
 
@@ -202,8 +201,7 @@ Camera::setPM()
 }
 
 void
-Camera::uploadPM() const
-{
+Camera::uploadPM() const {
 	Shader::setUniform4All("projection", mProjMat);
 }
 
@@ -211,6 +209,11 @@ void
 Camera::upload() const
 {
 	mViewPort->upload();
+
 	uploadVM();
 	uploadPM();
+
+	Shader* s = Shader::get("simple_light");
+	s->use();
+	s->setUniform("lightDir", mViewMat * glm::vec4(-1.0f, -1.5f, -1.25f, 0.0f));
 }
