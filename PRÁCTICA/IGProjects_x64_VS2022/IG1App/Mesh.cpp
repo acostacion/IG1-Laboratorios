@@ -10,6 +10,7 @@ Mesh::Mesh()
  : mVAO(NONE)
  , mVBO(NONE)
  , mCBO(NONE)
+ , mTBO(NONE)	
  , mNBO(NONE)
 {
 }
@@ -44,7 +45,8 @@ Mesh::load() {
 			glGenBuffers(1, &mCBO);
 
 			glBindBuffer(GL_ARRAY_BUFFER, mCBO);
-			glBufferData(GL_ARRAY_BUFFER, vColors.size() * sizeof(vec4), vColors.data(), GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, vColors.size() * sizeof(vec4), 
+				vColors.data(), GL_STATIC_DRAW);
 			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vec4), nullptr);
 			glEnableVertexAttribArray(1);
 		}
@@ -52,20 +54,18 @@ Mesh::load() {
 		if (vTexCoords.size() > 0) {
 			glGenBuffers(1, &mTBO);
 			glBindBuffer(GL_ARRAY_BUFFER, mTBO);
-			glBufferData(GL_ARRAY_BUFFER, vTexCoords.size() * sizeof(glm::vec2),
+			glBufferData(GL_ARRAY_BUFFER, vTexCoords.size() * sizeof(vec2),
 				vTexCoords.data(), GL_STATIC_DRAW);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), nullptr);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), nullptr);
 			glEnableVertexAttribArray(2);
 		}
 
-		if (vNormals.size() > 0) { // upload normals
+		if (vNormals.size() > 0) { 
 			glGenBuffers(1, &mNBO);
 			glBindBuffer(GL_ARRAY_BUFFER, mNBO);
-			glBufferData(GL_ARRAY_BUFFER,
-				vNormals.size() * sizeof(vec3),
+			glBufferData(GL_ARRAY_BUFFER, vNormals.size() * sizeof(vec3),
 				vNormals.data(), GL_STATIC_DRAW);
-			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
-				sizeof(vec3), nullptr);
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), nullptr);
 			glEnableVertexAttribArray(3);
 		}
 	}
@@ -106,8 +106,7 @@ Mesh::render() const {
 	draw();
 }
 
-Mesh*
-Mesh::createRGBAxes(GLdouble l)
+Mesh* Mesh::createRGBAxes(GLdouble l)
 {
 	Mesh* mesh = new Mesh();
 
@@ -507,22 +506,31 @@ void IndexMesh::unload() {
 }
 
 IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax) {
-	//Crea la malla
 	IndexMesh* mesh = new IndexMesh();
-	//Pone la primitiva
 	mesh->mPrimitive = GL_TRIANGLES;
-	//Toma el tamano del perfil
+
 	int tamPerfil = profile.size();
-	//std::cout << tamPerfil;
-	//Y reserva los vertices correspondientes a partir de las samples
-	mesh->vVertices.reserve(nSamples * tamPerfil);
-	// Genera los vertices de las muestras (como si fuera un poligono regular)
-	GLdouble theta1 = angleMax / nSamples; //antes era 2 * std::numbers::pi (360º)
+	
+	mesh->vVertices.reserve((nSamples + 1) * tamPerfil);
+	mesh->vTexCoords.reserve((nSamples + 1) * tamPerfil);
+	
+	GLdouble theta1 = angleMax / nSamples; 
 	//Crea los vertices
 	for (int i = 0; i <= nSamples; ++i) { // muestra i-esima
 		GLdouble c = cos(i * theta1), s = sin(i * theta1);
-		for (auto p : profile) // rota el perfil
+
+		// recorrido horizontal textura
+		float u = float(i) / float(nSamples);
+
+		for (int j = 0; j < tamPerfil; ++j) {// rota el perfil
+			auto p = profile[j]; 
 			mesh->vVertices.emplace_back(p.x * c, p.y, -p.x * s);
+
+			// recorrido vertical textura
+			float v = float(j) / float(tamPerfil - 1);
+			mesh->vTexCoords.emplace_back(u, v); // coordenadas textura (si no se hace con float() se ralla)
+
+		}
 	}
 
 	//Despues une los vertices para formar caras
@@ -572,6 +580,24 @@ void IndexMesh::buildNormalVectors() {
 	//Normalizamos los vectores de vNormals
 	for (int i = 0; i < vNormals.size(); i++)
 		vNormals[i] = glm::normalize(vNormals[i]);
+}
+
+IndexMesh* IndexMesh::generateSphere(GLdouble radius, GLuint nParallel, GLuint nMeridians) {
+	std::vector<glm::vec2> profile;
+
+	// Se van guardando en sentido antihorario desde x = 0
+	GLdouble alpha = 90.0;
+	GLdouble incremento = 180.0 / (nParallel + 1); //Solo media esfera, por eso 180
+	//Conseguimos los puntos del perfil
+	for (GLuint i = 0; i < nParallel + 1; i++) {
+		GLdouble x = radius * glm::cos(glm::radians(alpha));
+		GLdouble y = radius * glm::sin(glm::radians(alpha));
+		alpha -= incremento;
+
+		profile.emplace_back(x, y);
+	}
+
+	return generateByRevolution(profile, nMeridians, 2 * std::numbers::pi);
 }
 
 void IndexMesh::draw() const {

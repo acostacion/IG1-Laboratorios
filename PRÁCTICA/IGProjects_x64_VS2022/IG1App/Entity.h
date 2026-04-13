@@ -72,10 +72,24 @@ protected:
 class ColorMaterialEntity : public SingleColorEntity {
 public:
 	explicit ColorMaterialEntity();
+	void render(const glm::mat4& modelViewMat) const override;
 };
 
-class RGBAxes : public EntityWithColors
-{
+class CompoundEntity : public Abs_Entity {
+public:
+	virtual ~CompoundEntity();
+
+	void render(const glm::mat4& modelViewMat) const override;
+	void update() override;
+	void load() override;
+	void unload() override;
+
+	void addEntity(Abs_Entity* ae);
+protected:
+	std::vector<Abs_Entity*> gObjects;
+};
+
+class RGBAxes : public EntityWithColors {
 public:
 	explicit RGBAxes(GLdouble l);
 };
@@ -225,8 +239,10 @@ protected:
 	GLdouble _length;
 };
 
+// TODO:
+// Assertion failed: mVBO == NONE, file C:\Users\Usuario\Music\IG1-Laboratorios\PRÁCTICA\IGProjects_x64_VS2022\IG1App\Mesh.cpp, line 31
 class Torus : public SingleColorEntity {
-public:
+public: // NOTA: singlecolorentity?
 	/*
 	R - radio desde origen de coordenadas
 	r - radio del perfil
@@ -237,4 +253,41 @@ public:
 	void render(const glm::mat4& modelViewMat) const override;
 };
 
+class Sphere : public ColorMaterialEntity {
+public:
+	explicit Sphere(GLdouble radius, GLuint nParallels, GLuint nMeridians);
+};
+
+class Disk : public ColorMaterialEntity {
+public:
+	explicit Disk(GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples);
+};
+
+class Cone : public ColorMaterialEntity {
+	/*
+		· cono(r = 0 o R = 0)
+		· cilindro(R = r)
+		· tronco de cono de altura h, radio inferior r, radio superior R, rRings vértices en el perfil y nSamples muestras de revolución.
+	*/
+public:
+	explicit Cone(GLdouble h, GLdouble r, GLdouble R, GLuint nRings, GLuint nSamples);
+};
+
+class SphereWithTexture : public EntityWithTexture {
+public:
+	explicit SphereWithTexture(GLdouble radius, GLuint nParallels, GLuint nMeridians);
+};
+
+class Droid : public CompoundEntity {
+public:
+	explicit Droid(GLdouble radius);
+private:
+	Cone* createHead(GLdouble r);
+	Cone* createEye(GLdouble r);
+};
+
+class Robot : public CompoundEntity {
+public:
+	explicit Robot(GLdouble radius);
+};
 #endif //_H_Entities_H_

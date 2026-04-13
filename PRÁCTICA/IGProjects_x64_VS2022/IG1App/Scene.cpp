@@ -258,3 +258,14 @@ void Scene5::init() {
 	gObjects.push_back(torus);
 
 }
+
+void Scene6::init() {
+	Scene::init();
+}
+
+void Scene7::init() {
+	Scene::init();
+
+	Robot* r = new Robot(100);
+	gObjects.push_back(r);
+}

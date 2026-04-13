@@ -598,5 +598,157 @@ void Torus::render(const glm::mat4& modelViewMat) const {
 }
 
 ColorMaterialEntity::ColorMaterialEntity() {
-	mShader = Shader::get("simple_light");
+	mShader = Shader::get("simple_light"); // TODO tiene q estar???
+}
+
+void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
+	if (mMesh != nullptr) {
+		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mShader->setUniform("color", mColor);
+		upload(aMat);
+
+		glEnable(GL_CULL_FACE);
+		// CARA DE DELANTE
+		glCullFace(GL_BACK);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		mMesh->render();
+
+		// CARA DE ATRAS
+		glCullFace(GL_FRONT);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		mMesh->render();
+		glDisable(GL_CULL_FACE);
+
+	}
+}
+
+
+Sphere::Sphere(GLdouble radius, GLuint nParallels, GLuint nMeridians) {
+	mMesh = IndexMesh::generateSphere(radius, nParallels, nMeridians);
+}
+
+Disk::Disk(GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples) {
+	std::vector<glm::vec2> profile;
+
+	//El perfil es una linea recta
+	GLdouble incremento = (R - r) / nRings;
+	//Conseguimos los puntos del perfil
+	for (GLuint i = 0; i < nRings + 2; i++)
+	{
+		GLdouble x = r + (incremento * i);
+		GLdouble y = 0;
+
+		profile.emplace_back(x, y);
+	}
+
+	//Hacemos la malla por revolucion
+	mMesh = IndexMesh::generateByRevolution(profile, nSamples, 2 * std::numbers::pi);
+
+}
+
+Cone::Cone(GLdouble h, GLdouble r, GLdouble R, GLuint nRings, GLuint nSamples) {
+	std::vector<glm::vec2> profile;
+
+	// zona de abajo
+	GLdouble incremento = r / nRings;
+	for (GLuint i = 0; i < nRings; i++)
+	{
+		GLdouble x = incremento * i;
+		GLdouble y = -h / 2;
+
+		profile.emplace_back(x, y);
+	}
+
+	// zona de arriba.
+	incremento = R / nRings;
+	for (GLuint i = nRings; i > 0; i--)
+	{
+		GLdouble x = incremento * (i - 1); // i-1 para cerrar.
+		GLdouble y = h / 2;
+
+		profile.emplace_back(x, y);
+	}
+
+	//Hacemos la malla por revolucion
+	mMesh = IndexMesh::generateByRevolution(profile, nSamples, 2 * std::numbers::pi);
+}
+
+CompoundEntity::~CompoundEntity() {
+	for (Abs_Entity* el : gObjects) delete el;
+	gObjects.clear();
+}
+
+void CompoundEntity::render(const glm::mat4& modelViewMat) const {
+	dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+	for (Abs_Entity* el : gObjects)
+		el->render(aMat);
+	
+}
+
+void CompoundEntity::update() {
+	for (Abs_Entity* el : gObjects)
+		el->update();
+}
+
+void CompoundEntity::load() {
+	for (Abs_Entity* el : gObjects)
+		el->load();
+}
+
+void CompoundEntity::unload() {
+	for (Abs_Entity* el : gObjects)
+		el->unload();
+}
+
+void CompoundEntity::addEntity(Abs_Entity* ae) {
+	gObjects.emplace_back(ae);
+}
+
+SphereWithTexture::SphereWithTexture(GLdouble radius, GLuint nParallels, GLuint nMeridians) {
+	mMesh = IndexMesh::generateSphere(radius, nParallels, nMeridians);
+	mTexture = new Texture();
+	mTexture->load("../assets/images/container.jpg", 255);
+}
+
+Droid::Droid(GLdouble radius) {
+	addEntity(createHead(radius));
+
+	Cone* eyeRight = createEye(radius);
+	Cone* eyeLeft = createEye(radius);
+
+	eyeRight->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(radius/16, 0.0, radius * 0.8))
+		* glm::rotate(glm::dmat4(1), radians(90.0), glm::dvec3(1.0, 0.0, 0.0))
+	);
+
+	eyeLeft->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(-radius/16, 0.0, radius * 0.8))
+		* glm::rotate(glm::dmat4(1), radians(90.0), glm::dvec3(1.0, 0.0, 0.0))
+	);
+
+	addEntity(eyeRight);
+	addEntity(eyeLeft);
+}
+
+Cone* Droid::createHead(GLdouble r) {
+	Cone* head = new Cone(r/2, r , r / 2, r, r);
+	head->setColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)); // amarillo
+	return head;
+}
+
+Cone* Droid::createEye(GLdouble r) {
+	Cone* eye = new Cone(r, r/16, r/16, r, r);
+	eye->setColor(glm::vec4(0.0f, 0.8f, 0.0f, 1.0f));
+	return eye;
+}
+
+// TODO falla iluminacion
+Robot::Robot(GLdouble radius) {
+	addEntity(new SphereWithTexture(radius, 20, 20));
+
+	Droid* head = new Droid(radius);
+	head->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0, radius, 0)));
+	addEntity(head);
+
 }

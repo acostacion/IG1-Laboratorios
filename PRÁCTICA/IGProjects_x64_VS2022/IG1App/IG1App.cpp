@@ -94,6 +94,8 @@ IG1App::init()
 	mScenes.push_back(new Scene3());
 	mScenes.push_back(new Scene4());
 	mScenes.push_back(new Scene5());
+	mScenes.push_back(new Scene6());
+	mScenes.push_back(new Scene7());
 
 	mCamera->set2D();
 	mCamera2->set2D();
@@ -204,45 +206,19 @@ IG1App::key(unsigned int key) {
 	bool need_redisplay = true;
 
 	switch (key) {
-		case 'f': 
-			captura();
-			break;
-		case '+':
-			actualCam->setScale(+0.01); // zoom in  (increases the scale)
-			break;
-		case '-':
-			actualCam->setScale(-0.01); // zoom out (decreases the scale)
-			break;
-		case 'l':
-			actualCam->set3D();
-			break;
-		case 'o':
-			actualCam->set2D();
-			break;
-		case 'a':
-			actualCam->moveLR(-10);
-			break;
-		case 'd':
-			actualCam->moveLR(10);
-			break;
-		case 'w':
-			actualCam->moveUD(10);
-			break;
-		case 's':
-			actualCam->moveUD(-10);
-			break;
-		case 'W':
-			actualCam->moveFB(10);
-			break;
-		case 'S':
-			actualCam->moveFB(-10);
-			break;
-		case 'p':
-			actualCam->changePrj();
-			break;
-		case 'c':
-			actualCam->setCenital();
-			break;
+		case 'f': captura();				  break;
+		case '+': actualCam->setScale(+0.01); break; // zoom in  (increases the scale)
+		case '-': actualCam->setScale(-0.01); break; // zoom out (decreases the scale)
+		case 'l': actualCam->set3D();	      break;
+		case 'o': actualCam->set2D();		  break;
+		case 'a': actualCam->moveLR(-10);	  break;
+		case 'd': actualCam->moveLR(10);	  break;
+		case 'w': actualCam->moveUD(10);	  break;
+		case 's': actualCam->moveUD(-10);     break;
+		case 'W': actualCam->moveFB(10);	  break;
+		case 'S': actualCam->moveFB(-10);	  break;
+		case 'p': actualCam->changePrj();	  break;
+		case 'c': actualCam->setCenital();	  break;
 		case 'k':
 			m2Vistas = !m2Vistas;
 			m2Scenes = false; // si se activa m2Vistas, se quita m2Scenes.
@@ -251,13 +227,11 @@ IG1App::key(unsigned int key) {
 			m2Vistas = false; // si se activa m2Scenes, se quita m2Vistas.
 			m2Scenes = !m2Scenes;
 
-			if (m2Scenes)
-			{
+			if (m2Scenes) {
 				mScenes[2]->load();
 				mScenes[4]->load();
 			}
-			else
-			{
+			else {
 				mScenes[2]->unload();
 				mScenes[4]->unload();
 				mScenes[mCurrentScene] = actualScene;
@@ -269,7 +243,6 @@ IG1App::key(unsigned int key) {
 			if (mUpdateEnabled) {
 				mNextUpdate = glfwGetTime() + FRAME_DURATION; // ponemos ya cuando sera el siguiente update, dentro de frame duration segundos
 			}
-			
 			break;
 		default:
 			if (key >= '0' && key <= '9') {
