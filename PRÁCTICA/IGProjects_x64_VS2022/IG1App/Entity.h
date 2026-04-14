@@ -290,4 +290,21 @@ class Robot : public CompoundEntity {
 public:
 	explicit Robot(GLdouble radius);
 };
+
+class SnowManHat : public CompoundEntity {
+public: explicit SnowManHat(GLdouble radius);
+};
+
+class SnowManHead : public CompoundEntity {
+public:
+	explicit SnowManHead(GLdouble radius);
+private:
+	Cone* createEye(GLdouble r);
+	Cone* createNose(GLdouble r);
+};
+
+class SnowMan : public CompoundEntity {
+public:
+	explicit SnowMan(GLdouble radius);
+};
 #endif //_H_Entities_H_

@@ -602,6 +602,15 @@ ColorMaterialEntity::ColorMaterialEntity() {
 }
 
 void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
+	// TODO esto creo k hay k kitarlo
+	glm::vec4 dir(-1.0f, -1.5f, -1.25f, 0.0f);
+	//Activar shader simple_light
+	Shader* newShader = Shader::get("simple_light");
+	//Usar shader
+	newShader->use();
+	//Vector normalizado
+	newShader->setUniform("lightDir", glm::normalize(glm::vec4(modelViewMat * dir)));
+
 	if (mMesh != nullptr) {
 		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
@@ -619,7 +628,6 @@ void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		mMesh->render();
 		glDisable(GL_CULL_FACE);
-
 	}
 }
 
@@ -750,5 +758,75 @@ Robot::Robot(GLdouble radius) {
 	Droid* head = new Droid(radius);
 	head->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0, radius, 0)));
 	addEntity(head);
-
 }
+
+SnowManHat::SnowManHat(GLdouble radius) {
+	Cone* innerC = new Cone(radius/2, radius - 1, radius - 1, 20, 20);
+	Cone* outerC = new Cone((radius / 2) - 1, radius, radius, 20, 20);
+	Cone* lowerC = new Cone(1, 3 * radius / 2, 3 * radius / 2, 20, 20);
+
+	innerC->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	outerC->setColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	lowerC->setColor(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+
+	innerC->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0.0, radius / 4, 0.0)));
+	outerC->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0.0, radius / 4, 0.0)));
+
+	addEntity(innerC);
+	addEntity(outerC);
+	addEntity(lowerC);
+}
+
+SnowManHead::SnowManHead(GLdouble radius) {
+	Sphere* head = new Sphere(radius, 20, 20);
+	head->setColor(glm::vec4(0.95f, 0.95f, 0.95f, 1.0f));
+	addEntity(head);
+
+	Cone* leftEye = createEye(radius);
+	leftEye->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(radius / 3, 0.0, radius))
+		* glm::rotate(glm::dmat4(1), radians(90.0), glm::dvec3(1.0, 0.0, 0.0))
+	);
+	Cone* rightEye = createEye(radius);
+	rightEye->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(-radius / 3, 0.0, radius))
+		* glm::rotate(glm::dmat4(1), radians(90.0), glm::dvec3(1.0, 0.0, 0.0))
+	);
+
+	addEntity(leftEye);
+	addEntity(rightEye);
+
+	Cone* nose = createNose(radius);
+	nose->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(0.0, -radius/3, radius))
+		* glm::rotate(glm::dmat4(1), radians(90.0), glm::dvec3(1.0, 0.0, 0.0))
+	);
+	addEntity(nose);
+
+	SnowManHat* hat = new SnowManHat(radius);
+	hat->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0.0, radius/2, 0.0)));
+	addEntity(hat);
+}
+
+Cone* SnowManHead::createEye(GLdouble r) {
+	Cone* eye = new Cone(r / 3, r / 4, 0, 20, 20);
+	eye->setColor(glm::vec4(0.0f, 0.5f, 0.5f, 1.0f));
+	return eye;
+}
+
+Cone* SnowManHead::createNose(GLdouble r) {
+	Cone* nose = new Cone(r , r / 8, 0, 20, 20);
+	nose->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+	return nose;
+}
+
+SnowMan::SnowMan(GLdouble radius) {
+	Sphere* body = new Sphere(radius, 20, 20);
+	body->setColor(glm::vec4(0.95f, 0.95f, 0.95f, 1.0f));
+	addEntity(body);
+
+	SnowManHead* head = new SnowManHead(2 * radius / 3);
+	head->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0, radius * 3 / 2, 0)));
+	addEntity(head);
+}
+

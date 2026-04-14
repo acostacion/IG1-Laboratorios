@@ -269,3 +269,14 @@ void Scene7::init() {
 	Robot* r = new Robot(100);
 	gObjects.push_back(r);
 }
+
+void Scene8::init() {
+	Scene::init();
+}
+
+void Scene9::init() {
+	Scene::init();
+
+	SnowMan* sm = new SnowMan(100);
+	gObjects.push_back(sm);
+}

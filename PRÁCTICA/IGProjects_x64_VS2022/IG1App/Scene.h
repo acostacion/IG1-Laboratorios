@@ -83,17 +83,22 @@ private:
 };
 
 class Scene5 : public Scene {
-public:
-	void init() override;
+public: void init() override;
 };
 
 class Scene6 : public Scene {
-public:
-	void init() override;
+public: void init() override;
 };
 
 class Scene7 : public Scene {
-public:
-	void init() override;
+public: void init() override;
+};
+
+class Scene8 : public Scene {
+public: void init() override;
+};
+
+class Scene9 : public Scene {
+public: void init() override;
 };
 #endif //_H_Scene_H_
