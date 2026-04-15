@@ -597,44 +597,40 @@ void Torus::render(const glm::mat4& modelViewMat) const {
 	}
 }
 
+bool ColorMaterialEntity::mShowNormals = true;
+
 ColorMaterialEntity::ColorMaterialEntity() {
-	mShowNormals = true;
-	//mShader = Shader::get("simple_light"); // TODO tiene q estar???
 }
 
 void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
-	// TODO esto creo k hay k kitarlo
-	glm::vec4 dir(1.0f, 1.0f, 1.0f, 0.0f);
-	//Activar shader simple_light
-	Shader* newShader;
-	if (mShowNormals) {
-		newShader = Shader::get("normals");
-	}
-	else {
-		newShader = Shader::get("simple_light");
-	}
-	//Usar shader
-	newShader->use();
-	//Vector normalizado
-	newShader->setUniform("lightDir", glm::normalize(glm::vec4(modelViewMat * dir)));
-
 	if (mMesh != nullptr) {
-		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
-		mShader->use();
-		mShader->setUniform("color", mColor);
+		mat4 aMat = modelViewMat * mModelMat;
+
+		// Primera pasada iluminación con simple_light
+		Shader* lightShader = Shader::get("simple_light");
+		lightShader->use();
+		// dirección de luz en coordenadas de vista
+		glm::vec4 lightDir = glm::normalize(
+			modelViewMat * glm::vec4(-1.0f, -1.0f, -1.0f, 0.0f)
+		);
+		lightShader->setUniform("lightDir", lightDir);
+		lightShader->setUniform("color", mColor);
 		upload(aMat);
 
 		glEnable(GL_CULL_FACE);
-		// CARA DE DELANTE
 		glCullFace(GL_BACK);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		mMesh->render();
-
-		// CARA DE ATRAS
-		glCullFace(GL_FRONT);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		mMesh->render();
 		glDisable(GL_CULL_FACE);
+
+		// Segunda pasada normales si está activado
+		if (mShowNormals) {
+			Shader* normShader = Shader::get("normals");
+			upload(aMat);        // upload con mShader (simple_light) aún activo
+			normShader->use();   // ahora sí el shader de normales
+			// sin esto salía un error invalid operation <location> is invalid. No entiendo muy bien qué pasaba.
+			mMesh->render();
+		}
 	}
 }
 

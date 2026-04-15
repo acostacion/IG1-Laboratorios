@@ -73,10 +73,10 @@ class ColorMaterialEntity : public SingleColorEntity {
 public:
 	explicit ColorMaterialEntity();
 	void render(const glm::mat4& modelViewMat) const override;
-	void toggleNormals() { mShowNormals = !mShowNormals; }
+	static void toggleNormals() { mShowNormals = !mShowNormals; }
 
 private:
-	bool mShowNormals;
+	static bool mShowNormals;
 };
 
 class CompoundEntity : public Abs_Entity {

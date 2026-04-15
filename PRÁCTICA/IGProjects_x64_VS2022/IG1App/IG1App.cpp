@@ -221,6 +221,7 @@ IG1App::key(unsigned int key) {
 		case 'S': actualCam->moveFB(-10);	  break;
 		case 'p': actualCam->changePrj();	  break;
 		case 'c': actualCam->setCenital();	  break;
+		case 'n': ColorMaterialEntity::toggleNormals(); break;
 		case 'k':
 			m2Vistas = !m2Vistas;
 			m2Scenes = false; // si se activa m2Vistas, se quita m2Scenes.
