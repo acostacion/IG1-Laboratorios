@@ -1,4 +1,4 @@
-#include "Mesh.h"
+ï»¿#include "Mesh.h"
 
 using namespace std;
 using namespace glm;
@@ -423,16 +423,16 @@ Mesh* Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h) {
 	mesh->vVertices.emplace_back(0.0, 0.0, 0.0);
 
 	GLdouble ri = re / 2.0;
-	GLdouble angIncr = 360.0 / np; // ángulo entre puntas
+	GLdouble angIncr = 360.0 / np; // Ã¡ngulo entre puntas
 
 	for (GLuint i = 0; i < np; i++) {
 		GLdouble angExt = glm::radians(90.0 + i * angIncr);       // punta exterior
 		GLdouble angInt = glm::radians(90.0 + (i + 0.5) * angIncr); // valle interior
 
-		// Vértice exterior (punta)
+		// VÃ©rtice exterior (punta)
 		mesh->vVertices.emplace_back(
 			re * cos(angExt), re * sin(angExt), h);
-		// Vértice interior (valle)
+		// VÃ©rtice interior (valle)
 		mesh->vVertices.emplace_back(
 			ri * cos(angInt), ri * sin(angInt), h);
 	}
@@ -444,7 +444,7 @@ Mesh* Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h) {
 }
 
 Mesh* Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h) {
-	Mesh* mesh = generateStar3D(re, np, h); // reutilizamos la geometría
+	Mesh* mesh = generateStar3D(re, np, h); // reutilizamos la geometrÃ­a
 	mesh->vTexCoords.reserve(mesh->mNumVertices);
 
 	GLdouble ri = re / 2.0;
@@ -608,7 +608,7 @@ IndexMesh* IndexMesh::generateIndexedBox8(GLdouble l) {
 
 	GLdouble h = l / 2.0;
 
-	// 8 vértices del cubo (según las diapositivas)
+	// 8 vÃ©rtices del cubo (segÃºn las diapositivas)
 	mesh->vVertices = {
 		{ h,  h, -h}, // 0
 		{ h, -h, -h}, // 1
@@ -620,7 +620,7 @@ IndexMesh* IndexMesh::generateIndexedBox8(GLdouble l) {
 		{-h, -h, -h}  // 7
 	};
 
-	// 36 índices (12 triángulos, 2 por cara) según las diapositivas
+	// 36 Ã­ndices (12 triÃ¡ngulos, 2 por cara) segÃºn las diapositivas
 	mesh->vIndexes = {
 		0, 1, 2,  2, 1, 3,  // cara derecha
 		2, 3, 4,  4, 3, 5,  // cara frontal
@@ -636,11 +636,74 @@ IndexMesh* IndexMesh::generateIndexedBox8(GLdouble l) {
 	return mesh;
 }
 
+IndexMesh* IndexMesh::generateIndexedBox(GLdouble l)
+{
+	IndexMesh* mesh = new IndexMesh();
+	mesh->mPrimitive = GL_TRIANGLES;
+	GLdouble h = l / 2.0;
+
+	// Cada cara define sus 4 vÃ©rtices propios, sin compartir con otras caras.
+	// Orden de los vÃ©rtices en cada cara: esquina superior-izquierda en sentido
+	// antihorario visto desde el exterior (para que la normal salga hacia fuera).
+	mesh->vVertices = {
+		// Cara derecha (x = +h), normal (1,0,0)
+		{ h,  h, -h},  //  0
+		{ h, -h, -h},  //  1
+		{ h, -h,  h},  //  2
+		{ h,  h,  h},  //  3
+
+		// Cara izquierda (x = -h), normal (-1,0,0)
+		{-h,  h,  h},  //  4
+		{-h, -h,  h},  //  5
+		{-h, -h, -h},  //  6
+		{-h,  h, -h},  //  7
+
+		// Cara superior (y = +h), normal (0,1,0)
+		{-h,  h, -h},  //  8
+		{ h,  h, -h},  //  9
+		{ h,  h,  h},  // 10
+		{-h,  h,  h},  // 11
+
+		// Cara inferior (y = -h), normal (0,-1,0)
+		{-h, -h,  h},  // 12
+		{ h, -h,  h},  // 13
+		{ h, -h, -h},  // 14
+		{-h, -h, -h},  // 15
+
+		// Cara frontal (z = +h), normal (0,0,1)
+		{ h,  h,  h},  // 16
+		{ h, -h,  h},  // 17
+		{-h, -h,  h},  // 18
+		{-h,  h,  h},  // 19
+
+		// Cara trasera (z = -h), normal (0,0,-1)
+		{-h,  h, -h},  // 20
+		{-h, -h, -h},  // 21
+		{ h, -h, -h},  // 22
+		{ h,  h, -h},  // 23
+	};
+
+	// Cada cara: 2 triÃ¡ngulos â†’ 6 Ã­ndices
+	// TriÃ¡ngulo 1: 0,1,2  TriÃ¡ngulo 2: 0,2,3
+	mesh->vIndexes = {
+		 0,  1,  2,   0,  2,  3,  // cara derecha
+		 4,  5,  6,   4,  6,  7,  // cara izquierda
+		 8,  9, 10,   8, 10, 11,  // cara superior
+		12, 13, 14,  12, 14, 15,  // cara inferior
+		16, 17, 18,  16, 18, 19,  // cara frontal
+		20, 21, 22,  20, 22, 23,  // cara trasera
+	};
+
+	mesh->mNumVertices = mesh->vVertices.size();
+	mesh->buildNormalVectors();
+	return mesh;
+}
+
 void IndexMesh::draw() const {
 	glDrawElements(
 		mPrimitive, // primitiva ( GL_TRIANGLES , etc.)
-		vIndexes.size(), // número de índices
-		GL_UNSIGNED_INT, // tipo de los índices
-		nullptr // offset en el VBO de índices
+		vIndexes.size(), // nÃºmero de Ã­ndices
+		GL_UNSIGNED_INT, // tipo de los Ã­ndices
+		nullptr // offset en el VBO de Ã­ndices
 	);
 }

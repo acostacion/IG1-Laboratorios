@@ -837,7 +837,7 @@ IndexedBox::IndexedBox(GLdouble l)
 	: ColorMaterialEntity()  // color verde
 {
 	mShader = Shader::get("simple_light");
-	mMesh = IndexMesh::generateIndexedBox8(l);
+	mMesh = IndexMesh::generateIndexedBox(l);
 	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 }
 
