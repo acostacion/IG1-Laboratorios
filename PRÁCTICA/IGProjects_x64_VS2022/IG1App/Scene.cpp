@@ -90,6 +90,7 @@ Scene::render(Camera const& cam) const {
 
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
+	glClearColor(0.6, 0.7, 0.8, 1.0);
 }
 
 void Scene0::init() {
@@ -275,6 +276,19 @@ void Scene7::init() {
 
 void Scene8::init() {
 	Scene::init();
+	//Sphere* planeta = new Sphere(100, 20, 20);
+	//gObjects.push_back(planeta);
+
+	Robot* r = new Robot(100);
+	//r->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0, 100, 0)));
+	gObjects.push_back(r);
+
+}
+
+void Scene8::render(Camera const& cam) const {
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Scene::render(cam);
 }
 
 void Scene9::init() {

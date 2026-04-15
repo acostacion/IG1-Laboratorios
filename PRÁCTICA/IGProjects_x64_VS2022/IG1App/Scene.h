@@ -20,7 +20,7 @@ public:
 
 	virtual void init();
 
-	void render(Camera const& cam) const;
+	virtual void render(Camera const& cam) const;
 
 	virtual void update() {
 		for (Abs_Entity* obj : gObjects)
@@ -94,8 +94,10 @@ class Scene7 : public Scene {
 public: void init() override;
 };
 
-class Scene8 : public Scene {
-public: void init() override;
+class Scene8 : public Scene {  
+public:  
+   void init() override;  
+   void render(Camera const& cam) const override; // Ensure this matches the base class signature  
 };
 
 class Scene9 : public Scene {
