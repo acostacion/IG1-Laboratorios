@@ -72,6 +72,7 @@ public:
 	static IndexMesh* generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax = 2 * std::numbers::pi);
 	void buildNormalVectors();
 	static IndexMesh* generateSphere(GLdouble radius, GLuint nParallel, GLuint nMeridians);
+	static IndexMesh* generateIndexedBox8(GLdouble l);
 
 protected:
 	void draw() const override;

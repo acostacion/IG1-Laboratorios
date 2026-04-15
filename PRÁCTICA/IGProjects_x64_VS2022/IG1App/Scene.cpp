@@ -261,6 +261,10 @@ void Scene5::init() {
 
 void Scene6::init() {
 	Scene::init();
+
+	IndexedBox* indexedBox = new IndexedBox(200);
+	indexedBox->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(150, 100, 150)));
+	gObjects.push_back(indexedBox);
 }
 
 void Scene7::init() {

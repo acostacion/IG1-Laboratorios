@@ -73,6 +73,10 @@ class ColorMaterialEntity : public SingleColorEntity {
 public:
 	explicit ColorMaterialEntity();
 	void render(const glm::mat4& modelViewMat) const override;
+	void toggleNormals() { mShowNormals = !mShowNormals; }
+
+private:
+	bool mShowNormals;
 };
 
 class CompoundEntity : public Abs_Entity {
@@ -307,4 +311,12 @@ class SnowMan : public CompoundEntity {
 public:
 	explicit SnowMan(GLdouble radius);
 };
+
+class IndexedBox : public ColorMaterialEntity {
+public:
+	explicit IndexedBox(GLdouble l);
+	//void render(const glm::mat4& modelViewMat) const override;
+};
+
+
 #endif //_H_Entities_H_
