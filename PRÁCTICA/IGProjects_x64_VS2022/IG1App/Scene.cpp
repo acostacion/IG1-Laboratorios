@@ -279,11 +279,33 @@ void Scene8::init() {
 	//Sphere* planeta = new Sphere(100, 20, 20);
 	//gObjects.push_back(planeta);
 
-	Robot* r = new Robot(100);
+	//Robot* r = new Robot(100);
 	//r->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0, 100, 0)));
-	gObjects.push_back(r);
+	//gObjects.push_back(r);
+
+	GLdouble radioPlaneta = 200.0;
+	GLdouble radioRobot = 30.0;
+
+	// --- planeta
+	mPlaneta = new Sphere(radioPlaneta, 40, 40);
+	mPlaneta->setColor({ 171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f, 1.0f });
+	gObjects.push_back(mPlaneta);
+
+	// --- nodo ficticio: se encarga de posicionar el droide en el polo norte
+	// El polo norte es (0, radioPlaneta, 0)
+	mNodoFicticio = new CompoundEntity();
+	mNodoFicticio->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(0, radioPlaneta + 30, 0))
+	);
+
+	// --- droide encima del polo norte
+	mRobot = new Robot(radioRobot);
+	static_cast<CompoundEntity*>(mNodoFicticio)->addEntity(mRobot);
+
+	gObjects.push_back(mNodoFicticio);
 
 }
+
 
 void Scene8::render(Camera const& cam) const {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

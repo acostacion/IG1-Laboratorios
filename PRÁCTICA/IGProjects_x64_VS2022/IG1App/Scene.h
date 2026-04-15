@@ -98,6 +98,12 @@ class Scene8 : public Scene {
 public:  
    void init() override;  
    void render(Camera const& cam) const override; // Ensure this matches the base class signature  
+   void rotate();
+   void orbit();
+private:
+	Robot* mRobot = nullptr;
+	Sphere* mPlaneta = nullptr;
+	Abs_Entity* mNodoFicticio = nullptr;
 };
 
 class Scene9 : public Scene {
