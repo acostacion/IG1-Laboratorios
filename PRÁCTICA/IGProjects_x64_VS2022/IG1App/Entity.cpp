@@ -846,38 +846,3 @@ IndexedBox::IndexedBox(GLdouble l)
 	mMesh = IndexMesh::generateIndexedBox(l);
 	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 }
-
-/*
-void IndexedBox::render(const glm::mat4& modelViewMat) const
-{
-	// TODO esto creo k hay k kitarlo
-	//Vector direccion (no funciona con -1, -1, -1) para los torus
-	glm::vec4 dir(1.0f, 1.0f, 1.0f, 0.0f);
-	//Activar shader simple_light
-	Shader* newShader = Shader::get("simple_light");
-	//Usar shader
-	newShader->use();
-	//Vector normalizado
-	newShader->setUniform("lightDir", glm::normalize(glm::vec4(modelViewMat * dir)));
-
-	if (mMesh != nullptr) {
-		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
-		mShader->use();
-		mShader->setUniform("color", mColor);
-		upload(aMat);
-
-		glEnable(GL_CULL_FACE);
-		// CARA DE DELANTE
-		glCullFace(GL_BACK);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		mMesh->render();
-
-		// CARA DE ATRAS
-		glCullFace(GL_FRONT);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		mMesh->render();
-		glDisable(GL_CULL_FACE);
-	}
-}
-*/
-

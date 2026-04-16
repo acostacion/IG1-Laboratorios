@@ -20,7 +20,7 @@ public:
 
 	virtual void init();
 
-	void render(Camera const& cam) const;
+	virtual void render(Camera const& cam) const;
 
 	virtual void update() {
 		for (Abs_Entity* obj : gObjects)
@@ -95,7 +95,18 @@ public: void init() override;
 };
 
 class Scene8 : public Scene {
-public: void init() override;
+public: 
+	void init() override;
+	void render(Camera const& cam) const override;
+	void rotate();
+	void orbit();
+
+private:
+	Sphere* mPlaneta = nullptr;
+	Robot* mRobot = nullptr;
+	CompoundEntity* mNodoFicticio = nullptr;
+	CompoundEntity* mNodoRotacion = nullptr;
+
 };
 
 class Scene9 : public Scene {

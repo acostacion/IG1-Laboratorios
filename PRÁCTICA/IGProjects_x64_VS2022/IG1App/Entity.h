@@ -314,7 +314,6 @@ public:
 class IndexedBox : public ColorMaterialEntity {
 public:
 	explicit IndexedBox(GLdouble l);
-	//void render(const glm::mat4& modelViewMat) const override;
 };
 
 #endif //_H_Entities_H_

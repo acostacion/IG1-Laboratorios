@@ -206,9 +206,10 @@ IG1App::key(unsigned int key) {
 	Scene* actualScene = mScenes[mCurrentScene];
 
 	bool need_redisplay = true;
+	Scene8* s8 = dynamic_cast<Scene8*>(actualScene); // para los casos de las teclas g y f, que solo funcionan en la escena 8.
 
 	switch (key) {
-		case 'f': captura();				  break;
+		case 'r': captura();				  break;
 		case '+': actualCam->setScale(+0.01); break; // zoom in  (increases the scale)
 		case '-': actualCam->setScale(-0.01); break; // zoom out (decreases the scale)
 		case 'l': actualCam->set3D();	      break;
@@ -222,6 +223,12 @@ IG1App::key(unsigned int key) {
 		case 'p': actualCam->changePrj();	  break;
 		case 'c': actualCam->setCenital();	  break;
 		case 'n': ColorMaterialEntity::toggleShowNormals(); break;
+		case 'f': 
+			if (s8) s8->rotate();
+			break;
+		case 'g': 
+			if (s8) s8->orbit();
+			break;
 		case 'k':
 			m2Vistas = !m2Vistas;
 			m2Scenes = false; // si se activa m2Vistas, se quita m2Scenes.

@@ -75,6 +75,8 @@ void
 Scene::render(Camera const& cam) const {
 	cam.upload();
 
+	glClearColor(0.6, 0.7, 0.8, 1.0);
+
 	// --- objetos opacos
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
@@ -275,6 +277,61 @@ void Scene7::init() {
 
 void Scene8::init() {
 	Scene::init();
+
+	GLdouble radioPlaneta = 200.0;
+	GLdouble radioRobot = 30.0;
+
+	// --- planeta
+	mPlaneta = new Sphere(radioPlaneta, 40, 40);
+	mPlaneta->setColor({ 171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f, 1.0f });
+	gObjects.push_back(mPlaneta);
+
+	// nodo ficticio exterior: posiciona el droide en el polo norte
+	// y controla la órbita (se rota sobre ejes del planeta)
+	mNodoFicticio = new CompoundEntity();
+	mNodoFicticio->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(0, radioPlaneta, 0))
+	);
+
+	// nodo de rotación interior: controla hacia dónde apunta el morro
+	// es hijo del nodo ficticio, por lo que su eje Y es el "arriba" local del droide
+	mNodoRotacion = new CompoundEntity();
+
+	mRobot = new Robot(radioRobot);
+	static_cast<CompoundEntity*>(mNodoRotacion)->addEntity(mRobot);
+	static_cast<CompoundEntity*>(mNodoFicticio)->addEntity(mNodoRotacion);
+
+	gObjects.push_back(mNodoFicticio);
+}
+
+
+void Scene8::render(Camera const& cam) const {
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Scene::render(cam);
+}
+
+void Scene8::rotate() {
+	mNodoRotacion->setModelMat(
+		mNodoRotacion->modelMat() *
+		glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+	);
+}
+
+void Scene8::orbit() {
+	// Extraemos el eje "frente" actual del droide (columna 2 = eje Z local)
+	// combinando la orientación del nodo ficticio y el nodo de rotación
+	glm::mat4 orientacion = mNodoFicticio->modelMat() * mNodoRotacion->modelMat();
+	glm::vec3 ejeFrente = glm::normalize(glm::vec3(orientacion[2])); // columna 2
+
+	// Orbitamos alrededor del planeta usando ese eje como eje de rotación
+	// pero perpendicular al frente, osea el eje derecha (columna 0)
+	glm::vec3 ejeDerecha = glm::normalize(glm::vec3(orientacion[0])); // columna 0
+
+	mNodoFicticio->setModelMat(
+		glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), ejeDerecha)
+		* mNodoFicticio->modelMat()
+	);
 }
 
 void Scene9::init() {
