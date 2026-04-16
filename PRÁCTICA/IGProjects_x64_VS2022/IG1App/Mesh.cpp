@@ -600,6 +600,40 @@ IndexMesh* IndexMesh::generateSphere(GLdouble radius, GLuint nParallel, GLuint n
 	return generateByRevolution(profile, nMeridians, 2 * std::numbers::pi);
 }
 
+IndexMesh* IndexMesh::generateIndexedBox8(GLdouble l) {
+	IndexMesh* mesh = new IndexMesh();
+	mesh->mPrimitive = GL_TRIANGLES;
+
+	GLdouble h = l / 2.0;
+
+	// 8 vértices del cubo (según las diapositivas)
+	mesh->vVertices = {
+		{ h,  h, -h}, // 0
+		{ h, -h, -h}, // 1
+		{ h,  h,  h}, // 2
+		{ h, -h,  h}, // 3
+		{-h,  h,  h}, // 4
+		{-h, -h,  h}, // 5
+		{-h,  h, -h}, // 6
+		{-h, -h, -h}  // 7
+	};
+
+	// 36 índices (12 triángulos, 2 por cara) según las diapositivas
+	mesh->vIndexes = {
+		0, 1, 2,  2, 1, 3,  // cara derecha
+		2, 3, 4,  4, 3, 5,  // cara frontal
+		4, 5, 6,  6, 5, 7,  // cara izquierda
+		6, 7, 0,  0, 7, 1,  // cara trasera
+		4, 6, 2,  2, 6, 0,  // cara superior
+		1, 7, 3,  3, 7, 5   // cara inferior
+	};
+
+	mesh->mNumVertices = mesh->vVertices.size();
+	mesh->buildNormalVectors();
+
+	return mesh;
+}
+
 void IndexMesh::draw() const {
 	glDrawElements(
 		mPrimitive, // primitiva ( GL_TRIANGLES , etc.)

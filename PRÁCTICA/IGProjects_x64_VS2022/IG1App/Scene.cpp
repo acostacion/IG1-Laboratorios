@@ -261,6 +261,9 @@ void Scene5::init() {
 
 void Scene6::init() {
 	Scene::init();
+
+	IndexedBox* indexedBox = new IndexedBox(200);
+	gObjects.push_back(indexedBox);
 }
 
 void Scene7::init() {
