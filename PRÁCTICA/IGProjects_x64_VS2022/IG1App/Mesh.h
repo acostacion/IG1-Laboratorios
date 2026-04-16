@@ -73,6 +73,7 @@ public:
 	void buildNormalVectors();
 	static IndexMesh* generateSphere(GLdouble radius, GLuint nParallel, GLuint nMeridians);
 	static IndexMesh* generateIndexedBox8(GLdouble l);
+	static IndexMesh* generateIndexedBox(GLdouble l);
 
 protected:
 	void draw() const override;

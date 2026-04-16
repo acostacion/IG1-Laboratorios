@@ -634,6 +634,68 @@ IndexMesh* IndexMesh::generateIndexedBox8(GLdouble l) {
 	return mesh;
 }
 
+IndexMesh* IndexMesh::generateIndexedBox(GLdouble l) {
+	IndexMesh* mesh = new IndexMesh();
+	mesh->mPrimitive = GL_TRIANGLES;
+	GLdouble h = l / 2.0;
+
+	// Cada cara define sus 4 vértices propios, sin compartir con otras caras.
+	// Orden de los vértices en cada cara: esquina superior-izquierda en sentido
+	// antihorario visto desde el exterior (para que la normal salga hacia fuera).
+	mesh->vVertices = {
+		// Cara derecha (x = +h), normal (1,0,0)
+		{ h,  h, -h},  //  0
+		{ h, -h, -h},  //  1
+		{ h, -h,  h},  //  2
+		{ h,  h,  h},  //  3
+
+		// Cara izquierda (x = -h), normal (-1,0,0)
+		{-h,  h,  h},  //  4
+		{-h, -h,  h},  //  5
+		{-h, -h, -h},  //  6
+		{-h,  h, -h},  //  7
+
+		// Cara superior (y = +h), normal (0,1,0)
+		{-h,  h, -h},  //  8
+		{ h,  h, -h},  //  9
+		{ h,  h,  h},  // 10
+		{-h,  h,  h},  // 11
+
+		// Cara inferior (y = -h), normal (0,-1,0)
+		{-h, -h,  h},  // 12
+		{ h, -h,  h},  // 13
+		{ h, -h, -h},  // 14
+		{-h, -h, -h},  // 15
+
+		// Cara frontal (z = +h), normal (0,0,1)
+		{ h,  h,  h},  // 16
+		{ h, -h,  h},  // 17
+		{-h, -h,  h},  // 18
+		{-h,  h,  h},  // 19
+
+		// Cara trasera (z = -h), normal (0,0,-1)
+		{-h,  h, -h},  // 20
+		{-h, -h, -h},  // 21
+		{ h, -h, -h},  // 22
+		{ h,  h, -h},  // 23
+	};
+
+	// Cada cara: 2 triángulos -> 6 índices
+	// Triángulo 1: 0,1,2  Triángulo 2: 0,2,3
+	mesh->vIndexes = {
+		 0,  1,  2,   0,  2,  3,  // cara derecha
+		 4,  5,  6,   4,  6,  7,  // cara izquierda
+		 8,  9, 10,   8, 10, 11,  // cara superior
+		12, 13, 14,  12, 14, 15,  // cara inferior
+		16, 17, 18,  16, 18, 19,  // cara frontal
+		20, 21, 22,  20, 22, 23,  // cara trasera
+	};
+
+	mesh->mNumVertices = mesh->vVertices.size();
+	mesh->buildNormalVectors();
+	return mesh;
+}
+
 void IndexMesh::draw() const {
 	glDrawElements(
 		mPrimitive, // primitiva ( GL_TRIANGLES , etc.)

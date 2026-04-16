@@ -843,7 +843,7 @@ SnowMan::SnowMan(GLdouble radius) {
 
 IndexedBox::IndexedBox(GLdouble l)
 {
-	mMesh = IndexMesh::generateIndexedBox8(l);
+	mMesh = IndexMesh::generateIndexedBox(l);
 	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 }
 
