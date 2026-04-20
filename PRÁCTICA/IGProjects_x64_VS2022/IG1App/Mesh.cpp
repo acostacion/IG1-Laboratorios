@@ -481,7 +481,8 @@ IndexMesh::~IndexMesh() {
 }
 
 void IndexMesh::load() {
-	Mesh::load(); glBindVertexArray(mVAO);
+	Mesh::load(); 
+	glBindVertexArray(mVAO);
 	glGenBuffers(1, &mIBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
@@ -503,6 +504,8 @@ void IndexMesh::unload() {
 			mIBO = NONE;
 		}
 	}
+
+	Mesh::unload();
 }
 
 IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax) {
@@ -559,6 +562,7 @@ IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile
 void IndexMesh::buildNormalVectors() {
 	// METODO NEWELL (REVISAR):
 	//Rellena inicialmente con (0.0, 0.0, 0.0)
+	vNormals.clear();
 	for (int i = 0; i < vIndexes.size(); i++)
 		vNormals.emplace_back(0.0, 0.0, 0.0);
 
@@ -570,7 +574,7 @@ void IndexMesh::buildNormalVectors() {
 			vVertices[vIndexes[i + 1]] - vVertices[vIndexes[i]],
 			vVertices[vIndexes[i + 2]] - vVertices[vIndexes[i]])
 		);
-
+	
 		//Los rellena
 		vNormals[vIndexes[i]] += normal;
 		vNormals[vIndexes[i + 1]] += normal;
