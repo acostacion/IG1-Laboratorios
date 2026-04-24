@@ -219,13 +219,13 @@ Ground::Ground(GLdouble w, GLdouble h) {
 	mModelMat = glm::rotate(glm::dmat4(1), glm::radians(-90.0), glm::dvec3(1, 0, 0));
 }
 
-Ground::~Ground() {
-	delete mMesh; mMesh = nullptr;
-	delete mTexture; mTexture = nullptr;
-}
-
 EntityWithTexture::EntityWithTexture() {
 	mShader = Shader::get("texture");
+}
+
+EntityWithTexture::~EntityWithTexture() {
+	delete mMesh; mMesh = nullptr;
+	delete mTexture; mTexture = nullptr;
 }
 
 void EntityWithTexture::render(const glm::mat4& modelViewMat) const {
