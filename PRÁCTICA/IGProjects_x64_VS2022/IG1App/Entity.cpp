@@ -808,3 +808,15 @@ IndexedBox::IndexedBox(GLdouble l)
 	mMesh = IndexMesh::generateIndexedBox(l);
 	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 }
+
+EntityWithMaterial::EntityWithMaterial() {
+	mShader = Shader::get("light");
+}
+
+void EntityWithMaterial::render(const glm::mat4& modelViewMat) const {
+	mShader->use();
+	// Carga los atributos del material en la GPU
+	mMaterial.upload(*mShader);
+	upload(modelViewMat * mModelMat);
+	mMesh->render();
+}

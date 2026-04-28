@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Material.h"
 
 class Abs_Entity // abstract class
 {
@@ -91,6 +92,15 @@ public:
 	void addEntity(Abs_Entity* ae);
 protected:
 	std::vector<Abs_Entity*> gObjects;
+};
+
+class EntityWithMaterial : public Abs_Entity {
+public:
+	EntityWithMaterial();
+	void setMaterial(const Material& m) { material = m; };
+	void render(const glm::mat4& modelViewMat) const override;
+protected:
+	Material material;
 };
 
 class RGBAxes : public EntityWithColors {
