@@ -6,6 +6,7 @@
 
 #include "Camera.h"
 #include "Entity.h"
+#include "Light.h"
 
 #include <vector>
 
@@ -35,6 +36,8 @@ public:
 	void unload();
 
 protected:
+	void uploadLights(Camera const& cam) const;
+
 	void destroy();
 	void setGL();
 	void resetGL();
@@ -42,6 +45,7 @@ protected:
 	std::vector<Abs_Entity*> gObjects;		// Entities (graphic objects) of the scene
 	std::vector<Texture*> gTextures;		// texturas de la escena
 	std::vector<Abs_Entity*> gObjectsTrans; // Entidades con transparencias
+	std::vector<Light*> gLights;			// Luces
 };
 
 class Scene0 : public Scene {

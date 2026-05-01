@@ -224,7 +224,6 @@ EntityWithTexture::EntityWithTexture() {
 }
 
 EntityWithTexture::~EntityWithTexture() {
-	delete mMesh; mMesh = nullptr;
 	delete mTexture; mTexture = nullptr;
 }
 
@@ -578,30 +577,9 @@ void Torus::render(const glm::mat4& modelViewMat) const {
 	}
 }
 
-bool ColorMaterialEntity::mShowNormals = false;
-
 ColorMaterialEntity::ColorMaterialEntity() {
 	mShader = Shader::get("simple_light"); // TODO tiene q estar???
 }
-
-void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
-	if (mMesh != nullptr) {
-		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
-		mShader->use();
-		mShader->setUniform("color", mColor);
-		upload(aMat);
-
-		mMesh->render();
-
-		if (mShowNormals) {
-			Shader* normShader = Shader::get("normals");
-			normShader->use();
-			normShader->setUniform("modelView", aMat);  // o el nombre que use ese shader
-			mMesh->render();
-		}
-	}
-}
-
 
 Sphere::Sphere(GLdouble radius, GLuint nParallels, GLuint nMeridians) {
 	mMesh = IndexMesh::generateSphere(radius, nParallels, nMeridians);
@@ -712,13 +690,13 @@ Droid::Droid(GLdouble radius) {
 
 Cone* Droid::createHead(GLdouble r) {
 	Cone* head = new Cone(r/2, r , r / 2, r, r);
-	head->setColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)); // amarillo
+	head->setMaterial(glm::vec3(1.0f, 1.0f, 0.0f)); // amarillo
 	return head;
 }
 
 Cone* Droid::createEye(GLdouble r) {
 	Cone* eye = new Cone(r, r/16, r/16, r, r);
-	eye->setColor(glm::vec4(0.0f, 0.8f, 0.0f, 1.0f));
+	eye->setMaterial(glm::vec3(0.0f, 0.8f, 0.0f));
 	return eye;
 }
 
@@ -736,9 +714,9 @@ SnowManHat::SnowManHat(GLdouble radius) {
 	Cone* outerC = new Cone((radius / 2) - 1, radius, radius, 20, 20);
 	Cone* lowerC = new Cone(1, 3 * radius / 2, 3 * radius / 2, 20, 20);
 
-	innerC->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	outerC->setColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	lowerC->setColor(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+	innerC->setMaterial(glm::vec3(1.0f, 0.0f, 0.0f));
+	outerC->setMaterial(glm::vec3(0.0f, 0.0f, 1.0f));
+	lowerC->setMaterial(glm::vec3(0.0f, 1.0f, 1.0f));
 
 	innerC->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0.0, radius / 4, 0.0)));
 	outerC->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0.0, radius / 4, 0.0)));
@@ -750,7 +728,7 @@ SnowManHat::SnowManHat(GLdouble radius) {
 
 SnowManHead::SnowManHead(GLdouble radius) {
 	Sphere* head = new Sphere(radius, 20, 20);
-	head->setColor(glm::vec4(0.95f, 0.95f, 0.95f, 1.0f));
+	head->setMaterial(glm::vec3(0.95f, 0.95f, 0.95f));
 	addEntity(head);
 
 	Cone* leftEye = createEye(radius);
@@ -781,19 +759,19 @@ SnowManHead::SnowManHead(GLdouble radius) {
 
 Cone* SnowManHead::createEye(GLdouble r) {
 	Cone* eye = new Cone(r / 3, r / 4, 0, 20, 20);
-	eye->setColor(glm::vec4(0.0f, 0.5f, 0.5f, 1.0f));
+	eye->setMaterial(glm::vec3(0.0f, 0.5f, 0.5f));
 	return eye;
 }
 
 Cone* SnowManHead::createNose(GLdouble r) {
 	Cone* nose = new Cone(r , r / 8, 0, 20, 20);
-	nose->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+	nose->setMaterial(glm::vec3(1.0f, 0.5f, 0.0f));
 	return nose;
 }
 
 SnowMan::SnowMan(GLdouble radius) {
 	Sphere* body = new Sphere(radius, 20, 20);
-	body->setColor(glm::vec4(0.95f, 0.95f, 0.95f, 1.0f));
+	body->setMaterial(glm::vec3(0.95f, 0.95f, 0.95f));
 	addEntity(body);
 
 	SnowManHead* head = new SnowManHead(2 * radius / 3);
@@ -801,22 +779,32 @@ SnowMan::SnowMan(GLdouble radius) {
 	addEntity(head);
 }
 
-
-
 IndexedBox::IndexedBox(GLdouble l)
 {
 	mMesh = IndexMesh::generateIndexedBox(l);
-	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	setMaterial(glm::vec3(0.0f, 1.0f, 0.0f));
 }
+
+bool EntityWithMaterial::mShowNormals = false;
 
 EntityWithMaterial::EntityWithMaterial() {
 	mShader = Shader::get("light");
 }
 
 void EntityWithMaterial::render(const glm::mat4& modelViewMat) const {
-	mShader->use();
-	// Carga los atributos del material en la GPU
-	mMaterial.upload(*mShader);
-	upload(modelViewMat * mModelMat);
-	mMesh->render();
+	if (mMesh != nullptr) {
+		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		material.upload(*mShader);
+		upload(aMat);
+
+		mMesh->render();
+
+		if (mShowNormals) {
+			Shader* normShader = Shader::get("normals");
+			normShader->use();
+			normShader->setUniform("modelView", aMat);  // o el nombre que use ese shader
+			mMesh->render();
+		}
+	}
 }

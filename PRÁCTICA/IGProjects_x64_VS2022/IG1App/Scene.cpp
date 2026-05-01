@@ -12,6 +12,16 @@ Scene::init()
 
 	// allocate memory and load resources
 	// Lights
+	DirLight* dirLight = new DirLight(); //Con id = 0
+
+	//Caracteristicas de shader simple_light
+	dirLight->setAmb(vec3(0.25, 0.25, 0.25));
+	dirLight->setDiff(vec3(0.6, 0.6, 0.6));
+	dirLight->setSpec(vec3(0.0, 0.2, 0.0));
+	//Cambiamos la direccion porque DirLight (-1, -1, -1) viene desde abajo
+	dirLight->setDirection(vec3(-1.0, -1.0, -1.0));
+	dirLight->setEnabled(true);
+	gLights.push_back(dirLight);
 	// Textures
 
 	// Graphics objects (entities) of the scene
@@ -22,6 +32,15 @@ Scene::~Scene()
 {
 	destroy();
 	resetGL();
+}
+
+void Scene::uploadLights(Camera const& cam) const {
+	Shader* s = Shader::get("light");
+	s->use();
+
+	for (Light* l : gLights) {
+		l->upload(*s, cam.viewMat()); // actualizamos las luces
+	}
 }
 
 void
@@ -39,6 +58,10 @@ Scene::destroy()
 	for (Texture* t : gTextures)
 		delete t;
 	gTextures.clear();
+
+	for (Light* l : gLights)
+		delete l;
+	gLights.clear();
 }
 
 void
@@ -77,6 +100,8 @@ Scene::render(Camera const& cam) const {
 
 	glClearColor(0.6, 0.7, 0.8, 1.0);
 
+	uploadLights(cam);
+
 	// --- objetos opacos
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
@@ -96,6 +121,21 @@ Scene::render(Camera const& cam) const {
 
 void Scene0::init() {
 	Scene::init();
+
+	Sphere* yellow = new Sphere(25, 40, 40);
+	Sphere* gold = new Sphere(25, 40, 40);
+	
+	Material yellowMat(glm::vec3(1.0, 1.0, 0.0));
+	Material goldMat; goldMat.setGold();
+
+	yellow->setMaterial(yellowMat);
+	gold->setMaterial(goldMat);
+
+	yellow->setModelMat(translate(glm::dmat4(1), glm::dvec3(50, 0, 0)));
+	gold->setModelMat(translate(glm::dmat4(1), glm::dvec3(-50, 0, 0)));
+
+	gObjects.push_back(yellow);
+	gObjects.push_back(gold);
 }
 
 void Scene1::init() {
@@ -283,7 +323,7 @@ void Scene8::init() {
 
 	// --- planeta
 	mPlaneta = new Sphere(radioPlaneta, 40, 40);
-	mPlaneta->setColor({ 171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f, 1.0f });
+	mPlaneta->setMaterial(glm::vec3(171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f));
 	gObjects.push_back(mPlaneta);
 
 	// nodo ficticio exterior: posiciona el droide en el polo norte

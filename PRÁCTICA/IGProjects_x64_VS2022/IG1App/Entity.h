@@ -71,13 +71,19 @@ protected:
 	bool mModulate = false;
 };
 
-class ColorMaterialEntity : public SingleColorEntity {
+class EntityWithMaterial : public Abs_Entity {
 public:
-	explicit ColorMaterialEntity();
+	EntityWithMaterial();
+	void setMaterial(const Material& m) { material = m; };
 	void render(const glm::mat4& modelViewMat) const override;
 	static void toggleShowNormals() { mShowNormals = !mShowNormals; }
-private:
+protected:
+	Material material;
 	static bool mShowNormals;
+};
+
+class ColorMaterialEntity : public EntityWithMaterial {
+public: explicit ColorMaterialEntity();
 };
 
 class CompoundEntity : public Abs_Entity {
@@ -92,15 +98,6 @@ public:
 	void addEntity(Abs_Entity* ae);
 protected:
 	std::vector<Abs_Entity*> gObjects;
-};
-
-class EntityWithMaterial : public Abs_Entity {
-public:
-	EntityWithMaterial();
-	void setMaterial(const Material& m) { material = m; };
-	void render(const glm::mat4& modelViewMat) const override;
-protected:
-	Material material;
 };
 
 class RGBAxes : public EntityWithColors {

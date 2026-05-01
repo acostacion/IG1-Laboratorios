@@ -13,12 +13,17 @@ public:
 	virtual ~Material() = default;
 	void upload(Shader& shader) const;
 
+	const glm::vec3& getAmb() const { return ambient; }
+	const glm::vec3& getDiff() const { return diffuse; }
+	const glm::vec3& getSpec() const { return specular; }
+
 	void setAmb(const glm::vec3& v);
 	void setDiff(const glm::vec3& v);
 	void setSpec(const glm::vec3& v);
 	void setExp(GLfloat exp);
 
 	void setCopper();
+	void setGold();
 
 protected:
 	// Coeficientes de reflexión

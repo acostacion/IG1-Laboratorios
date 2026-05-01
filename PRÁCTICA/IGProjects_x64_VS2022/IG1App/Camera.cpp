@@ -34,11 +34,6 @@ Camera::SetAxes()
 }
 
 void
-Camera::uploadVM() const {
-	Shader::setUniform4All("modelView", mViewMat);
-}
-
-void
 Camera::setVM()
 {
 	mViewMat = lookAt(mEye, mLook, mUp); // glm::lookAt defines the view matrix
@@ -208,8 +203,6 @@ Camera::uploadPM() const {
 void
 Camera::upload() const {
 	mViewPort->upload();
-
-	uploadVM();
 	uploadPM();
 
 	Shader* s = Shader::get("simple_light");
