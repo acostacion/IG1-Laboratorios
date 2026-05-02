@@ -100,16 +100,14 @@ void
 Camera::moveLR(GLfloat d) {
 	mEye += mRight * d;
 	mLook += mRight * d;
-	mViewMat = glm::translate(mViewMat, glm::vec3(-d, 0, 0)); // en espacio de cámara
-	SetAxes();
+	setVM();
 }
 
 void 
 Camera::moveUD(GLfloat d) {
 	mEye += mUpward * d;
 	mLook += mUpward * d;
-	mViewMat = glm::translate(mViewMat, glm::vec3(0, -d, 0));
-	SetAxes();
+	setVM();
 }
 
 void Camera::pitchReal(GLfloat cs) {
@@ -145,8 +143,7 @@ void
 Camera::moveFB(GLfloat d) {
 	mEye += mFront * d;
 	mLook += mFront * d;
-	mViewMat = glm::translate(mViewMat, glm::vec3(0, 0, d));
-	SetAxes();
+	setVM();
 }
 
 void
