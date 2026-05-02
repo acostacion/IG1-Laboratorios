@@ -41,7 +41,6 @@ void Scene::uploadLights(Camera const& cam) const {
 	for (Light* l : gLights) {
 		l->upload(*s, cam.viewMat());
 		// Debug dirlight direction
-		std::cout << "viewMat[0][0]=" << cam.viewMat()[0][0] << std::endl;
 	}
 }
 
@@ -344,13 +343,63 @@ void Scene8::init() {
 	static_cast<CompoundEntity*>(mNodoFicticio)->addEntity(mNodoRotacion);
 
 	gObjects.push_back(mNodoFicticio);
+
+	// luz posicional en el plano XY positivo
+	mPosLight = new PosLight(0);  // "posLights[0]"
+	mPosLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
+	mPosLight->setDiff(glm::vec3(0.6f, 0.6f, 0.6f));
+	mPosLight->setSpec(glm::vec3(0.0f, 0.2f, 0.0f));
+	mPosLight->setPosition(glm::vec3(150.0f, 300.0f, 0.0f)); // plano XY positivo
+	mPosLight->setEnabled(false);
+	gLights.push_back(mPosLight);
+
+	// foco en plano YZ positivo
+	mSpotLight = new SpotLight(glm::vec3(0.0f, 250.0f, 250.0f), 0); // "spotLights[0]"
+	mSpotLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
+	mSpotLight->setDiff(glm::vec3(0.6f, 0.6f, 0.6f));
+	mSpotLight->setSpec(glm::vec3(0.0f, 0.2f, 0.0f));
+	mSpotLight->setDirection(glm::vec3(0.0f, -1.0f, -1.0f)); // apunta hacia el origen
+	mSpotLight->setCutoff(20.0f, 30.0f); // inner=20°, outer=30°
+	mSpotLight->setEnabled(false);  // tecla 'y'
+	gLights.push_back(mSpotLight);
+
+	// foco droide
+	mDroidLight = new SpotLight(glm::vec3(0.0f, radioPlaneta, 0.0f), 1); // "spotLights[1]"
+	mDroidLight->setAmb(glm::vec3(0.0f, 0.0f, 0.0f));
+	mDroidLight->setDiff(glm::vec3(0.8f, 0.8f, 0.8f));
+	mDroidLight->setSpec(glm::vec3(0.2f, 0.2f, 0.2f));
+	mDroidLight->setDirection(glm::vec3(0.0f, -1.0f, 0.0f)); // apunta hacia el planeta
+	mDroidLight->setCutoff(20.0f, 30.0f);
+	mDroidLight->setEnabled(false);  // tecla 'h'
+	gLights.push_back(mDroidLight);
 }
 
 
 void Scene8::render(Camera const& cam) const {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	Scene::render(cam);
+
+	// Apartado 79: actualizar posición y dirección del foco del droide
+	// antes de que uploadLights() lo envíe al shader
+	if (mDroidLight) {
+		// Matriz acumulada: dónde está y cómo está orientado el droide en el mundo
+		glm::mat4 M = glm::mat4(mNodoFicticio->modelMat()) *
+			glm::mat4(mNodoRotacion->modelMat());
+
+		// El foco está en el centro del droide transformamos el origen local (0,0,0)
+		glm::vec3 posWorld = glm::vec3(M * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+		// La dirección "hacia el planeta" en local es -Y del nodo ficticio
+		// w=0 porque es un vector (no se traslada, solo se rota)
+		glm::vec3 dirWorld = glm::normalize(
+			glm::vec3(M * glm::vec4(0.0f, -1.0f, 0.0f, 0.0f))
+		);
+
+		mDroidLight->setPosition(posWorld);
+		mDroidLight->setDirection(dirWorld);
+	}
+
+	Scene::render(cam);  // aquí se llama uploadLights() con los valores ya actualizados
 }
 
 void Scene8::rotate() {

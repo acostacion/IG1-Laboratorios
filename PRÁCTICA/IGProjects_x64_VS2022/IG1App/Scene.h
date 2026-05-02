@@ -112,11 +112,19 @@ public:
 	void rotate();
 	void orbit();
 
+	void togglePosLight() { if (mPosLight)   mPosLight->setEnabled(!mPosLight->enabled()); }
+	void toggleSpotLight() { if (mSpotLight)  mSpotLight->setEnabled(!mSpotLight->enabled()); }
+	void toggleDroidLight() { if (mDroidLight) mDroidLight->setEnabled(!mDroidLight->enabled()); }
+
 private:
 	Sphere* mPlaneta = nullptr;
 	Robot* mRobot = nullptr;
 	CompoundEntity* mNodoFicticio = nullptr;
 	CompoundEntity* mNodoRotacion = nullptr;
+
+	PosLight* mPosLight = nullptr;
+	SpotLight* mSpotLight = nullptr;
+	SpotLight* mDroidLight = nullptr;
 
 };
 
