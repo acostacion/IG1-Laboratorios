@@ -195,18 +195,20 @@ Camera::setPM()
 	}
 }
 
-void
-Camera::uploadPM() const {
-	Shader::setUniform4All("projection", mProjMat);
-}
-
-void
-Camera::upload() const {
+void Camera::upload() const {
 	mViewPort->upload();
 	uploadPM();
+	uploadVM();
+}
 
-	Shader* s = Shader::get("simple_light");
-	s->use();
+void Camera::uploadVM() const {
+	Shader::setUniform4All("view", mViewMat);
+}
 
-	s->setUniform("lightDir", glm::normalize(mViewMat * glm::vec4(-1.0f, -1.5f, -1.25f, 0.0f)));
+void Camera::uploadPM() const {
+	// Forzar que el shader "light" exista antes de setUniform4All
+	Shader::get("light")->use();
+	Shader::get("light")->setUniform("projection", mProjMat);
+
+	Shader::setUniform4All("projection", mProjMat);
 }

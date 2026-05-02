@@ -102,7 +102,7 @@ IG1App::init()
 	mCamera->set2D();
 	mCamera2->set2D();
 
-	mScenes[0]->init();
+	//mScenes[0]->init();
 
 	for (Scene* s : mScenes) s->init();
 
@@ -209,7 +209,7 @@ IG1App::key(unsigned int key) {
 	Scene8* s8 = dynamic_cast<Scene8*>(actualScene); // para los casos de las teclas g y f, que solo funcionan en la escena 8.
 
 	switch (key) {
-		case 'r': captura();				  break;
+		case 'y': captura();				  break;
 		case '+': actualCam->setScale(+0.01); break; // zoom in  (increases the scale)
 		case '-': actualCam->setScale(-0.01); break; // zoom out (decreases the scale)
 		case 'l': actualCam->set3D();	      break;
@@ -223,6 +223,9 @@ IG1App::key(unsigned int key) {
 		case 'p': actualCam->changePrj();	  break;
 		case 'c': actualCam->setCenital();	  break;
 		case 'n': ColorMaterialEntity::toggleShowNormals(); break;
+		case 'r':
+			mScenes[mCurrentScene]->toggleDirLight();
+			break;
 		case 'f': 
 			if (s8) s8->rotate();
 			break;

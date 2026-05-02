@@ -35,6 +35,11 @@ public:
 	void load();
 	void unload();
 
+	void toggleDirLight() {
+		if (mDirLight)
+			mDirLight->setEnabled(!mDirLight->enabled());
+	}
+
 protected:
 	void uploadLights(Camera const& cam) const;
 
@@ -46,6 +51,8 @@ protected:
 	std::vector<Texture*> gTextures;		// texturas de la escena
 	std::vector<Abs_Entity*> gObjectsTrans; // Entidades con transparencias
 	std::vector<Light*> gLights;			// Luces
+
+	DirLight* mDirLight = nullptr;
 };
 
 class Scene0 : public Scene {

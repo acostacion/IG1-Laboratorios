@@ -492,20 +492,11 @@ void IndexMesh::load() {
 }
 
 void IndexMesh::unload() {
-	if (mVAO != GL_NONE) {
-		//Borramos los vertices
-		glDeleteVertexArrays(1, &mVAO);
+	if (mIBO != NONE) {
 		glDeleteBuffers(1, &mIBO);
-		mVAO = GL_NONE;
-		mIBO = GL_NONE;
-
-		if (mIBO != NONE) {
-			glDeleteBuffers(1, &mIBO);
-			mIBO = NONE;
-		}
+		mIBO = NONE;
 	}
-
-	Mesh::unload();
+	Mesh::unload(); // esto ya borra mVAO, mVBO, etc.
 }
 
 IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nSamples, GLfloat angleMax) {
@@ -560,30 +551,27 @@ IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile
 }
 
 void IndexMesh::buildNormalVectors() {
-	// METODO NEWELL (REVISAR):
-	//Rellena inicialmente con (0.0, 0.0, 0.0)
 	vNormals.clear();
-	for (int i = 0; i < vIndexes.size(); i++)
-		vNormals.emplace_back(0.0, 0.0, 0.0);
+	// inicializar una normal por VERTICE (no por índice)
+	vNormals.resize(vVertices.size(), glm::vec3(0.0f, 0.0f, 0.0f));
 
-	//Define las normales con el producto vectorial
-	for (int i = 0; i < vIndexes.size(); i += 3) //(36 indices/12 triangulos) = 3(vertices por triangulo))
-	{
-		// Calculo normal
-		glm::vec3 normal = glm::normalize(glm::cross(
-			vVertices[vIndexes[i + 1]] - vVertices[vIndexes[i]],
-			vVertices[vIndexes[i + 2]] - vVertices[vIndexes[i]])
+	// acumular normales de cada triángulo en sus vértices
+	for (int i = 0; i + 2 < (int)vIndexes.size(); i += 3) {
+		GLuint i0 = vIndexes[i], i1 = vIndexes[i + 1], i2 = vIndexes[i + 2];
+		glm::vec3 normal = glm::cross(
+			vVertices[i1] - vVertices[i0],
+			vVertices[i2] - vVertices[i0]
 		);
-	
-		//Los rellena
-		vNormals[vIndexes[i]] += normal;
-		vNormals[vIndexes[i + 1]] += normal;
-		vNormals[vIndexes[i + 2]] += normal;
+		// no normalizar aquí: la contribución es proporcional al área del triángulo
+		vNormals[i0] += normal;
+		vNormals[i1] += normal;
+		vNormals[i2] += normal;
 	}
 
-	//Normalizamos los vectores de vNormals
-	for (int i = 0; i < vNormals.size(); i++)
-		vNormals[i] = glm::normalize(vNormals[i]);
+	// normalizar al final
+	for (auto& n : vNormals)
+		if (glm::length(n) > 0.0001f)
+			n = glm::normalize(n);
 }
 
 IndexMesh* IndexMesh::generateSphere(GLdouble radius, GLuint nParallel, GLuint nMeridians) {

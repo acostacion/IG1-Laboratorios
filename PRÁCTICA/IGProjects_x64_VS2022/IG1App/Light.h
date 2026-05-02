@@ -27,7 +27,7 @@ protected:
 
 	// Identifier
 	std::string lightID;
-	bool bEnabled;
+	bool bEnabled = false;
 
 	// Atributos lumínicos y geométrico de la fuente de luz
 	glm::vec3 ambient = {0.1, 0.1, 0.1};

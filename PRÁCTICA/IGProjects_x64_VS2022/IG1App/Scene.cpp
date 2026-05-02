@@ -2,6 +2,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+
 
 using namespace glm;
 
@@ -12,16 +14,15 @@ Scene::init()
 
 	// allocate memory and load resources
 	// Lights
-	DirLight* dirLight = new DirLight(); //Con id = 0
+	mDirLight = new DirLight();
 
-	//Caracteristicas de shader simple_light
-	dirLight->setAmb(vec3(0.25, 0.25, 0.25));
-	dirLight->setDiff(vec3(0.6, 0.6, 0.6));
-	dirLight->setSpec(vec3(0.0, 0.2, 0.0));
-	//Cambiamos la direccion porque DirLight (-1, -1, -1) viene desde abajo
-	dirLight->setDirection(vec3(-1.0, -1.0, -1.0));
-	dirLight->setEnabled(true);
-	gLights.push_back(dirLight);
+	mDirLight->setAmb(vec3(0.25, 0.25, 0.25));
+	mDirLight->setDiff(vec3(0.6, 0.6, 0.6));
+	mDirLight->setSpec(vec3(0.0, 0.2, 0.0));
+	mDirLight->setDirection(vec3(-1.0, -1.0, -1.0));
+	mDirLight->setEnabled(true);
+	gLights.push_back(mDirLight);
+	
 	// Textures
 
 	// Graphics objects (entities) of the scene
@@ -37,9 +38,10 @@ Scene::~Scene()
 void Scene::uploadLights(Camera const& cam) const {
 	Shader* s = Shader::get("light");
 	s->use();
-
 	for (Light* l : gLights) {
-		l->upload(*s, cam.viewMat()); // actualizamos las luces
+		l->upload(*s, cam.viewMat());
+		// Debug dirlight direction
+		std::cout << "viewMat[0][0]=" << cam.viewMat()[0][0] << std::endl;
 	}
 }
 

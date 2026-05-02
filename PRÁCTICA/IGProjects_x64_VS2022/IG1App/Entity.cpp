@@ -2,6 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 using namespace glm;
 
@@ -562,9 +563,9 @@ Torus::Torus(GLdouble R, GLdouble r, GLuint nPoints, GLuint nSamples) {
 
 	//Hacemos la malla por revolucion
 	mMesh = IndexMesh::generateByRevolution(profile, nSamples, 2 * std::numbers::pi);
-	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	//setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 }
-
+/*
 void Torus::render(const glm::mat4& modelViewMat) const {
 
 	if (mMesh != nullptr) {
@@ -576,7 +577,7 @@ void Torus::render(const glm::mat4& modelViewMat) const {
 		mMesh->render();
 	}
 }
-
+*/
 ColorMaterialEntity::ColorMaterialEntity() {
 	mShader = Shader::get("simple_light"); // TODO tiene q estar???
 }
@@ -798,13 +799,20 @@ void EntityWithMaterial::render(const glm::mat4& modelViewMat) const {
 		material.upload(*mShader);
 		upload(aMat);
 
+		// Debug: imprime la primera columna de la matriz para verificar
+		glm::mat4 fMat = glm::mat4(aMat);
+		std::cout << "modelView[0]: " << fMat[0][0] << " " << fMat[0][1] << " " << fMat[0][2] << std::endl;
+		std::cout << "material ambient: " << material.getAmb().r << " " << material.getAmb().g << " " << material.getAmb().b << std::endl;
+
 		mMesh->render();
 
+		
 		if (mShowNormals) {
 			Shader* normShader = Shader::get("normals");
 			normShader->use();
 			normShader->setUniform("modelView", aMat);  // o el nombre que use ese shader
 			mMesh->render();
 		}
+		
 	}
 }
