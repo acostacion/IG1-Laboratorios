@@ -799,11 +799,6 @@ void EntityWithMaterial::render(const glm::mat4& modelViewMat) const {
 		material.upload(*mShader);
 		upload(aMat);
 
-		// Debug: imprime la primera columna de la matriz para verificar
-		glm::mat4 fMat = glm::mat4(aMat);
-		std::cout << "modelView[0]: " << fMat[0][0] << " " << fMat[0][1] << " " << fMat[0][2] << std::endl;
-		std::cout << "material ambient: " << material.getAmb().r << " " << material.getAmb().g << " " << material.getAmb().b << std::endl;
-
 		mMesh->render();
 
 		
