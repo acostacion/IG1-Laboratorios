@@ -211,9 +211,4 @@ Camera::upload() const {
 
 	uploadVM();
 	uploadPM();
-
-	Shader* s = Shader::get("simple_light");
-	s->use();
-
-	s->setUniform("lightDir", glm::normalize(mViewMat * glm::vec4(-1.0f, -1.5f, -1.25f, 0.0f)));
 }

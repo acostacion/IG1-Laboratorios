@@ -224,6 +224,18 @@ IG1App::key(unsigned int key) {
 		case 'c': actualCam->setCenital();	  break;
 		case 'n': ColorMaterialEntity::toggleShowNormals(); break;
 		case 'r': actualScene->toggleDirLight(); break;
+		case 't': {
+			if (s8) s8->togglePosLight();
+			break;
+		}
+		case 'y': {
+			if (s8) s8->toggleSpotLight();
+			break;
+		}
+		case 'h': {
+			if (s8) s8->toggleDroidLight();
+			break;
+		}
 		case 'f': 
 			if (s8) s8->rotate();
 			break;

@@ -120,6 +120,21 @@ Scene::render(Camera const& cam) const {
 
 void Scene0::init() {
 	Scene::init();
+
+	Sphere* yellow = new Sphere(25, 40, 40);
+	Sphere* gold = new Sphere(25, 40, 40);
+
+	Material yellowMat(glm::vec3(1.0, 1.0, 0.0));
+	Material goldMat; goldMat.setGold();
+
+	yellow->setMaterial(yellowMat);
+	gold->setMaterial(goldMat);
+
+	yellow->setModelMat(translate(glm::dmat4(1), glm::dvec3(50, 0, 0)));
+	gold->setModelMat(translate(glm::dmat4(1), glm::dvec3(-50, 0, 0)));
+
+	gObjects.push_back(yellow);
+	gObjects.push_back(gold);
 }
 
 void Scene1::init() {
@@ -307,31 +322,84 @@ void Scene8::init() {
 
 	// --- planeta
 	mPlaneta = new Sphere(radioPlaneta, 40, 40);
-	mPlaneta->setColor({ 171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f, 1.0f });
+	mPlaneta->setMaterial(glm::vec3(171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f));
 	gObjects.push_back(mPlaneta);
 
-	// nodo ficticio exterior: posiciona el droide en el polo norte
-	// y controla la órbita (se rota sobre ejes del planeta)
+	// --- jerarquía droide
 	mNodoFicticio = new CompoundEntity();
 	mNodoFicticio->setModelMat(
 		glm::translate(glm::dmat4(1), glm::dvec3(0, radioPlaneta, 0))
 	);
-
-	// nodo de rotación interior: controla hacia dónde apunta el morro
-	// es hijo del nodo ficticio, por lo que su eje Y es el "arriba" local del droide
 	mNodoRotacion = new CompoundEntity();
-
 	mRobot = new Robot(radioRobot);
 	static_cast<CompoundEntity*>(mNodoRotacion)->addEntity(mRobot);
 	static_cast<CompoundEntity*>(mNodoFicticio)->addEntity(mNodoRotacion);
-
 	gObjects.push_back(mNodoFicticio);
+
+	// ---------------------------------------------------
+	// Apartado 77: luz posicional encima del planeta (plano XY)
+	// PosLight(id=1) para no solaparse con el DirLight que ya ocupa id=0
+	// en gLights (aunque son arrays distintos en el shader, mejor ser explícito)
+	// ---------------------------------------------------
+	mPosLight = new PosLight(0);  // "posLights[0]"
+	mPosLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
+	mPosLight->setDiff(glm::vec3(0.6f, 0.6f, 0.6f));
+	mPosLight->setSpec(glm::vec3(0.0f, 0.2f, 0.0f));
+	mPosLight->setPosition(glm::vec3(150.0f, 300.0f, 0.0f)); // plano XY positivo
+	mPosLight->setEnabled(false);  // tecla 't'
+	gLights.push_back(mPosLight);
+
+	// ---------------------------------------------------
+	// Apartado 78: foco en el plano YZ positivo
+	// SpotLight recibe posición en el constructor
+	// ---------------------------------------------------
+	mSpotLight = new SpotLight(glm::vec3(0.0f, 250.0f, 250.0f), 0); // "spotLights[0]"
+	mSpotLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
+	mSpotLight->setDiff(glm::vec3(0.6f, 0.6f, 0.6f));
+	mSpotLight->setSpec(glm::vec3(0.0f, 0.2f, 0.0f));
+	mSpotLight->setDirection(glm::vec3(0.0f, -1.0f, -1.0f)); // apunta hacia el origen
+	mSpotLight->setCutoff(20.0f, 30.0f); // inner=20°, outer=30°
+	mSpotLight->setEnabled(false);  // tecla 'y'
+	gLights.push_back(mSpotLight);
+
+	// ---------------------------------------------------
+	// Apartado 79: foco en el vientre del droide
+	// Posición inicial = polo norte del planeta (igual que mNodoFicticio)
+	// Se actualiza cada frame en render()
+	// ---------------------------------------------------
+	mDroidLight = new SpotLight(glm::vec3(0.0f, radioPlaneta, 0.0f), 1); // "spotLights[1]"
+	mDroidLight->setAmb(glm::vec3(0.0f, 0.0f, 0.0f));
+	mDroidLight->setDiff(glm::vec3(0.8f, 0.8f, 0.8f));
+	mDroidLight->setSpec(glm::vec3(0.2f, 0.2f, 0.2f));
+	mDroidLight->setDirection(glm::vec3(0.0f, -1.0f, 0.0f)); // apunta hacia el planeta
+	mDroidLight->setCutoff(20.0f, 30.0f);
+	mDroidLight->setEnabled(false);  // tecla 'h'
+	gLights.push_back(mDroidLight);
 }
 
 
 void Scene8::render(Camera const& cam) const {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Actualizar posición y dirección del foco del droide
+	// según la transformación acumulada del nodo ficticio * nodo rotación
+	if (mDroidLight) {
+		glm::mat4 M = glm::mat4(mNodoFicticio->modelMat()) *
+			glm::mat4(mNodoRotacion->modelMat());
+
+		// Posición mundial del centro del droide
+		glm::vec3 posWorld = glm::vec3(M * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+		// Dirección "abajo" local del droide = -Y del nodo ficticio
+		glm::vec3 dirWorld = glm::normalize(
+			glm::vec3(M * glm::vec4(0.0f, -1.0f, 0.0f, 0.0f))
+		);
+
+		mDroidLight->setPosition(posWorld);
+		mDroidLight->setDirection(dirWorld);
+	}
+
 	Scene::render(cam);
 }
 

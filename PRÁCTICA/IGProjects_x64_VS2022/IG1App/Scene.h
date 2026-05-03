@@ -103,11 +103,14 @@ public: void init() override;
 };
 
 class Scene8 : public Scene {
-public: 
+public:
 	void init() override;
 	void render(Camera const& cam) const override;
 	void rotate();
 	void orbit();
+	void togglePosLight() { if (mPosLight)  mPosLight->setEnabled(!mPosLight->enabled()); }
+	void toggleSpotLight() { if (mSpotLight) mSpotLight->setEnabled(!mSpotLight->enabled()); }
+	void toggleDroidLight() { if (mDroidLight) mDroidLight->setEnabled(!mDroidLight->enabled()); }
 
 private:
 	Sphere* mPlaneta = nullptr;
@@ -115,6 +118,9 @@ private:
 	CompoundEntity* mNodoFicticio = nullptr;
 	CompoundEntity* mNodoRotacion = nullptr;
 
+	PosLight* mPosLight = nullptr;  // apartado 77
+	SpotLight* mSpotLight = nullptr;  // apartado 78
+	SpotLight* mDroidLight = nullptr;  // apartado 79
 };
 
 class Scene9 : public Scene {
