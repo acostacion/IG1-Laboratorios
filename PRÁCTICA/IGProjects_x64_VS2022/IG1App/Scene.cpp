@@ -328,7 +328,7 @@ void Scene8::init() {
 	// --- jerarquía droide
 	mNodoFicticio = new CompoundEntity();
 	mNodoFicticio->setModelMat(
-		glm::translate(glm::dmat4(1), glm::dvec3(0, radioPlaneta, 0))
+		glm::translate(glm::dmat4(1), glm::dvec3(0, radioPlaneta + 35, 0))
 	);
 	mNodoRotacion = new CompoundEntity();
 	mRobot = new Robot(radioRobot);
@@ -345,7 +345,7 @@ void Scene8::init() {
 	mPosLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
 	mPosLight->setDiff(glm::vec3(0.6f, 0.6f, 0.6f));
 	mPosLight->setSpec(glm::vec3(0.0f, 0.2f, 0.0f));
-	mPosLight->setPosition(glm::vec3(150.0f, 300.0f, 0.0f)); // plano XY positivo
+	mPosLight->setPosition(glm::vec3(100.0f, 300.0f, 0.0f)); // plano XY positivo
 	mPosLight->setEnabled(false);  // tecla 't'
 	gLights.push_back(mPosLight);
 
