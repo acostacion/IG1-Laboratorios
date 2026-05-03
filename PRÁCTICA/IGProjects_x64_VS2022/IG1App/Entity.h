@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Material.h"
 
 class Abs_Entity // abstract class
 {
@@ -70,9 +71,24 @@ protected:
 	bool mModulate = false;
 };
 
-class ColorMaterialEntity : public SingleColorEntity {
+class EntityWithMaterial : public Abs_Entity {
 public:
-	explicit ColorMaterialEntity();
+	EntityWithMaterial();
+	void setMaterial(const Material& m) { mMaterial = m; }
+	void render(const glm::mat4& modelViewMat) const override;
+protected:
+	Material mMaterial;
+};
+
+class ColorMaterialEntity : public EntityWithMaterial {
+public:
+	explicit ColorMaterialEntity(glm::vec3 color = { 0.0f, 1.0f, 0.0f });
+
+	// Mantiene compatibilidad con código anterior (Cone, Sphere, etc.)
+	void setColor(const glm::vec4& color) {
+		mMaterial = Material(glm::vec3(color));
+	}
+
 	void render(const glm::mat4& modelViewMat) const override;
 	static void toggleShowNormals() { mShowNormals = !mShowNormals; }
 private:

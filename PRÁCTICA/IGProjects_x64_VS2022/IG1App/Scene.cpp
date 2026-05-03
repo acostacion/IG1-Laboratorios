@@ -12,10 +12,19 @@ Scene::init()
 
 	// allocate memory and load resources
 	// Lights
+	
+	mDirLight = new DirLight(0);
+	mDirLight->setDirection({ -1.0f, -1.5f, -1.25f });
+	mDirLight->setEnabled(true);
+	gLights.push_back(mDirLight);
+
 	// Textures
+
 
 	// Graphics objects (entities) of the scene
 	gObjects.push_back(new RGBAxes(400.0));
+
+
 }
 
 Scene::~Scene()
@@ -39,6 +48,10 @@ Scene::destroy()
 	for (Texture* t : gTextures)
 		delete t;
 	gTextures.clear();
+
+	for (Light* l : gLights)
+		delete l;
+	gLights.clear();
 }
 
 void
@@ -59,6 +72,18 @@ Scene::unload() {
 		obj->unload();
 }
 
+void Scene::uploadLights(Camera const& cam) const {
+	Shader* lightShader = Shader::get("light");
+	lightShader->use();
+	for (Light* l : gLights)
+		l->upload(*lightShader, cam.viewMat());
+}
+
+void Scene::toggleDirLight() {
+	if (mDirLight)
+		mDirLight->setEnabled(!mDirLight->enabled());
+}
+
 void
 Scene::setGL() {
 	// OpenGL basic setting
@@ -71,25 +96,24 @@ Scene::resetGL() {
 	glDisable(GL_DEPTH_TEST);     // disable Depth test
 }
 
-void
+void 
 Scene::render(Camera const& cam) const {
 	cam.upload();
-
 	glClearColor(0.6, 0.7, 0.8, 1.0);
 
-	// --- objetos opacos
+	// --- nuevo: subir luces antes de renderizar ---
+	uploadLights(cam);
+
+	// objetos opacos
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
 
-	// --- blending objetos translucidos
+	// blending objetos translúcidos
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // activa blend func antes de renderizar objetos translucidos
-	glDepthMask(GL_FALSE);							   // 
-
-	// translucidos -> despues objetos con transparencia
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE);
 	for (Abs_Entity* el : gObjectsTrans)
 		el->render(cam.viewMat());
-
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 }

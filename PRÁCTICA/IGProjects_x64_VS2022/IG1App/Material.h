@@ -1,57 +1,33 @@
-#ifndef _H_Material_H_
-#define _H_Material_H_
-
-#include "Shader.h"
+#pragma once
 #include <glm/glm.hpp>
+#include <GL/glew.h>
 
-class Material
-{
+class Shader; // forward declaration
+
+class Material {
 public:
-	Material() = default;
-	Material(glm::vec3 color, float shininess=8.0); // color material
+    Material() = default;
+    virtual ~Material() = default;
 
-	virtual ~Material() = default;
-	void upload(Shader& shader) const;
+    // Constructor con color uniforme y shininess
+    Material(glm::vec3 color, float shininess = 8.0f);
 
-	void setAmb(const glm::vec3& v);
-	void setDiff(const glm::vec3& v);
-	void setSpec(const glm::vec3& v);
-	void setExp(GLfloat exp);
+    // Sube los atributos al shader light
+    void upload(Shader& shader) const;
 
-	void setCopper();
+    // Setters
+    void setAmbient(const glm::vec3& a) { ambient = a; }
+    void setDiffuse(const glm::vec3& d) { diffuse = d; }
+    void setSpecular(const glm::vec3& s) { specular = s; }
+    void setShininess(GLfloat s) { expF = s; }
+
+    // Materiales predefinidos
+    void setCopper();
+    void setGold();
 
 protected:
-	// Coeficientes de reflexión
-	glm::vec3 ambient = {0.2, 0.2, 0.2};
-	glm::vec3 diffuse = {0.8, 0.8, 0.8};
-	glm::vec3 specular = {0.0, 0.0, 0.0};
-	// Exponente para la reflexión especular
-	GLfloat expF = 0;
+    glm::vec3 ambient = { 0.2f, 0.2f, 0.2f };
+    glm::vec3 diffuse = { 0.8f, 0.8f, 0.8f };
+    glm::vec3 specular = { 0.5f, 0.5f, 0.5f };
+    GLfloat   expF = 8.0f;
 };
-
-inline void
-Material::setAmb(const glm::vec3& v)
-{
-	ambient = v;
-}
-
-inline void
-Material::setDiff(const glm::vec3& v)
-{
-	diffuse = v;
-}
-
-inline void
-Material::setSpec(const glm::vec3& v)
-{
-	specular = v;
-}
-
-inline void
-Material::setExp(GLfloat exp)
-{
-	expF = exp;
-}
-
-#endif //_H_Material_H_
-

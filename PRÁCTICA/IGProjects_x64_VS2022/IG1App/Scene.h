@@ -6,6 +6,7 @@
 
 #include "Camera.h"
 #include "Entity.h"
+#include "Light.h"
 
 #include <vector>
 
@@ -34,14 +35,21 @@ public:
 	void load();
 	void unload();
 
+	void toggleDirLight(); // activa/desactiva la luz direccional
+
 protected:
 	void destroy();
 	void setGL();
 	void resetGL();
 
+	void uploadLights(Camera const& cam) const;
+
 	std::vector<Abs_Entity*> gObjects;		// Entities (graphic objects) of the scene
 	std::vector<Texture*> gTextures;		// texturas de la escena
 	std::vector<Abs_Entity*> gObjectsTrans; // Entidades con transparencias
+	std::vector<Light*> gLights; // luces de la escena
+
+	DirLight* mDirLight = nullptr; // luz direccional de la escena
 };
 
 class Scene0 : public Scene {

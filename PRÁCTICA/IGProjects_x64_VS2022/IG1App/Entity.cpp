@@ -580,25 +580,21 @@ void Torus::render(const glm::mat4& modelViewMat) const {
 
 bool ColorMaterialEntity::mShowNormals = false;
 
-ColorMaterialEntity::ColorMaterialEntity() {
-	mShader = Shader::get("simple_light"); // TODO tiene q estar???
+ColorMaterialEntity::ColorMaterialEntity(glm::vec3 color) {
+	// Todas las componentes del material tienen el mismo color base
+	mMaterial = Material(color);
 }
 
 void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
-	if (mMesh != nullptr) {
-		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
-		mShader->use();
-		mShader->setUniform("color", mColor);
-		upload(aMat);
+	// Renderizado normal con iluminación
+	EntityWithMaterial::render(modelViewMat);
 
+	// Renderizado de normales si está activado (apartado 63)
+	if (mShowNormals && mMesh) {
+		Shader* normShader = Shader::get("normals");
+		normShader->use();
+		upload(modelViewMat * mModelMat);
 		mMesh->render();
-
-		if (mShowNormals) {
-			Shader* normShader = Shader::get("normals");
-			normShader->use();
-			normShader->setUniform("modelView", aMat);  // o el nombre que use ese shader
-			mMesh->render();
-		}
 	}
 }
 
@@ -807,4 +803,16 @@ IndexedBox::IndexedBox(GLdouble l)
 {
 	mMesh = IndexMesh::generateIndexedBox(l);
 	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+}
+
+EntityWithMaterial::EntityWithMaterial()
+{
+	mShader = Shader::get("light");
+}
+
+void EntityWithMaterial::render(const glm::mat4& modelViewMat) const {
+	mShader->use();
+	mMaterial.upload(*mShader);                      // sube el material
+	upload(modelViewMat * mModelMat);                // sube matrices
+	if (mMesh) mMesh->render();
 }
