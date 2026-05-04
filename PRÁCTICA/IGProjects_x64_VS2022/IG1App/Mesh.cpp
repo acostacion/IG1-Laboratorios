@@ -423,16 +423,16 @@ Mesh* Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h) {
 	mesh->vVertices.emplace_back(0.0, 0.0, 0.0);
 
 	GLdouble ri = re / 2.0;
-	GLdouble angIncr = 360.0 / np; // ángulo entre puntas
+	GLdouble angIncr = 360.0 / np; // angulo entre puntas
 
 	for (GLuint i = 0; i < np; i++) {
 		GLdouble angExt = glm::radians(90.0 + i * angIncr);       // punta exterior
 		GLdouble angInt = glm::radians(90.0 + (i + 0.5) * angIncr); // valle interior
 
-		// Vértice exterior (punta)
+		// Vertice exterior (punta)
 		mesh->vVertices.emplace_back(
 			re * cos(angExt), re * sin(angExt), h);
-		// Vértice interior (valle)
+		// Vertice interior (valle)
 		mesh->vVertices.emplace_back(
 			ri * cos(angInt), ri * sin(angInt), h);
 	}
@@ -444,7 +444,7 @@ Mesh* Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h) {
 }
 
 Mesh* Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h) {
-	Mesh* mesh = generateStar3D(re, np, h); // reutilizamos la geometría
+	Mesh* mesh = generateStar3D(re, np, h); // reutilizamos la geometr
 	mesh->vTexCoords.reserve(mesh->mNumVertices);
 
 	GLdouble ri = re / 2.0;
@@ -610,7 +610,7 @@ IndexMesh* IndexMesh::generateIndexedBox8(GLdouble l) {
 
 	GLdouble h = l / 2.0;
 
-	// 8 vértices del cubo (según las diapositivas)
+	// 8 vertices del cubo (seg las diapositivas)
 	mesh->vVertices = {
 		{ h,  h, -h}, // 0
 		{ h, -h, -h}, // 1
@@ -622,7 +622,7 @@ IndexMesh* IndexMesh::generateIndexedBox8(GLdouble l) {
 		{-h, -h, -h}  // 7
 	};
 
-	// 36 índices (12 triángulos, 2 por cara) según las diapositivas
+	// 36 indices (12 triangulos, 2 por cara) segn las diapositivas
 	mesh->vIndexes = {
 		0, 1, 2,  2, 1, 3,  // cara derecha
 		2, 3, 4,  4, 3, 5,  // cara frontal
@@ -643,8 +643,8 @@ IndexMesh* IndexMesh::generateIndexedBox(GLdouble l) {
 	mesh->mPrimitive = GL_TRIANGLES;
 	GLdouble h = l / 2.0;
 
-	// Cada cara define sus 4 vértices propios, sin compartir con otras caras.
-	// Orden de los vértices en cada cara: esquina superior-izquierda en sentido
+	// Cada cara define sus 4 vertices propios, sin compartir con otras caras.
+	// Orden de los vertices en cada cara: esquina superior-izquierda en sentido
 	// antihorario visto desde el exterior (para que la normal salga hacia fuera).
 	mesh->vVertices = {
 		// Cara derecha (x = +h), normal (1,0,0)
@@ -684,8 +684,8 @@ IndexMesh* IndexMesh::generateIndexedBox(GLdouble l) {
 		{ h,  h, -h},  // 23
 	};
 
-	// Cada cara: 2 triángulos -> 6 índices
-	// Triángulo 1: 0,1,2  Triángulo 2: 0,2,3
+	// Cada cara: 2 triangulos -> 6 indices
+	// Triangulo 1: 0,1,2  Triangulo 2: 0,2,3
 	mesh->vIndexes = {
 		 0,  1,  2,   0,  2,  3,  // cara derecha
 		 4,  5,  6,   4,  6,  7,  // cara izquierda
@@ -703,8 +703,8 @@ IndexMesh* IndexMesh::generateIndexedBox(GLdouble l) {
 void IndexMesh::draw() const {
 	glDrawElements(
 		mPrimitive, // primitiva ( GL_TRIANGLES , etc.)
-		vIndexes.size(), // número de índices
-		GL_UNSIGNED_INT, // tipo de los índices
-		nullptr // offset en el VBO de índices
+		vIndexes.size(), // nmero de indices
+		GL_UNSIGNED_INT, // tipo de los idices
+		nullptr // offset en el VBO de idices
 	);
 }

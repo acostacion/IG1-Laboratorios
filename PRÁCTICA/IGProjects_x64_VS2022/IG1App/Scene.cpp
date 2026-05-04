@@ -108,7 +108,7 @@ Scene::render(Camera const& cam) const {
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
 
-	// blending objetos translúcidos
+	// blending objetos translcidos
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
@@ -325,7 +325,7 @@ void Scene8::init() {
 	mPlaneta->setMaterial(glm::vec3(171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f));
 	gObjects.push_back(mPlaneta);
 
-	// --- jerarquía droide
+	// --- jerarquia droide
 	mNodoFicticio = new CompoundEntity();
 	mNodoFicticio->setModelMat(
 		glm::translate(glm::dmat4(1), glm::dvec3(0, radioPlaneta + 35, 0))
@@ -339,7 +339,7 @@ void Scene8::init() {
 	// ---------------------------------------------------
 	// Apartado 77: luz posicional encima del planeta (plano XY)
 	// PosLight(id=1) para no solaparse con el DirLight que ya ocupa id=0
-	// en gLights (aunque son arrays distintos en el shader, mejor ser explícito)
+	// en gLights (aunque son arrays distintos en el shader, mejor ser explicito)
 	// ---------------------------------------------------
 	mPosLight = new PosLight(0);  // "posLights[0]"
 	mPosLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
@@ -351,20 +351,20 @@ void Scene8::init() {
 
 	// ---------------------------------------------------
 	// Apartado 78: foco en el plano YZ positivo
-	// SpotLight recibe posición en el constructor
+	// SpotLight recibe posicion en el constructor
 	// ---------------------------------------------------
 	mSpotLight = new SpotLight(glm::vec3(0.0f, 250.0f, 250.0f), 0); // "spotLights[0]"
 	mSpotLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
 	mSpotLight->setDiff(glm::vec3(0.6f, 0.6f, 0.6f));
 	mSpotLight->setSpec(glm::vec3(0.0f, 0.2f, 0.0f));
 	mSpotLight->setDirection(glm::vec3(0.0f, -1.0f, -1.0f)); // apunta hacia el origen
-	mSpotLight->setCutoff(20.0f, 30.0f); // inner=20°, outer=30°
+	mSpotLight->setCutoff(20.0f, 30.0f); // inner=20, outer=30
 	mSpotLight->setEnabled(false);  // tecla 'y'
 	gLights.push_back(mSpotLight);
 
 	// ---------------------------------------------------
 	// Apartado 79: foco en el vientre del droide
-	// Posición inicial = polo norte del planeta (igual que mNodoFicticio)
+	// Posicion inicial = polo norte del planeta (igual que mNodoFicticio)
 	// Se actualiza cada frame en render()
 	// ---------------------------------------------------
 	mDroidLight = new SpotLight(glm::vec3(0.0f, radioPlaneta, 0.0f), 1); // "spotLights[1]"
@@ -382,16 +382,16 @@ void Scene8::render(Camera const& cam) const {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Actualizar posición y dirección del foco del droide
-	// según la transformación acumulada del nodo ficticio * nodo rotación
+	// Actualizar posicio y direcci del foco del droide
+	// segn la transformacin acumulada del nodo ficticio * nodo rotacin
 	if (mDroidLight) {
 		glm::mat4 M = glm::mat4(mNodoFicticio->modelMat()) *
 			glm::mat4(mNodoRotacion->modelMat());
 
-		// Posición mundial del centro del droide
+		// Posicin mundial del centro del droide
 		glm::vec3 posWorld = glm::vec3(M * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-		// Dirección "abajo" local del droide = -Y del nodo ficticio
+		// Direccin "abajo" local del droide = -Y del nodo ficticio
 		glm::vec3 dirWorld = glm::normalize(
 			glm::vec3(M * glm::vec4(0.0f, -1.0f, 0.0f, 0.0f))
 		);
@@ -412,11 +412,11 @@ void Scene8::rotate() {
 
 void Scene8::orbit() {
 	// Extraemos el eje "frente" actual del droide (columna 2 = eje Z local)
-	// combinando la orientación del nodo ficticio y el nodo de rotación
+	// combinando la orientacin del nodo ficticio y el nodo de rotacin
 	glm::mat4 orientacion = mNodoFicticio->modelMat() * mNodoRotacion->modelMat();
 	glm::vec3 ejeFrente = glm::normalize(glm::vec3(orientacion[2])); // columna 2
 
-	// Orbitamos alrededor del planeta usando ese eje como eje de rotación
+	// Orbitamos alrededor del planeta usando ese eje como eje de rotacin
 	// pero perpendicular al frente, osea el eje derecha (columna 0)
 	glm::vec3 ejeDerecha = glm::normalize(glm::vec3(orientacion[0])); // columna 0
 

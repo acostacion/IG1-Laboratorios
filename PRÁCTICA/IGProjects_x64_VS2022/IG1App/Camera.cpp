@@ -30,7 +30,7 @@ Camera::SetAxes()
 {
 	mRight = glm::row(mViewMat, 0);
 	mUpward = glm::row(mViewMat, 1);
-	mFront = -glm::row(mViewMat, 2); // negado porque la cámara mira hacia -Z
+	mFront = -glm::row(mViewMat, 2); // negado porque la camara mira hacia -Z
 }
 
 void
@@ -65,7 +65,7 @@ Camera::set3D() {
 	GLdouble dx = mEye.x - mLook.x;
 	GLdouble dz = mEye.z - mLook.z;
 	mRadio = sqrt(dx * dx + dz * dz);   // distancia horizontal al look
-	mAng = glm::degrees(atan2(-dz, dx)); // ángulo coherente con orbit()
+	mAng = glm::degrees(atan2(-dz, dx)); // angulo coherente con orbit()
 
 	setVM();
 }
@@ -73,7 +73,7 @@ Camera::set3D() {
 void 
 Camera::setCenital() {
 	mEye = { mLook.x, mLook.y + 1000, mLook.z }; // directamente encima del look
-	mUp = { 0, 0, -1 }; // el up no puede ser (0,1,0) porque la cámara mira hacia -Y
+	mUp = { 0, 0, -1 }; // el up no puede ser (0,1,0) porque la camara mira hacia -Y
 	setVM();
 }
 
@@ -105,7 +105,7 @@ void
 Camera::moveLR(GLfloat d) {
 	mEye += mRight * d;
 	mLook += mRight * d;
-	mViewMat = glm::translate(mViewMat, glm::vec3(-d, 0, 0)); // en espacio de cámara
+	mViewMat = glm::translate(mViewMat, glm::vec3(-d, 0, 0)); // en espacio de camara
 	SetAxes();
 }
 
@@ -171,7 +171,7 @@ Camera::setScale(GLdouble s)
 		mScaleFact -= s;
 		if (mScaleFact < 0) mScaleFact = 0.01;
 	}
-	// si no es ortogonal, ajustamos el campo de visión (FOV) para simular el zoom
+	// si no es ortogonal, ajustamos el campo de vision (FOV) para simular el zoom
 	else {
 		mFov -= s * 10;
 		if (mFov < 1.0f) mFov = 1.0f;

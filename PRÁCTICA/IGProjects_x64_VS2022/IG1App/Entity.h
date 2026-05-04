@@ -83,7 +83,7 @@ class ColorMaterialEntity : public EntityWithMaterial {
 public:
 	explicit ColorMaterialEntity(glm::vec3 color = { 0.0f, 1.0f, 0.0f });
 
-	// Mantiene compatibilidad con código anterior (Cone, Sphere, etc.)
+	// Mantiene compatibilidad con cdigo anterior (Cone, Sphere, etc.)
 	void setColor(const glm::vec4& color) {
 		mMaterial = Material(glm::vec3(color));
 	}
@@ -204,7 +204,7 @@ protected:
 	glm::mat4 mModelMatArr = glm::mat4(1.0);
 private:
 
-	glm::dmat4 mBaseTranslation = glm::mat4(1.0); // traslación base de la caja
+	glm::dmat4 mBaseTranslation = glm::mat4(1.0); // traslacin base de la caja
 
 	// --- para el update.
 	double angle = 180.0;  // empiza en 180 grados (empieza abierta)
@@ -228,7 +228,7 @@ private:
 	GLdouble _h;
 	float _zAngle = 0.0f;
 	float _yAngle = 0.0f;
-	glm::mat4 mBaseTransform = glm::mat4(1.0); // base: traslación + escala
+	glm::mat4 mBaseTransform = glm::mat4(1.0); // base: traslacin + escala
 };
 
 class Photo : public EntityWithTexture {
@@ -258,8 +258,6 @@ protected:
 	GLdouble _length;
 };
 
-// TODO:
-// Assertion failed: mVBO == NONE, file C:\Users\Usuario\Music\IG1-Laboratorios\PRÁCTICA\IGProjects_x64_VS2022\IG1App\Mesh.cpp, line 31
 class Torus : public SingleColorEntity {
 public: // NOTA: singlecolorentity?
 	/*
@@ -286,7 +284,7 @@ class Cone : public ColorMaterialEntity {
 	/*
 		· cono(r = 0 o R = 0)
 		· cilindro(R = r)
-		· tronco de cono de altura h, radio inferior r, radio superior R, rRings vértices en el perfil y nSamples muestras de revolución.
+		· tronco de cono de altura h, radio inferior r, radio superior R, rRings vertices en el perfil y nSamples muestras de revolucin.
 	*/
 public:
 	explicit Cone(GLdouble h, GLdouble r, GLdouble R, GLuint nRings, GLuint nSamples);

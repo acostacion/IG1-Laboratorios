@@ -27,7 +27,7 @@ public:
 	void roll(GLfloat a);  // rotates a degrees on the Z axis
 
 	void moveLR(GLfloat d); // mueve d unidades a la derecha (d>0) o a la izquierda (d<0)
-	void moveFB(GLfloat d); // mueve d unidades hacia adelante (d>0) o hacia atrás (d<0)
+	void moveFB(GLfloat d); // mueve d unidades hacia adelante (d>0) o hacia atras (d<0)
 	void moveUD(GLfloat d); // mueve d unidades hacia arriba (d>0) o hacia abajo (d<0)
 
 	void pitchReal(GLfloat cs); //Rotacion en x (u)
@@ -39,7 +39,7 @@ public:
 	// projection matrix
 	glm::mat4 const& projMat() const { return mProjMat; };
 
-	void changePrj() { bOrto = !bOrto; setPM(); }; // cambia de proyección ortogonal a perspectiva o viceversa
+	void changePrj() { bOrto = !bOrto; setPM(); }; // cambia de proyeccin ortogonal a perspectiva o viceversa
 
 	// sets scene visible area size
 	void setSize(GLdouble xw, GLdouble yh);

@@ -135,7 +135,7 @@ void RGBCube::rotateOnAxis(GLint n) {
 RGBTriangle::RGBTriangle(GLdouble l, GLdouble r) {
 	mMesh = Mesh::generateRegularPolygon(3, l);
 	mMesh->setPrimitive(GL_TRIANGLES);
-	// se pone a cada vértice un color diferente
+	// se pone a cada vertice un color diferente
 	mMesh->setColorBuffer({
 	  {1.0f, 0.0f, 0.0f, 1.0f}, // rojo
 	  {0.0f, 1.0f, 0.0f, 1.0f}, // verde
@@ -268,9 +268,9 @@ void Star3D::render(const glm::mat4& modelViewMat) const {
 
 void Star3D::update() {
 	_zAngle += 2.0f; // velocidad giro sobre Z
-	_yAngle += 1.0f; // velocidad giro sobre Y (más lento)
+	_yAngle += 1.0f; // velocidad giro sobre Y (mas lento)
 
-	mModelMat = mBaseTransform                                                          // posición/escala base
+	mModelMat = mBaseTransform                                                          // posicin/escala base
 		* glm::rotate(glm::mat4(1.0f), glm::radians(_yAngle), glm::vec3(0, 1, 0))
 		* glm::rotate(glm::mat4(1.0f), glm::radians(_zAngle), glm::vec3(0, 0, 1));
 }
@@ -455,7 +455,7 @@ void Box::renderBoxLower(const glm::mat4& modelViewMat) const {
 
 void Box::update() {
 
-	mModelMatArr = mBaseTranslation                                              // posición base
+	mModelMatArr = mBaseTranslation                                              // posicin base
 		* translate(glm::dmat4(1), glm::dvec3(-_length / 2, _length / 2, 0))
 		* rotate(dmat4(1), radians(angle), dvec3(0.0, 0.0, 1.0))
 		* translate(glm::dmat4(1), glm::dvec3(_length / 2, 0, 0));
@@ -585,10 +585,10 @@ ColorMaterialEntity::ColorMaterialEntity(glm::vec3 color) {
 }
 
 void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
-	// Renderizado normal con iluminación
+	// Renderizado normal con iluminacin
 	EntityWithMaterial::render(modelViewMat);
 
-	// Renderizado de normales si está activado (apartado 63)
+	// Renderizado de normales si esta activado (apartado 63)
 	if (mShowNormals && mMesh) {
 		Shader* normShader = Shader::get("normals");
 		normShader->use();

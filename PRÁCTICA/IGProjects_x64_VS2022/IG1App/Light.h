@@ -29,7 +29,7 @@ protected:
 	std::string lightID;
 	bool bEnabled;
 
-	// Atributos lumínicos y geométrico de la fuente de luz
+	// Atributos luminicos y geometrico de la fuente de luz
 	glm::vec3 ambient = {0.1, 0.1, 0.1};
 	glm::vec3 diffuse = {0.5, 0.5, 0.5};
 	glm::vec3 specular = {0.5, 0.5, 0.5};
@@ -62,7 +62,7 @@ public:
 
 protected:
 	glm::vec4 position = {0, 0, 0, 1};
-	// Factores de atenuación
+	// Factores de atenuacin
 	GLfloat constant = 1, linear = 0, quadratic = 0;
 };
 
