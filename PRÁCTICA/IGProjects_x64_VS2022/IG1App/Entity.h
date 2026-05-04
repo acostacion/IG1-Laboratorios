@@ -63,7 +63,6 @@ protected:
 class EntityWithTexture : public Abs_Entity {
 public:
 	explicit EntityWithTexture();
-	~EntityWithTexture();
 	void render(const glm::mat4& modelViewMat) const override;
 	void setTexture(Texture* t) { mTexture = t; }
 protected:
@@ -215,6 +214,7 @@ private:
 class Ground : public EntityWithTexture {
 public:
 	explicit Ground(GLdouble w, GLdouble h);
+	~Ground();
 };
 
 class Star3D : public EntityWithTexture {
@@ -295,6 +295,7 @@ public:
 class SphereWithTexture : public EntityWithTexture {
 public:
 	explicit SphereWithTexture(GLdouble radius, GLuint nParallels, GLuint nMeridians);
+	~SphereWithTexture();
 };
 
 class Droid : public CompoundEntity {

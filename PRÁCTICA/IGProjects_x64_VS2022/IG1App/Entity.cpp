@@ -219,13 +219,12 @@ Ground::Ground(GLdouble w, GLdouble h) {
 	mModelMat = glm::rotate(glm::dmat4(1), glm::radians(-90.0), glm::dvec3(1, 0, 0));
 }
 
-EntityWithTexture::EntityWithTexture() {
-	mShader = Shader::get("texture");
+Ground::~Ground() {
+	delete mTexture; mTexture = nullptr;
 }
 
-EntityWithTexture::~EntityWithTexture() {
-	delete mMesh; mMesh = nullptr;
-	delete mTexture; mTexture = nullptr;
+EntityWithTexture::EntityWithTexture() {
+	mShader = Shader::get("texture");
 }
 
 void EntityWithTexture::render(const glm::mat4& modelViewMat) const {
@@ -684,6 +683,10 @@ SphereWithTexture::SphereWithTexture(GLdouble radius, GLuint nParallels, GLuint 
 	mMesh = IndexMesh::generateSphere(radius, nParallels, nMeridians);
 	mTexture = new Texture();
 	mTexture->load("../assets/images/container.jpg", 255);
+}
+
+SphereWithTexture::~SphereWithTexture() {
+	delete mTexture; mTexture = nullptr;
 }
 
 Droid::Droid(GLdouble radius) {
