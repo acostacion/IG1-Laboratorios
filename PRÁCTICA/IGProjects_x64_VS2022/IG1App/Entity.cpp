@@ -592,7 +592,7 @@ void ColorMaterialEntity::render(const glm::mat4& modelViewMat) const {
 	if (mShowNormals && mMesh) {
 		Shader* normShader = Shader::get("normals");
 		normShader->use();
-		upload(modelViewMat * mModelMat);
+		normShader->setUniform("modelView", modelViewMat * mModelMat);
 		mMesh->render();
 	}
 }
