@@ -1,4 +1,4 @@
-#include "Mesh.h"
+ï»¿#include "Mesh.h"
 
 using namespace std;
 using namespace glm;
@@ -550,7 +550,7 @@ IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile
 
 void IndexMesh::buildNormalVectors() {
 	vNormals.clear();
-	for (int i = 0; i < vVertices.size(); i++) // tamaño de vértices, no de índices
+	for (int i = 0; i < vVertices.size(); i++) // tamaÃ±o de vÃ©rtices, no de Ã­ndices
 		vNormals.emplace_back(0.0, 0.0, 0.0);
 
 	for (int i = 0; i < vIndexes.size(); i += 3) {

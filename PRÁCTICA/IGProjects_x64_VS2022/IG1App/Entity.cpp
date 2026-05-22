@@ -1,4 +1,4 @@
-#include "Entity.h"
+﻿#include "Entity.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -594,7 +594,7 @@ Disk::Disk(GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples) {
 
 	// el perfil es una linea recta que va de R a r, con nRings+1 puntos (incluyendo ambos extremos)
 	for (GLuint i = 0; i < nRings + 2; i++) {
-		GLdouble x = R - (incremento * i); // de R hacia r, al rev�s
+		GLdouble x = R - (incremento * i); // de R hacia r, al revés
 		GLdouble y = 0;
 		profile.emplace_back(x, y);
 	}
