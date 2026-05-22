@@ -44,7 +44,7 @@ protected:
 	void setGL();
 	void resetGL();
 
-	void uploadLights(Camera const& cam) const;
+	virtual void uploadLights(Camera const& cam) const;
 
 	std::vector<Abs_Entity*> gObjects;		// Entities (graphic objects) of the scene
 	std::vector<Texture*> gTextures;		// texturas de la escena
@@ -113,6 +113,8 @@ public:
 	void togglePosLight() { if (mPosLight)  mPosLight->setEnabled(!mPosLight->enabled()); }
 	void toggleSpotLight() { if (mSpotLight) mSpotLight->setEnabled(!mSpotLight->enabled()); }
 	void toggleDroidLight() { if (mDroidLight) mDroidLight->setEnabled(!mDroidLight->enabled()); }
+
+	void uploadLights(Camera const& cam) const override;
 
 	void handleKey(unsigned int key) override;
 

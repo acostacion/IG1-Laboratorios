@@ -331,15 +331,13 @@ void Scene8::init() {
 	mPlaneta->setMaterial(glm::vec3(171.0f / 255.0f, 33.0f / 255.0f, 72.0f / 255.0f));
 	gObjects.push_back(mPlaneta);
 
-	// --- jerarquia droide
+	// --- jerarquia droide (solo 1 nodo ficticio)
 	mNodoFicticio = new CompoundEntity();
 	mNodoFicticio->setModelMat(
 		glm::translate(glm::dmat4(1), glm::dvec3(0, radioPlaneta + 35, 0))
 	);
-	mNodoRotacion = new CompoundEntity();
 	mRobot = new Robot(radioRobot);
-	static_cast<CompoundEntity*>(mNodoRotacion)->addEntity(mRobot);
-	static_cast<CompoundEntity*>(mNodoFicticio)->addEntity(mNodoRotacion);
+	static_cast<CompoundEntity*>(mNodoFicticio)->addEntity(mRobot);
 	gObjects.push_back(mNodoFicticio);
 
 	// ---------------------------------------------------
@@ -373,11 +371,11 @@ void Scene8::init() {
 	// Posicion inicial = polo norte del planeta (igual que mNodoFicticio)
 	// Se actualiza cada frame en render()
 	// ---------------------------------------------------
-	mDroidLight = new SpotLight(glm::vec3(0.0f, radioPlaneta, 0.0f), 1); // "spotLights[1]"
+	mDroidLight = new SpotLight(glm::vec3(0.0f, 0.0f, 0.0f), 1); // origen local del nodo
 	mDroidLight->setAmb(glm::vec3(0.0f, 0.0f, 0.0f));
 	mDroidLight->setDiff(glm::vec3(0.8f, 0.8f, 0.8f));
 	mDroidLight->setSpec(glm::vec3(0.2f, 0.2f, 0.2f));
-	mDroidLight->setDirection(glm::vec3(0.0f, -1.0f, 0.0f)); // apunta hacia el planeta
+	mDroidLight->setDirection(glm::vec3(0.0f, -1.0f, 0.0f));   // abajo en local hacia el planeta
 	mDroidLight->setCutoff(20.0f, 30.0f);
 	mDroidLight->setEnabled(false);  // tecla 'h'
 	gLights.push_back(mDroidLight);
@@ -390,6 +388,7 @@ void Scene8::render(Camera const& cam) const {
 
 	// Actualizar posicio y direcci del foco del droide
 	// segn la transformacin acumulada del nodo ficticio * nodo rotacin
+	/*
 	if (mDroidLight) {
 		glm::mat4 M = glm::mat4(mNodoFicticio->modelMat()) *
 			glm::mat4(mNodoRotacion->modelMat());
@@ -405,31 +404,41 @@ void Scene8::render(Camera const& cam) const {
 		mDroidLight->setPosition(posWorld);
 		mDroidLight->setDirection(dirWorld);
 	}
-
+	*/
 	Scene::render(cam);
 }
 
 void Scene8::rotate() {
-	mNodoRotacion->setModelMat(
-		mNodoRotacion->modelMat() *
+	// el robot rota sobre si mismo
+	mRobot->setModelMat(
+		mRobot->modelMat() *
 		glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f))
 	);
 }
 
 void Scene8::orbit() {
-	// Extraemos el eje "frente" actual del droide (columna 2 = eje Z local)
-	// combinando la orientacin del nodo ficticio y el nodo de rotacin
-	glm::mat4 orientacion = mNodoFicticio->modelMat() * mNodoRotacion->modelMat();
-	glm::vec3 ejeFrente = glm::normalize(glm::vec3(orientacion[2])); // columna 2
-
-	// Orbitamos alrededor del planeta usando ese eje como eje de rotacin
-	// pero perpendicular al frente, osea el eje derecha (columna 0)
-	glm::vec3 ejeDerecha = glm::normalize(glm::vec3(orientacion[0])); // columna 0
+	glm::mat4 orientacion = glm::mat4(mNodoFicticio->modelMat()) * glm::mat4(mRobot->modelMat());
+	glm::vec3 ejeDerecha = glm::normalize(glm::vec3(orientacion[0]));
 
 	mNodoFicticio->setModelMat(
 		glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), ejeDerecha)
 		* mNodoFicticio->modelMat()
 	);
+}
+
+// En Scene8, sobreescribe uploadLights
+void Scene8::uploadLights(Camera const& cam) const {
+	// subimos todas las luces normalmente
+	Scene::uploadLights(cam);
+
+	// para la luz del droide, la subimos con la matriz del nodo ficticio
+	if (mDroidLight) {
+		Shader* lightShader = Shader::get("light");
+		lightShader->use();
+		// la viewMat incluye la transformacion del nodo ficticio
+		glm::mat4 droidModelView = cam.viewMat() * glm::mat4(mNodoFicticio->modelMat());
+		mDroidLight->upload(*lightShader, droidModelView);
+	}
 }
 
 void Scene8::handleKey(unsigned int key) {
