@@ -543,8 +543,6 @@ void Grass::createThirdGrass(const glm::mat4& modelViewMat) const {
 }
 
 Torus::Torus(GLdouble R, GLdouble r, GLuint nPoints, GLuint nSamples) {
-	mShader = Shader::get("simple_light");
-	//mShader = Shader::get("normals");
 	std::vector<glm::vec2> profile;
 
 	// Se van guardando en sentido antihorario desde x = 0
@@ -563,18 +561,6 @@ Torus::Torus(GLdouble R, GLdouble r, GLuint nPoints, GLuint nSamples) {
 	//Hacemos la malla por revolucion
 	mMesh = IndexMesh::generateByRevolution(profile, nSamples, 2 * std::numbers::pi);
 	setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-}
-
-void Torus::render(const glm::mat4& modelViewMat) const {
-
-	if (mMesh != nullptr) {
-		dmat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
-		mShader->use();
-		mShader->setUniform("color", mColor);
-		upload(aMat);
-
-		mMesh->render();
-	}
 }
 
 bool ColorMaterialEntity::mShowNormals = false;

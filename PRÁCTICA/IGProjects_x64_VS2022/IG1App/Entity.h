@@ -258,7 +258,7 @@ protected:
 	GLdouble _length;
 };
 
-class Torus : public SingleColorEntity {
+class Torus : public ColorMaterialEntity {
 public: // NOTA: singlecolorentity?
 	/*
 	R - radio desde origen de coordenadas
@@ -267,7 +267,7 @@ public: // NOTA: singlecolorentity?
 	nSamples - numero de repeticiones del perfil en la figura final
 	*/
 	explicit Torus(GLdouble R, GLdouble r, GLuint nPoints = 40, GLuint nSamples = 40);
-	void render(const glm::mat4& modelViewMat) const override;
+	//void render(const glm::mat4& modelViewMat) const override;
 };
 
 class Sphere : public ColorMaterialEntity {
