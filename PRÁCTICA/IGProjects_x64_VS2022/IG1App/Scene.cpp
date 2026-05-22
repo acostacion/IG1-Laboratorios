@@ -426,6 +426,16 @@ void Scene8::orbit() {
 	);
 }
 
+void Scene8::handleKey(unsigned int key) {
+	switch (key) {
+	case 't': togglePosLight();  break;
+	case 'y': toggleSpotLight(); break;
+	case 'h': toggleDroidLight(); break;
+	case 'f': rotate(); break;
+	case 'g': orbit();  break;
+	}
+}
+
 void Scene9::init() {
 	Scene::init();
 

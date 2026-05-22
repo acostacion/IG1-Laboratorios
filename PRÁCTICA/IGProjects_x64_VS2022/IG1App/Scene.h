@@ -31,6 +31,8 @@ public:
 			obj->update();
 	}
 
+	virtual void handleKey(unsigned int key) {} // por defecto no hace nada
+
 	// load or unload scene data into the GPU
 	void load();
 	void unload();
@@ -111,6 +113,8 @@ public:
 	void togglePosLight() { if (mPosLight)  mPosLight->setEnabled(!mPosLight->enabled()); }
 	void toggleSpotLight() { if (mSpotLight) mSpotLight->setEnabled(!mSpotLight->enabled()); }
 	void toggleDroidLight() { if (mDroidLight) mDroidLight->setEnabled(!mDroidLight->enabled()); }
+
+	void handleKey(unsigned int key) override;
 
 private:
 	Sphere* mPlaneta = nullptr;

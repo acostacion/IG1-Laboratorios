@@ -206,7 +206,7 @@ IG1App::key(unsigned int key) {
 	Scene* actualScene = mScenes[mCurrentScene];
 
 	bool need_redisplay = true;
-	Scene8* s8 = dynamic_cast<Scene8*>(actualScene); // para los casos de las teclas g y f, que solo funcionan en la escena 8.
+	//Scene8* s8 = dynamic_cast<Scene8*>(actualScene); // para los casos de las teclas g y f, que solo funcionan en la escena 8.
 
 	switch (key) {
 		case 'x': captura();				  break;
@@ -224,24 +224,12 @@ IG1App::key(unsigned int key) {
 		case 'c': actualCam->setCenital();	  break;
 		case 'n': ColorMaterialEntity::toggleShowNormals(); break;
 		case 'r': actualScene->toggleDirLight(); break;
-		case 't': {
-			if (s8) s8->togglePosLight();
+			/*
+			// Antes había 5 cases con dynamic_cast, ahora es una sola línea:
+		case 't': case 'y': case 'h': case 'f': case 'g':
+			actualScene->handleKey(key);
 			break;
-		}
-		case 'y': {
-			if (s8) s8->toggleSpotLight();
-			break;
-		}
-		case 'h': {
-			if (s8) s8->toggleDroidLight();
-			break;
-		}
-		case 'f': 
-			if (s8) s8->rotate();
-			break;
-		case 'g': 
-			if (s8) s8->orbit();
-			break;
+			*/
 		case 'k':
 			m2Vistas = !m2Vistas;
 			m2Scenes = false; // si se activa m2Vistas, se quita m2Scenes.
@@ -268,6 +256,7 @@ IG1App::key(unsigned int key) {
 			}
 			break;
 		default:
+			actualScene->handleKey(key); // para que cada escena pueda manejar sus propias teclas, como las de la escena 8.
 			if (key >= '0' && key <= '9') {
 				if (changeScene(key - '0')) break;
 				cout << "[NOTE] There is no scene " << char(key) << ".\n";
