@@ -14,8 +14,10 @@ Scene::init()
 	// Lights
 	
 	mDirLight = new DirLight(0);
-	mDirLight->setDirection({ 1.0f, -1.5f, -1.5f });
+	mDirLight->setDirection(glm::normalize(glm::vec3(1.0f, -1.5f, -1.5f)));
 	mDirLight->setAmb({ 0.2f, 0.2f, 0.2f });
+	mDirLight->setDiff({ 0.5f, 0.5f, 0.5f });
+	mDirLight->setSpec({ 0.5f, 0.5f, 0.5f });
 	mDirLight->setEnabled(true);
 	gLights.push_back(mDirLight);
 
@@ -361,7 +363,7 @@ void Scene8::init() {
 	mSpotLight->setAmb(glm::vec3(0.25f, 0.25f, 0.25f));
 	mSpotLight->setDiff(glm::vec3(0.6f, 0.6f, 0.6f));
 	mSpotLight->setSpec(glm::vec3(0.0f, 0.2f, 0.0f));
-	mSpotLight->setDirection(glm::vec3(0.0f, -1.0f, -1.0f)); // apunta hacia el origen
+	mSpotLight->setDirection(glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f))); // apunta hacia el origen
 	mSpotLight->setCutoff(20.0f, 30.0f); // inner=20, outer=30
 	mSpotLight->setEnabled(false);  // tecla 'y'
 	gLights.push_back(mSpotLight);
