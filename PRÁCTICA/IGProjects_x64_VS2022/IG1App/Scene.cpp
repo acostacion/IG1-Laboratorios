@@ -64,13 +64,18 @@ Scene::load() {
 		obj->load();
 }
 
-void
+void 
 Scene::unload() {
 	for (Abs_Entity* obj : gObjects)
 		obj->unload();
 
 	for (Abs_Entity* obj : gObjectsTrans)
 		obj->unload();
+
+	Shader* lightShader = Shader::get("light");
+	lightShader->use();
+	for (Light* l : gLights)
+		l->unload(*lightShader);
 }
 
 void Scene::uploadLights(Camera const& cam) const {
