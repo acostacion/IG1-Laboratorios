@@ -107,7 +107,7 @@ Scene::resetGL() {
 void 
 Scene::render(Camera const& cam) const {
 	cam.upload();
-	glClearColor(0.6, 0.7, 0.8, 1.0);
+	glClearColor(mBgColor.r, mBgColor.g, mBgColor.b, mBgColor.a);
 
 	// --- nuevo: subir luces antes de renderizar ---
 	uploadLights(cam);
@@ -128,6 +128,7 @@ Scene::render(Camera const& cam) const {
 
 void Scene0::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	Sphere* yellow = new Sphere(25, 40, 40);
 	Sphere* gold = new Sphere(25, 40, 40);
@@ -147,6 +148,7 @@ void Scene0::init() {
 
 void Scene1::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	// hexagono magenta.
 	RegularPolygon* hex = new RegularPolygon(6, 200);
@@ -161,6 +163,8 @@ void Scene1::init() {
 
 void Scene2::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
+
 	RGBTriangle* tri = new RGBTriangle(50, 215);
 	gObjects.push_back(tri);
 
@@ -174,6 +178,7 @@ void Scene2::init() {
 
 void Scene3::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	/*Cube* cube = new Cube(200);
 	cube->setColor({ 0.0f, 0.0f, 0.0f, 1.0f });
@@ -186,6 +191,7 @@ void Scene3::init() {
 
 void Scene4::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	//createBoxOutline(200);
 	createPhoto(100, 100);
@@ -301,6 +307,7 @@ void Scene4::createGrass(GLdouble length) {
 
 void Scene5::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	Torus* torus = new Torus(200, 50);
 	torus->setModelMat(glm::rotate(glm::dmat4(1), radians(-180.0), dvec3(0.0, 1.0, 0.0)));
@@ -310,6 +317,7 @@ void Scene5::init() {
 
 void Scene6::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	IndexedBox* indexedBox = new IndexedBox(200);
 	gObjects.push_back(indexedBox);
@@ -317,6 +325,7 @@ void Scene6::init() {
 
 void Scene7::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	Robot* r = new Robot(100);
 	gObjects.push_back(r);
@@ -324,6 +333,7 @@ void Scene7::init() {
 
 void Scene8::init() {
 	Scene::init();
+	mBgColor = { 0.0f, 0.0f, 0.0f, 1.0f }; // fondo negro solo para esta escena
 
 	GLdouble radioPlaneta = 200.0;
 	GLdouble radioRobot = 30.0;
@@ -383,33 +393,14 @@ void Scene8::init() {
 	gLights.push_back(mDroidLight);
 }
 
-
+/*
 void Scene8::render(Camera const& cam) const {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Actualizar posicio y direcci del foco del droide
-	// segn la transformacin acumulada del nodo ficticio * nodo rotacin
-	/*
-	if (mDroidLight) {
-		glm::mat4 M = glm::mat4(mNodoFicticio->modelMat()) *
-			glm::mat4(mNodoRotacion->modelMat());
-
-		// Posicin mundial del centro del droide
-		glm::vec3 posWorld = glm::vec3(M * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-
-		// Direccin "abajo" local del droide = -Y del nodo ficticio
-		glm::vec3 dirWorld = glm::normalize(
-			glm::vec3(M * glm::vec4(0.0f, -1.0f, 0.0f, 0.0f))
-		);
-
-		mDroidLight->setPosition(posWorld);
-		mDroidLight->setDirection(dirWorld);
-	}
-	*/
 	Scene::render(cam);
 }
-
+*/
 void Scene8::rotate() {
 	// el robot rota sobre si mismo
 	mRobot->setModelMat(
@@ -455,6 +446,7 @@ void Scene8::handleKey(unsigned int key) {
 
 void Scene9::init() {
 	Scene::init();
+	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
 	SnowMan* sm = new SnowMan(100);
 	gObjects.push_back(sm);

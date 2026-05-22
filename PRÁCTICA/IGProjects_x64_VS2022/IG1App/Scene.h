@@ -51,6 +51,8 @@ protected:
 	std::vector<Abs_Entity*> gObjectsTrans; // Entidades con transparencias
 	std::vector<Light*> gLights; // luces de la escena
 
+	glm::vec4 mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f }; // azul clarito por defecto
+
 	DirLight* mDirLight = nullptr; // luz direccional de la escena
 };
 
@@ -107,7 +109,7 @@ public: void init() override;
 class Scene8 : public Scene {
 public:
 	void init() override;
-	void render(Camera const& cam) const override;
+	//void render(Camera const& cam) const override;
 	void rotate();
 	void orbit();
 	void togglePosLight() { if (mPosLight)  mPosLight->setEnabled(!mPosLight->enabled()); }
