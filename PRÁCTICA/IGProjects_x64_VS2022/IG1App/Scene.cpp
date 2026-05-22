@@ -211,7 +211,7 @@ void Scene4::createGround(GLdouble width, GLdouble height) {
 void Scene4::createStar(GLdouble re, GLuint np, GLdouble h) {
 	Star3D* star = new Star3D(re, np, h);
 	Texture* starTex = new Texture();
-	starTex->load("..\\assets\\images\\rueda.png");
+	starTex->load("../assets/images/rueda.png");
 	gTextures.push_back(starTex);
 	star->setTexture(starTex);
 	star->setBaseTransform(

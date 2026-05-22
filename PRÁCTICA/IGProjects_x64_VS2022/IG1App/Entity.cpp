@@ -215,7 +215,7 @@ void BoxOutline::render(const glm::mat4& modelViewMat) const { // TODO luego cam
 Ground::Ground(GLdouble w, GLdouble h) {
 	mMesh = Mesh::generateRectangleTexCor(w, h, 4, 4); // rw=rh=4 como en el ejemplo
 	mTexture = new Texture();
-	mTexture->load("..\\assets\\images\\baldosaC.png"); // ajusta la ruta a tu proyecto
+	mTexture->load("..//assets//images//baldosaC.png"); // ajusta la ruta a tu proyecto
 	mModelMat = glm::rotate(glm::dmat4(1), glm::radians(-90.0), glm::dvec3(1, 0, 0));
 }
 
