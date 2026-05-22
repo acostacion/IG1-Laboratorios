@@ -563,7 +563,7 @@ void IndexMesh::buildNormalVectors() {
 	// METODO NEWELL (REVISAR):
 	//Rellena inicialmente con (0.0, 0.0, 0.0)
 	vNormals.clear();
-	for (int i = 0; i < vIndexes.size(); i++)
+	for (int i = 0; i < vVertices.size(); i++) 
 		vNormals.emplace_back(0.0, 0.0, 0.0);
 
 	//Define las normales con el producto vectorial
@@ -589,14 +589,13 @@ void IndexMesh::buildNormalVectors() {
 IndexMesh* IndexMesh::generateSphere(GLdouble radius, GLuint nParallel, GLuint nMeridians) {
 	std::vector<glm::vec2> profile;
 
-	// Se van guardando en sentido antihorario desde x = 0
-	GLdouble alpha = 90.0;
-	GLdouble incremento = 180.0 / (nParallel + 1); //Solo media esfera, por eso 180
-	//Conseguimos los puntos del perfil
+	GLdouble alpha = -90.0; // empezamos desde abajo en vez de desde arriba
+	GLdouble incremento = 180.0 / (nParallel + 1);
+
 	for (GLuint i = 0; i < nParallel + 1; i++) {
 		GLdouble x = radius * glm::cos(glm::radians(alpha));
 		GLdouble y = radius * glm::sin(glm::radians(alpha));
-		alpha -= incremento;
+		alpha += incremento;
 
 		profile.emplace_back(x, y);
 	}
