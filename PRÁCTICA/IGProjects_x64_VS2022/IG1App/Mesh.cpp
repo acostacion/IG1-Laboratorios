@@ -513,75 +513,56 @@ IndexMesh* IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile
 	mesh->mPrimitive = GL_TRIANGLES;
 
 	int tamPerfil = profile.size();
-	
+
 	mesh->vVertices.reserve((nSamples + 1) * tamPerfil);
 	mesh->vTexCoords.reserve((nSamples + 1) * tamPerfil);
-	
-	GLdouble theta1 = angleMax / nSamples; 
-	//Crea los vertices
-	for (int i = 0; i <= nSamples; ++i) { // muestra i-esima
-		GLdouble c = cos(i * theta1), s = sin(i * theta1);
 
-		// recorrido horizontal textura
+	GLdouble theta1 = angleMax / nSamples;
+	for (int i = 0; i <= nSamples; ++i) {
+		GLdouble c = cos(i * theta1), s = sin(i * theta1);
 		float u = float(i) / float(nSamples);
 
-		for (int j = 0; j < tamPerfil; ++j) {// rota el perfil
-			auto p = profile[j]; 
+		for (int j = 0; j < tamPerfil; ++j) {
+			auto p = profile[j];
 			mesh->vVertices.emplace_back(p.x * c, p.y, -p.x * s);
-
-			// recorrido vertical textura
 			float v = float(j) / float(tamPerfil - 1);
-			mesh->vTexCoords.emplace_back(u, v); // coordenadas textura (si no se hace con float() se ralla)
-
+			mesh->vTexCoords.emplace_back(u, v);
 		}
 	}
 
-	//Despues une los vertices para formar caras
-	for (int i = 0; i < nSamples; ++i) // caras i a i + 1 (todas las repeticiones del perfil)
-		for (int j = 0; j < tamPerfil - 1; ++j) { // una cara (puntos dentro del perfil)
-			if (profile[j].x != 0.0) // triangulo inferior
-				for (auto [s, t] : { std::pair{i, j}, std::pair{i, j + 1}, std::pair{i + 1, j} }) {
+	for (int i = 0; i < nSamples; ++i)
+		for (int j = 0; j < tamPerfil - 1; ++j) {
+			if (profile[j].x != 0.0)
+				for (auto [s, t] : { std::pair{i, j}, std::pair{i + 1, j}, std::pair{i, j + 1} }) {
 					mesh->vIndexes.push_back(s * tamPerfil + t);
 				}
 
-
-			if (profile[j + 1].x != 0.0) // triangulo superior
-				for (auto [s, t] : { std::pair{i, j + 1}, std::pair{i + 1, j + 1}, std::pair{i + 1, j} }) {
+			if (profile[j + 1].x != 0.0)
+				for (auto [s, t] : { std::pair{i, j + 1}, std::pair{i + 1, j}, std::pair{i + 1, j + 1} }) {
 					mesh->vIndexes.push_back(s * tamPerfil + t);
 				}
 		}
 
-	//Reserva vertices
 	mesh->mNumVertices = mesh->vVertices.size();
-
 	mesh->buildNormalVectors();
-	//Devuelve la malla correspondiente
 	return mesh;
 }
 
 void IndexMesh::buildNormalVectors() {
-	// METODO NEWELL (REVISAR):
-	//Rellena inicialmente con (0.0, 0.0, 0.0)
 	vNormals.clear();
-	for (int i = 0; i < vVertices.size(); i++) 
+	for (int i = 0; i < vVertices.size(); i++) // tamaño de vértices, no de índices
 		vNormals.emplace_back(0.0, 0.0, 0.0);
 
-	//Define las normales con el producto vectorial
-	for (int i = 0; i < vIndexes.size(); i += 3) //(36 indices/12 triangulos) = 3(vertices por triangulo))
-	{
-		// Calculo normal
+	for (int i = 0; i < vIndexes.size(); i += 3) {
 		glm::vec3 normal = glm::normalize(glm::cross(
 			vVertices[vIndexes[i + 1]] - vVertices[vIndexes[i]],
 			vVertices[vIndexes[i + 2]] - vVertices[vIndexes[i]])
 		);
-	
-		//Los rellena
 		vNormals[vIndexes[i]] += normal;
 		vNormals[vIndexes[i + 1]] += normal;
 		vNormals[vIndexes[i + 2]] += normal;
 	}
 
-	//Normalizamos los vectores de vNormals
 	for (int i = 0; i < vNormals.size(); i++)
 		vNormals[i] = glm::normalize(vNormals[i]);
 }
@@ -589,13 +570,13 @@ void IndexMesh::buildNormalVectors() {
 IndexMesh* IndexMesh::generateSphere(GLdouble radius, GLuint nParallel, GLuint nMeridians) {
 	std::vector<glm::vec2> profile;
 
-	GLdouble alpha = -90.0; // empezamos desde abajo en vez de desde arriba
+	GLdouble alpha = -90.0; // de abajo hacia arriba
 	GLdouble incremento = 180.0 / (nParallel + 1);
 
 	for (GLuint i = 0; i < nParallel + 1; i++) {
 		GLdouble x = radius * glm::cos(glm::radians(alpha));
 		GLdouble y = radius * glm::sin(glm::radians(alpha));
-		alpha += incremento;
+		alpha += incremento; // sumamos
 
 		profile.emplace_back(x, y);
 	}
@@ -686,12 +667,12 @@ IndexMesh* IndexMesh::generateIndexedBox(GLdouble l) {
 	// Cada cara: 2 triangulos -> 6 indices
 	// Triangulo 1: 0,1,2  Triangulo 2: 0,2,3
 	mesh->vIndexes = {
-		 0,  1,  2,   0,  2,  3,  // cara derecha
-		 4,  5,  6,   4,  6,  7,  // cara izquierda
-		 8,  9, 10,   8, 10, 11,  // cara superior
-		12, 13, 14,  12, 14, 15,  // cara inferior
-		16, 17, 18,  16, 18, 19,  // cara frontal
-		20, 21, 22,  20, 22, 23,  // cara trasera
+		 0,  2,  1,   0,  3,  2,  // cara derecha
+		 4,  6,  5,   4,  7,  6,  // cara izquierda
+		 8, 10,  9,   8, 11, 10,  // cara superior
+		12, 14, 13,  12, 15, 14,  // cara inferior
+		16, 18, 17,  16, 19, 18,  // cara frontal
+		20, 22, 21,  20, 23, 22,  // cara trasera
 	};
 
 	mesh->mNumVertices = mesh->vVertices.size();

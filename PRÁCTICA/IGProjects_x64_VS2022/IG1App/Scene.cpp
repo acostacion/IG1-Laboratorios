@@ -14,7 +14,7 @@ Scene::init()
 	// Lights
 	
 	mDirLight = new DirLight(0);
-	mDirLight->setDirection({ -1.0f, 1.5f, 1.5f });
+	mDirLight->setDirection({ 1.0f, -1.5f, -1.5f });
 	mDirLight->setAmb({ 0.2f, 0.2f, 0.2f });
 	mDirLight->setEnabled(true);
 	gLights.push_back(mDirLight);
