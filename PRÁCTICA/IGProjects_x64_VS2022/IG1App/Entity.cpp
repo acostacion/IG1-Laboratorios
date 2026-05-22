@@ -590,21 +590,15 @@ Sphere::Sphere(GLdouble radius, GLuint nParallels, GLuint nMeridians) {
 
 Disk::Disk(GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples) {
 	std::vector<glm::vec2> profile;
-
-	//El perfil es una linea recta
 	GLdouble incremento = (R - r) / nRings;
-	//Conseguimos los puntos del perfil
-	for (GLuint i = 0; i < nRings + 2; i++)
-	{
-		GLdouble x = r + (incremento * i);
-		GLdouble y = 0;
 
+	// el perfil es una linea recta que va de R a r, con nRings+1 puntos (incluyendo ambos extremos)
+	for (GLuint i = 0; i < nRings + 2; i++) {
+		GLdouble x = R - (incremento * i); // de R hacia r, al revés
+		GLdouble y = 0;
 		profile.emplace_back(x, y);
 	}
-
-	//Hacemos la malla por revolucion
 	mMesh = IndexMesh::generateByRevolution(profile, nSamples, 2 * std::numbers::pi);
-
 }
 
 Cone::Cone(GLdouble h, GLdouble r, GLdouble R, GLuint nRings, GLuint nSamples) {
