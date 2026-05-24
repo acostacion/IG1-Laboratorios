@@ -96,6 +96,8 @@ private:
 
 class Scene5 : public Scene {
 public: void init() override;
+private:
+	Vase* mVase = nullptr;
 };
 
 class Scene6 : public Scene {

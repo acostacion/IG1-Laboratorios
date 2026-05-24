@@ -799,3 +799,52 @@ void EntityWithMaterial::render(const glm::mat4& modelViewMat) const {
 	upload(modelViewMat * mModelMat);                // sube matrices
 	if (mMesh) mMesh->render();
 }
+
+Cone* Snowflake::createArm(GLdouble r)
+{
+	Cone* arm = new Cone(r * 2.0, r * 0.1, r * 0.1, 10, 10);
+	arm->setColor(glm::vec4(0.5f, 0.8f, 1.0f, 1.0f));
+	return arm;
+}
+
+Snowflake::Snowflake(GLdouble r)
+{
+	// Esfera central
+	Sphere* core = new Sphere(r, 20, 20);
+	core->setColor(glm::vec4(0.9f, 0.95f, 1.0f, 1.0f)); // blanco plateado
+	addEntity(core);
+
+	// 6 brazos, cada uno rotado 60° sobre el eje Y respecto al anterior
+	for (int i = 0; i < 6; i++) {
+		Cone* arm = createArm(r);
+
+		// Cada brazo: primero lo levantamos para que salga desde el centro
+		// (el Cone se genera centrado en Y, lo desplazamos para que el origen
+		//  quede en la base), luego rotamos 60*i grados sobre Y
+		glm::dmat4 mat =
+			glm::rotate(glm::dmat4(1), glm::radians(60.0 * i), glm::dvec3(0, 1, 0))  // giro en abanico
+			* glm::rotate(glm::dmat4(1), glm::radians(90.0), glm::dvec3(0, 0, 1))    // tumbarlo en XZ
+			* glm::translate(glm::dmat4(1), glm::dvec3(0, r, 0));                     // sacarlo del centro
+
+		arm->setModelMat(mat);
+		addEntity(arm);
+	}
+
+}
+
+Vase::Vase(GLdouble scale)
+{
+	std::vector<glm::vec2> profile;
+
+	// Cada punto es (radio_x, altura_y), de abajo hacia arriba.
+	// El perfil define la silueta derecha del jarrón.
+	profile.emplace_back(0.0 * scale, -60.0 * scale); // punto en el eje: base cerrada
+	profile.emplace_back(10.0 * scale, -55.0 * scale); // base estrecha
+	profile.emplace_back(40.0 * scale, -10.0 * scale); // cuerpo ancho (parte baja)
+	profile.emplace_back(45.0 * scale, 10.0 * scale); // cuerpo ancho (parte alta, maximo)
+	profile.emplace_back(15.0 * scale, 40.0 * scale); // cuello estrecho
+	profile.emplace_back(20.0 * scale, 55.0 * scale); // borde abierto
+	profile.emplace_back(0.0 * scale, 60.0 * scale); // punto en el eje: boca cerrada
+
+	mMesh = IndexMesh::generateByRevolution(profile, 40, 2 * std::numbers::pi);
+}

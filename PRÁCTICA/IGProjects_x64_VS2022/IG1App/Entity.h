@@ -331,4 +331,16 @@ public:
 	explicit IndexedBox(GLdouble l);
 };
 
+class Snowflake :public CompoundEntity {
+public:
+	explicit Snowflake(GLdouble r);
+private:
+	Cone* createArm(GLdouble r);
+};
+
+class Vase : public ColorMaterialEntity {
+public:
+	explicit Vase(GLdouble scale = 1.0);
+};
+
 #endif //_H_Entities_H_

@@ -309,10 +309,20 @@ void Scene5::init() {
 	Scene::init();
 	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
+	// Toro ya existente, desplazado a la izquierda para hacer sitio
 	Torus* torus = new Torus(200, 50);
-	torus->setModelMat(glm::rotate(glm::dmat4(1), radians(-180.0), dvec3(0.0, 1.0, 0.0)));
+	torus->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(-200, 0, 0)) *
+		glm::rotate(glm::dmat4(1), glm::radians(-180.0), glm::dvec3(0.0, 1.0, 0.0))
+	);
 	gObjects.push_back(torus);
 
+	// Jarrón nuevo, desplazado a la derecha
+	mVase = new Vase(1.5); // scale 1.5 para que se vea bien junto al toro
+	mVase->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(200, 0, 0))
+	);
+	gObjects.push_back(mVase);
 }
 
 void Scene6::init() {
@@ -448,6 +458,9 @@ void Scene9::init() {
 	Scene::init();
 	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
-	SnowMan* sm = new SnowMan(100);
-	gObjects.push_back(sm);
+	//SnowMan* sm = new SnowMan(100);
+	//gObjects.push_back(sm);
+
+	Snowflake* sf = new Snowflake(50);
+	gObjects.push_back(sf);
 }
