@@ -41,6 +41,8 @@ public:
 
 	void changePrj() { bOrto = !bOrto; setPM(); }; // cambia de proyeccin ortogonal a perspectiva o viceversa
 
+	bool isOrtho() const { return bOrto; } // devuelve true si la proyeccin es ortogonal, false si es perspectiva
+
 	// sets scene visible area size
 	void setSize(GLdouble xw, GLdouble yh);
 	// updates the scale factor

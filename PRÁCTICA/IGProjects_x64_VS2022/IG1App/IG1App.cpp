@@ -248,6 +248,28 @@ IG1App::key(unsigned int key) {
 				mScenes[mCurrentScene] = actualScene;
 			}
 			break;
+
+		case 'v':
+			mCenitalLock = !mCenitalLock;
+			if (mCenitalLock) {
+				// Activamos la vista cenital
+				actualCam->setCenital();
+			}
+			else {
+				// Volvemos a la posición 3D al desactivar
+				actualCam->set3D();
+			}
+			break;
+
+		case 'z':
+			mCenitalLock = false;
+			actualCam->set3D();
+			// Si estaba en ortogonal, cambiamos a perspectiva.
+			// Si ya era perspectiva, no hacemos nada.
+			if (actualCam->isOrtho())
+				actualCam->changePrj();
+			break;
+
 		case 'u':
 			mUpdateEnabled = !mUpdateEnabled;
 
@@ -328,6 +350,16 @@ void IG1App::mouse(int button, int state, int mods) {
 }
 
 void IG1App::motion(double x, double y) {
+
+	// Si la vista cenital está bloqueada, ignoramos el movimiento del ratón
+	if (mCenitalLock) {
+		// Aun así actualizamos mMouseCoord para no acumular deltas
+		// cuando se desactive el lock
+		mMouseCoord.x = x;
+		fixAxisY(y);
+		mMouseCoord.y = y;
+		return;
+	}
 
 	Camera* actualCam = mCamera;
 	//Si esta el modo en 2 escenas, y el raton esta en la segunda mitad

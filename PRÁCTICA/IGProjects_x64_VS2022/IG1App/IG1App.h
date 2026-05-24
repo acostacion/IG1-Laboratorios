@@ -45,6 +45,8 @@ public:
 	bool m2Scenes = false;
 	void display2S(Scene* s1, Scene* s2) const; 
 
+	bool mCenitalLock = false; // para bloquear la vista cenital
+
 protected:
 	IG1App() = default;
 	~IG1App() { close(); };
