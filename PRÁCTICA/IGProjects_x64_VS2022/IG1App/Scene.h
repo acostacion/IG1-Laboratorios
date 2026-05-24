@@ -95,9 +95,17 @@ private:
 };
 
 class Scene5 : public Scene {
-public: void init() override;
+public: 
+	void init() override;
+	void handleKey(unsigned int key) override;
+	void orbitSatellite();
+
+	void uploadLights(Camera const& cam) const override;
+
 private:
 	Vase* mVase = nullptr;
+	CompoundEntity* mNodoFicticio = nullptr;
+	SpotLight* mSatLight = nullptr;
 };
 
 class Scene6 : public Scene {

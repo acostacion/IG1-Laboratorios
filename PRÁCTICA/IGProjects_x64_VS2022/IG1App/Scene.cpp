@@ -309,7 +309,7 @@ void Scene5::init() {
 	Scene::init();
 	mBgColor = { 0.6f, 0.7f, 0.8f, 1.0f };
 
-	// Toro ya existente, desplazado a la izquierda para hacer sitio
+	// Toro
 	Torus* torus = new Torus(200, 50);
 	torus->setModelMat(
 		glm::translate(glm::dmat4(1), glm::dvec3(-200, 0, 0)) *
@@ -317,12 +317,77 @@ void Scene5::init() {
 	);
 	gObjects.push_back(torus);
 
-	// Jarrón nuevo, desplazado a la derecha
-	mVase = new Vase(1.5); // scale 1.5 para que se vea bien junto al toro
+	// Jarrón
+	mVase = new Vase(1.5);
 	mVase->setModelMat(
 		glm::translate(glm::dmat4(1), glm::dvec3(200, 0, 0))
 	);
 	gObjects.push_back(mVase);
+
+	// Nodo ficticio: centrado sobre el jarrón
+	mNodoFicticio = new CompoundEntity();
+	mNodoFicticio->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(200, 0, 0))
+	);
+
+	// Esfera satélite: desplazada del origen del nodo (radio de órbita = 180)
+	Sphere* satelite = new Sphere(15, 20, 20);
+	satelite->setColor(glm::vec4(1.0f, 0.8f, 0.2f, 1.0f)); // amarillo dorado
+	satelite->setModelMat(
+		glm::translate(glm::dmat4(1), glm::dvec3(180, 0, 0))
+	);
+
+	mNodoFicticio->addEntity(satelite);
+	gObjects.push_back(mNodoFicticio);
+
+	// SpotLight montada sobre el satélite
+   // La posición (180, 0, 0) coincide con la del satélite en espacio local del nodo
+	mSatLight = new SpotLight(glm::vec3(180.0f, 0.0f, 0.0f), 0); // spotLights[0]
+	mSatLight->setAmb(glm::vec3(0.05f, 0.05f, 0.05f));
+	mSatLight->setDiff(glm::vec3(0.8f, 0.7f, 0.3f)); // luz cálida dorada
+	mSatLight->setSpec(glm::vec3(0.5f, 0.4f, 0.1f));
+	// Dirección apuntando hacia el origen del nodo, es decir, hacia el jarrón
+	// Desde (180,0,0) hacia (0,0,0) => dirección (-1, 0, 0) normalizada
+	mSatLight->setDirection(glm::normalize(glm::vec3(-1.0f, 0.0f, 0.0f)));
+	mSatLight->setCutoff(15.0f, 25.0f); // inner=15°, outer=25°
+	mSatLight->setEnabled(false); // se activa con 't'
+	gLights.push_back(mSatLight);
+}
+
+void Scene5::uploadLights(Camera const& cam) const {
+	// Sube la luz direccional heredada (mDirLight) con el método base
+	Scene::uploadLights(cam);
+
+	// Sube la SpotLight del satélite con la matriz del nodo ficticio
+	if (mSatLight) {
+		Shader* lightShader = Shader::get("light");
+		lightShader->use();
+
+		// Multiplicamos la viewMat por la modelMat del nodo ficticio
+		// Esto transforma la posición y dirección de la luz del espacio
+		// local del nodo al espacio cámara, igual que Scene8 hace con mDroidLight
+		glm::mat4 satModelView = cam.viewMat() * glm::mat4(mNodoFicticio->modelMat());
+		mSatLight->upload(*lightShader, satModelView);
+	}
+}
+
+void Scene5::orbitSatellite()
+{
+	// Rota el nodo ficticio sobre el eje Y en su posición actual
+	mNodoFicticio->setModelMat(
+		glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), glm::vec3(0, 1, 0))
+		* mNodoFicticio->modelMat()
+	);
+}
+
+void Scene5::handleKey(unsigned int key) {
+	switch (key) {
+	case 'f': orbitSatellite(); break;
+	case 't':
+		if (mSatLight)
+			mSatLight->setEnabled(!mSatLight->enabled());
+		break;
+	}
 }
 
 void Scene6::init() {
