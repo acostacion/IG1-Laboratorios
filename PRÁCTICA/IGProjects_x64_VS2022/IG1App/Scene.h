@@ -134,4 +134,20 @@ private:
 class Scene9 : public Scene {
 public: void init() override;
 };
+
+class SceneJune0 : public Scene {
+public: void init() override;
+};
+
+class SceneJune1 : public Scene {
+public: void init() override;
+};
+
+class SceneJune2 : public Scene {
+public: 
+	void init() override;
+	void handleKey(unsigned int key) override;
+private: 
+	Flower* _flower;
+};
 #endif //_H_Scene_H_

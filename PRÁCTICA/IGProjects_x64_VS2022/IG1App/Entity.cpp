@@ -659,10 +659,10 @@ void CompoundEntity::addEntity(Abs_Entity* ae) {
 	gObjects.emplace_back(ae);
 }
 
-SphereWithTexture::SphereWithTexture(GLdouble radius, GLuint nParallels, GLuint nMeridians) {
+SphereWithTexture::SphereWithTexture(GLdouble radius, std::string s, GLuint nParallels, GLuint nMeridians) {
 	mMesh = IndexMesh::generateSphere(radius, nParallels, nMeridians);
 	mTexture = new Texture();
-	mTexture->load("../assets/images/container.jpg", 255);
+	mTexture->load("../assets/images/" + s, 255);
 }
 
 SphereWithTexture::~SphereWithTexture() {
@@ -703,7 +703,7 @@ Cone* Droid::createEye(GLdouble r) {
 
 // TODO falla iluminacion
 Robot::Robot(GLdouble radius) {
-	addEntity(new SphereWithTexture(radius, 20, 20));
+	addEntity(new SphereWithTexture(radius, "container.jpg", 20, 20));
 
 	Droid* head = new Droid(radius);
 	head->setModelMat(glm::translate(glm::dmat4(1), glm::dvec3(0, radius, 0)));
@@ -798,4 +798,155 @@ void EntityWithMaterial::render(const glm::mat4& modelViewMat) const {
 	mMaterial.upload(*mShader);                      // sube el material
 	upload(modelViewMat * mModelMat);                // sube matrices
 	if (mMesh) mMesh->render();
+}
+
+Corolla::Corolla(GLfloat w, GLfloat h, GLuint points, GLuint samples) {
+	std::vector<glm::vec2> profile;
+
+	float diffX = w / (points - 1); // para calcular los intervalos de x1, x2, x3 de cada punto y tal
+	float c = h / (w * w); // esto se saca despejando
+
+	for (GLuint i = 0; i < points; ++i)
+	{
+		float x = i * diffX;
+		float y = c * (x * x);
+
+		profile.emplace_back(x, y);
+	}
+	profile.emplace_back(1.1 * w, 0.9 * h);
+
+	mMesh = IndexMesh::generateByRevolution(profile, samples, 2 * std::numbers::pi);
+	mMaterial = Material(glm::vec3(1.f, 1.f, 0.f));
+}
+
+CorollaWithGradient::CorollaWithGradient(GLfloat w, GLfloat h, GLuint points, GLuint samples) {
+	// --- perfil
+	std::vector<glm::vec2> profile;
+
+	float diffX = w / (points - 1); // para calcular los intervalos de x1, x2, x3 de cada punto y tal
+	float c = h / (w * w); // esto se saca despejando
+
+	for (GLuint i = 0; i < points; ++i)
+	{
+		float x = i * diffX;
+		float y = c * (x * x);
+
+		profile.emplace_back(x, y);
+	}
+	profile.emplace_back(1.1 * w, 0.9 * h);
+
+	mMesh = IndexMesh::generateByRevolution(profile, samples, 2 * std::numbers::pi);
+
+	// --- colores
+	std::vector<glm::vec4> colors;
+	GLuint tamPerfil = profile.size();
+	colors.reserve((samples + 1) * tamPerfil);
+
+	for (GLuint i = 0; i < samples + 1; i++) {
+		for (GLuint j = 0; j < tamPerfil; j++) {
+			float t = float(j) / float(tamPerfil - 1);
+			colors.emplace_back(t, 0.0f, 1.0f - t, 1.0f);
+		}
+	}
+
+	mMesh->setColorBuffer(colors);
+}
+
+Flower::Flower(GLfloat w, GLfloat h, GLuint nStamber, GLuint points, GLuint samples) {
+	// corola
+	CorollaWithGradient* c = new CorollaWithGradient(w, h, points, samples);
+	addEntity(c);
+
+	// tallo
+	Cone* stem = new Cone(h/2, w * 0.03f, w * 0.03f);
+	stem->setModelMat(translate(mat4(1), vec3(0, -h / 4, 0)));
+	stem->setColor(vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	addEntity(stem);
+
+	// estambres
+	float angleStep = 360.0f / nStamber;
+
+	for (GLuint i = 0; i < nStamber; i++) {
+		float angle = i * angleStep;
+
+		SphereWithTexture* sphere = nullptr;
+		CompoundEntity* stamber = createStamber(h, sphere);
+
+		if (i == 0) _firstStamber = sphere;
+		else if (i == nStamber / 2) _oppositeStamber = sphere;
+
+		stamber->setModelMat(
+			 rotate(mat4(1), radians(angle), vec3(0, 1, 0))
+			* rotate(mat4(1), radians(-30.0f), vec3(1, 0, 0))
+		);
+
+		_stambers.push_back(stamber);
+		addEntity(stamber);
+	}
+
+	_firstTex = new Texture();
+	_firstTex->load("../assets/images/container.jpg");
+
+	_oppositeTex = new Texture();
+	_oppositeTex->load("../assets/images/windowV.jpg");
+
+	firstLight = new PosLight(1);
+	oppositeLight = new PosLight(2);
+}
+
+void Flower::update() {
+	CompoundEntity::update();
+
+	_angle += 1.0f;
+	_time += 0.05f;
+
+	float angleStep = 360.0f / _stambers.size();
+
+	for (GLuint i = 0; i < _stambers.size(); i++)
+	{
+		float angle = i * angleStep;
+
+		float scaleY;
+
+		if (i % 2 == 0) scaleY = 1.0f + 0.1f * sin(_time);
+		else scaleY = 1.0f - 0.1f * sin(_time);
+
+		_stambers[i]->setModelMat(
+			  rotate(mat4(1), radians(angle + _angle), vec3(0, 1, 0))
+			* rotate(mat4(1), radians(-30.0f), vec3(1, 0, 0))
+			* glm::scale(mat4(1), vec3(1, scaleY, 1))
+		);
+	}
+
+	firstLight->setPosition(_firstStamber->modelMat() * vec4(0, 0, 0, 1));
+	oppositeLight->setPosition(_oppositeStamber->modelMat()[3] * vec4(0, 0, 0, 1));
+}
+
+void Flower::toggleStamberTextures() {
+	_toggleStambers = !_toggleStambers;
+
+	if (_toggleStambers) {
+		_firstStamber->setTexture(_oppositeTex);
+		_oppositeStamber->setTexture(_oppositeTex);
+	}
+	else {
+		_firstStamber->setTexture(_firstTex);
+		_oppositeStamber->setTexture(_firstTex);
+	}
+	firstLight->setEnabled(_toggleStambers);
+	oppositeLight->setEnabled(_toggleStambers);
+}
+
+CompoundEntity* Flower::createStamber(GLfloat h, SphereWithTexture*& sphere) {
+	CompoundEntity* comp = new CompoundEntity();
+
+	sphere = new SphereWithTexture(h/16, "container.jpg");
+	sphere->setModelMat(translate(mat4(1), vec3(0, h, 0)));
+	comp->addEntity(sphere);
+
+	Cone* c = new Cone(h, h * 0.03f, h * 0.03f);
+	c->setModelMat(translate(mat4(1), vec3(0, h / 2, 0)));
+	comp->addEntity(c);
+
+	return comp;
 }

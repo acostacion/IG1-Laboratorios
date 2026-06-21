@@ -88,9 +88,9 @@ IG1App::init()
 	mCamera2 = new Camera(mViewPort);
 
 	// crea las escenas y las mete en el vector
-	mScenes.push_back(new Scene0());
-	mScenes.push_back(new Scene1());
-	mScenes.push_back(new Scene2());
+	mScenes.push_back(new SceneJune0());
+	mScenes.push_back(new SceneJune1());
+	mScenes.push_back(new SceneJune2());
 	mScenes.push_back(new Scene3());
 	mScenes.push_back(new Scene4());
 	mScenes.push_back(new Scene5());

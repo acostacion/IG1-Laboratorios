@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Material.h"
+#include "Light.h"
 
 class Abs_Entity // abstract class
 {
@@ -287,12 +288,12 @@ class Cone : public ColorMaterialEntity {
 		· tronco de cono de altura h, radio inferior r, radio superior R, rRings vertices en el perfil y nSamples muestras de revolucin.
 	*/
 public:
-	explicit Cone(GLdouble h, GLdouble r, GLdouble R, GLuint nRings, GLuint nSamples);
+	explicit Cone(GLdouble h, GLdouble r, GLdouble R, GLuint nRings = 40, GLuint nSamples = 40);
 };
 
 class SphereWithTexture : public EntityWithTexture {
 public:
-	explicit SphereWithTexture(GLdouble radius, GLuint nParallels, GLuint nMeridians);
+	explicit SphereWithTexture(GLdouble radius, std::string s, GLuint nParallels = 40, GLuint nMeridians = 40);
 	~SphereWithTexture();
 };
 
@@ -329,6 +330,38 @@ public:
 class IndexedBox : public ColorMaterialEntity {
 public:
 	explicit IndexedBox(GLdouble l);
+};
+
+class Corolla : public EntityWithMaterial {
+public:
+	explicit Corolla(GLfloat w, GLfloat h, GLuint points = 40, GLuint samples = 40);
+};
+
+class CorollaWithGradient : public EntityWithColors {
+public: 
+	explicit CorollaWithGradient(GLfloat w, GLfloat h, GLuint points = 40, GLuint samples = 40);
+};
+
+class Flower : public CompoundEntity {
+public:
+	explicit Flower(GLfloat w, GLfloat h, GLuint nStamber, GLuint points = 40, GLuint samples = 40);
+	void update() override;
+	void toggleStamberTextures();
+
+	PosLight* firstLight = nullptr;
+	PosLight* oppositeLight = nullptr;
+private:
+	CompoundEntity* createStamber(GLfloat h, SphereWithTexture*& sphere);
+	std::vector<CompoundEntity*> _stambers;
+	float _angle = 0.0f;
+	float _time = 0.0f;
+
+	bool _toggleStambers = false;
+	SphereWithTexture* _firstStamber; 
+	SphereWithTexture* _oppositeStamber; 
+
+	Texture* _firstTex = nullptr;
+	Texture* _oppositeTex = nullptr;
 };
 
 #endif //_H_Entities_H_

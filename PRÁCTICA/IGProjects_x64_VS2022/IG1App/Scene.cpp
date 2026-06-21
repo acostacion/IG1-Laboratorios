@@ -451,3 +451,30 @@ void Scene9::init() {
 	SnowMan* sm = new SnowMan(100);
 	gObjects.push_back(sm);
 }
+
+void SceneJune0::init() {
+	Scene::init();
+	Corolla* c = new Corolla(200, 200);
+	gObjects.push_back(c);
+}
+
+void SceneJune1::init() {
+	Scene::init();
+	CorollaWithGradient* cwg = new CorollaWithGradient(200, 200);
+	gObjects.push_back(cwg);
+}
+
+void SceneJune2::init() {
+	Scene::init();
+	_flower = new Flower(200, 200, 6);
+	gObjects.push_back(_flower);
+
+	gLights.push_back(_flower->firstLight);
+	gLights.push_back(_flower->oppositeLight);
+}
+
+void SceneJune2::handleKey(unsigned int key) {
+	switch (key) {
+	case 'e': _flower->toggleStamberTextures();  break;
+	}
+}
